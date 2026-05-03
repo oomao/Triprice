@@ -142,14 +142,14 @@ function categoryBadge(c) {
             v-model="search"
             type="text"
             placeholder="例：0050、台灣 50、半導體"
-            class="w-full px-3 py-1.5 rounded border border-slate-300 text-sm focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16]"
+            class="w-full px-3 py-1.5 border border-[#d8d8d2] bg-white text-sm focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16] transition"
           />
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">分類</label>
           <select
             v-model="categoryFilter"
-            class="w-full px-3 py-1.5 rounded border border-slate-300 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16]"
+            class="w-full px-3 py-1.5 border border-[#d8d8d2] bg-white text-sm focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16] transition"
           >
             <option v-for="c in CATEGORIES" :key="c.v" :value="c.v">{{ c.label }}</option>
           </select>
@@ -161,7 +161,7 @@ function categoryBadge(c) {
         <select
           :value="`${sortKey}:${sortDir}`"
           @change="(e) => { const [k, d] = e.target.value.split(':'); sortKey = k; sortDir = d }"
-          class="w-full px-3 py-2 rounded border border-slate-300 text-sm bg-white"
+          class="w-full px-3 py-2 border border-[#d8d8d2] text-sm bg-white"
         >
           <option v-for="k in SORT_KEYS" :key="k.v + '_d'" :value="`${k.v}:desc`">{{ k.label }} ↓</option>
           <option v-for="k in SORT_KEYS" :key="k.v + '_a'" :value="`${k.v}:asc`">{{ k.label }} ↑</option>

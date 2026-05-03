@@ -370,7 +370,7 @@ const epsLabel = computed(() =>
             <label class="block text-xs font-semibold text-slate-700 mb-1.5">股利取值</label>
             <select
               v-model="settings.dividend_mode"
-              class="w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0a0e16]/30"
+              class="w-full px-3 py-1.5 border border-[#d8d8d2] bg-white text-sm focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16] transition"
             >
               <option value="latest">最近一年（{{ fmt(rawData.dividend_used || 0) }}）</option>
               <option v-if="dividendAvgs[2]" value="avg2y">近 2 年平均（{{ fmt(dividendAvgs[2]) }}）</option>
@@ -385,7 +385,7 @@ const epsLabel = computed(() =>
               step="0.01"
               min="0"
               placeholder="例：18.5"
-              class="mt-2 w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0a0e16]/30"
+              class="mt-2 w-full px-3 py-1.5 border border-[#d8d8d2] bg-white text-sm focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16] transition"
             />
           </div>
 
@@ -394,7 +394,7 @@ const epsLabel = computed(() =>
             <label class="block text-xs font-semibold text-slate-700 mb-1.5">EPS（用於 PE 法）</label>
             <select
               v-model="settings.eps_mode"
-              class="w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0a0e16]/30"
+              class="w-full px-3 py-1.5 border border-[#d8d8d2] bg-white text-sm focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16] transition"
             >
               <option value="ttm">TTM 近 4 季合計（{{ fmt(rawData.eps_ttm) }}）</option>
               <option value="custom">自訂 EPS…</option>
@@ -405,7 +405,7 @@ const epsLabel = computed(() =>
               type="number"
               step="0.01"
               placeholder="例：80（預估明年）"
-              class="mt-2 w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0a0e16]/30"
+              class="mt-2 w-full px-3 py-1.5 border border-[#d8d8d2] bg-white text-sm focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16] transition"
             />
           </div>
 
