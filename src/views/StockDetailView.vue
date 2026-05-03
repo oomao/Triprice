@@ -5,7 +5,7 @@ import { useWatchlistStore } from '../stores/watchlist'
 
 const route = useRoute()
 const watchlist = useWatchlistStore()
-const data = ref(null)
+const rawData = ref(null)
 const stocksMeta = ref(null)
 const loading = ref(true)
 const loadingMessage = ref('載入中…')
@@ -13,13 +13,140 @@ const error = ref(null)
 
 const code = computed(() => route.params.code)
 const meta = computed(() => stocksMeta.value?.tw_stocks?.[code.value])
-const isDynamic = computed(() => data.value?._dynamic === true)
+const isDynamic = computed(() => rawData.value?._dynamic === true)
+
+// === User customization settings (per-stock localStorage) ===
+const defaultSettings = {
+  dividend_mode: 'latest', // 'latest' | 'avg2y' | 'avg3y' | 'avg5y' | 'custom'
+  custom_dividend: null,
+  eps_mode: 'ttm', // 'ttm' | 'custom'
+  custom_eps: null,
+  margin_of_safety: 0, // 0..50 percent
+}
+
+const settings = ref({ ...defaultSettings })
+
+function loadSettings(c) {
+  if (!c) return
+  try {
+    const raw = localStorage.getItem(`triprice.settings.${c}`)
+    if (raw) {
+      Object.assign(settings.value, defaultSettings, JSON.parse(raw))
+    } else {
+      Object.assign(settings.value, defaultSettings)
+    }
+  } catch {
+    Object.assign(settings.value, defaultSettings)
+  }
+}
+
+watch(
+  settings,
+  (val) => {
+    if (!code.value) return
+    try {
+      localStorage.setItem(`triprice.settings.${code.value}`, JSON.stringify(val))
+    } catch {}
+  },
+  { deep: true },
+)
+
+function resetSettings() {
+  Object.assign(settings.value, defaultSettings)
+}
+
+// === Computed values applying user settings ===
+const dividendAvgs = computed(() => {
+  const hist = rawData.value?.dividend_history || []
+  const result = {}
+  for (const n of [2, 3, 5]) {
+    if (hist.length >= n) {
+      const sum = hist.slice(0, n).reduce((s, d) => s + (d.cash_dividend || 0), 0)
+      result[n] = Number((sum / n).toFixed(2))
+    }
+  }
+  return result
+})
+
+const effectiveDividend = computed(() => {
+  if (!rawData.value) return null
+  if (settings.value.dividend_mode === 'custom' && settings.value.custom_dividend != null) {
+    const v = Number(settings.value.custom_dividend)
+    return isNaN(v) ? rawData.value.dividend_used : v
+  }
+  if (settings.value.dividend_mode.startsWith('avg')) {
+    const n = parseInt(settings.value.dividend_mode.slice(3), 10)
+    if (dividendAvgs.value[n] != null) return dividendAvgs.value[n]
+  }
+  return rawData.value.dividend_used || 0
+})
+
+const effectiveEps = computed(() => {
+  if (settings.value.eps_mode === 'custom' && settings.value.custom_eps != null) {
+    const v = Number(settings.value.custom_eps)
+    return isNaN(v) ? rawData.value?.eps_ttm : v
+  }
+  return rawData.value?.eps_ttm
+})
+
+function round2(n) {
+  return Number(Number(n).toFixed(2))
+}
+
+const computedValuations = computed(() => {
+  if (!rawData.value) return { yieldVal: null, peVal: null }
+  const div = effectiveDividend.value
+  const eps = effectiveEps.value
+  const ys = rawData.value.yield_stats
+  const ps = rawData.value.pe_stats
+  const factor = 1 - (settings.value.margin_of_safety || 0) / 100
+
+  let yieldVal = null
+  if (ys && div && div > 0) {
+    yieldVal = {
+      cheap: round2((div / ys.high) * factor),
+      fair: round2((div / ys.avg) * factor),
+      expensive: round2(div / ys.low),
+    }
+  }
+  let peVal = null
+  if (ps && eps && eps > 0) {
+    peVal = {
+      cheap: round2(eps * ps.low * factor),
+      fair: round2(eps * ps.avg * factor),
+      expensive: round2(eps * ps.high),
+    }
+  }
+  return { yieldVal, peVal }
+})
+
+const hasCustomization = computed(() => {
+  const s = settings.value
+  return (
+    s.dividend_mode !== 'latest' ||
+    s.eps_mode !== 'ttm' ||
+    s.margin_of_safety > 0
+  )
+})
+
+// data is the rawData with user-setting overrides — template reads this
+const data = computed(() => {
+  if (!rawData.value) return null
+  return {
+    ...rawData.value,
+    dividend_used: effectiveDividend.value,
+    eps_ttm: effectiveEps.value,
+    valuation_yield: computedValuations.value.yieldVal || rawData.value.valuation_yield,
+    valuation_pe: computedValuations.value.peVal || rawData.value.valuation_pe,
+  }
+})
 
 async function load() {
   loading.value = true
   loadingMessage.value = '載入中…'
   error.value = null
-  data.value = null
+  rawData.value = null
+  loadSettings(code.value)
   try {
     const base = import.meta.env.BASE_URL
     const [stocksRes, dataRes] = await Promise.all([
@@ -28,13 +155,12 @@ async function load() {
     ])
     stocksMeta.value = await stocksRes.json()
     if (dataRes.ok) {
-      data.value = await dataRes.json()
+      rawData.value = await dataRes.json()
     } else {
-      // No static data — fall back to live FinMind fetch.
       loadingMessage.value = '此股票未預載，從 FinMind 即時抓取（約 5 秒）…'
       try {
         const { fetchStockDynamic } = await import('../lib/finmind.js')
-        data.value = await fetchStockDynamic(code.value)
+        rawData.value = await fetchStockDynamic(code.value)
       } catch (e) {
         error.value = `動態抓取失敗：${e.message}`
       }
@@ -53,7 +179,7 @@ function fmt(n, d = 2) {
   if (n == null || isNaN(n)) return '—'
   return Number(n).toLocaleString('en-US', {
     minimumFractionDigits: d,
-    maximumFractionDigits: d
+    maximumFractionDigits: d,
   })
 }
 
@@ -67,6 +193,18 @@ function priceTier(current, valuation) {
 
 const yieldTier = computed(() => priceTier(data.value?.current_price, data.value?.valuation_yield))
 const peTier = computed(() => priceTier(data.value?.current_price, data.value?.valuation_pe))
+
+const dividendLabel = computed(() => {
+  const m = settings.value.dividend_mode
+  if (m === 'latest') return '使用最近一年股利'
+  if (m === 'custom') return '使用自訂股利'
+  if (m.startsWith('avg')) return `使用近 ${m.slice(3)} 年平均股利`
+  return '使用最近一年股利'
+})
+
+const epsLabel = computed(() =>
+  settings.value.eps_mode === 'custom' ? '使用自訂 EPS' : '使用近 4 季 EPS 合計',
+)
 </script>
 
 <template>
@@ -80,31 +218,122 @@ const peTier = computed(() => priceTier(data.value?.current_price, data.value?.v
     </div>
     <div v-else-if="data">
       <!-- Header -->
-      <div class="flex items-start justify-between mt-2 mb-5">
-        <div>
+      <div class="flex items-start justify-between mt-2 mb-5 gap-3">
+        <div class="min-w-0">
           <h1 class="text-2xl font-bold">
-            {{ meta?.name }}
+            {{ meta?.name || rawData?.name || code }}
             <span class="text-base font-mono text-slate-500 ml-2">{{ code }}</span>
+            <span v-if="isDynamic" class="ml-2 text-xs text-sky-600 font-normal align-middle">即時抓取</span>
           </h1>
           <div class="text-sm text-slate-500 mt-1">
-            收盤 {{ data.close_date }} ·
-            <span class="font-bold text-slate-900 text-base">{{ fmt(data.current_price) }}</span>
-            <span v-if="data.change != null" :class="data.change >= 0 ? 'text-red-500' : 'text-emerald-600'" class="ml-2">
-              {{ data.change >= 0 ? '+' : '' }}{{ fmt(data.change) }}
-              ({{ data.change >= 0 ? '+' : '' }}{{ fmt(data.change_pct, 2) }}%)
+            收盤 {{ rawData.close_date }} ·
+            <span class="font-bold text-slate-900 text-base">{{ fmt(rawData.current_price) }}</span>
+            <span
+              v-if="rawData.change != null"
+              :class="rawData.change >= 0 ? 'text-red-500' : 'text-emerald-600'"
+              class="ml-2"
+            >
+              {{ rawData.change >= 0 ? '+' : '' }}{{ fmt(rawData.change) }}
+              ({{ rawData.change >= 0 ? '+' : '' }}{{ fmt(rawData.change_pct, 2) }}%)
             </span>
           </div>
         </div>
         <button
           @click="watchlist.toggle(code)"
-          class="px-3 py-1.5 rounded-lg border text-sm transition"
-          :class="watchlist.has(code)
-            ? 'bg-amber-50 border-amber-400 text-amber-700'
-            : 'bg-white border-slate-300 hover:border-sky-400'"
+          class="px-3 py-1.5 rounded-lg border text-sm transition shrink-0"
+          :class="
+            watchlist.has(code)
+              ? 'bg-amber-50 border-amber-400 text-amber-700'
+              : 'bg-white border-slate-300 hover:border-sky-400'
+          "
         >
           {{ watchlist.has(code) ? '★ 已自選' : '☆ 加入自選' }}
         </button>
       </div>
+
+      <!-- 進階設定 -->
+      <details class="mb-5 group" :open="hasCustomization">
+        <summary
+          class="cursor-pointer text-sm font-medium text-sky-600 hover:text-sky-700 inline-flex items-center gap-1.5 select-none list-none"
+        >
+          <span class="inline-block transition-transform group-open:rotate-90 text-xs">▶</span>
+          進階設定
+          <span
+            v-if="hasCustomization"
+            class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-normal"
+          >已自訂</span>
+        </summary>
+
+        <div class="mt-3 bg-white rounded-lg border border-slate-200 p-4 space-y-4">
+          <!-- 股利取值 -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">股利取值</label>
+            <select
+              v-model="settings.dividend_mode"
+              class="w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+            >
+              <option value="latest">最近一年（{{ fmt(rawData.dividend_used || 0) }}）</option>
+              <option v-if="dividendAvgs[2]" value="avg2y">近 2 年平均（{{ fmt(dividendAvgs[2]) }}）</option>
+              <option v-if="dividendAvgs[3]" value="avg3y">近 3 年平均（{{ fmt(dividendAvgs[3]) }}）</option>
+              <option v-if="dividendAvgs[5]" value="avg5y">近 5 年平均（{{ fmt(dividendAvgs[5]) }}）</option>
+              <option value="custom">自訂金額…</option>
+            </select>
+            <input
+              v-if="settings.dividend_mode === 'custom'"
+              v-model.number="settings.custom_dividend"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="例：18.5"
+              class="mt-2 w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+            />
+          </div>
+
+          <!-- EPS -->
+          <div v-if="rawData.eps_ttm">
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">EPS（用於 PE 法）</label>
+            <select
+              v-model="settings.eps_mode"
+              class="w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+            >
+              <option value="ttm">TTM 近 4 季合計（{{ fmt(rawData.eps_ttm) }}）</option>
+              <option value="custom">自訂 EPS…</option>
+            </select>
+            <input
+              v-if="settings.eps_mode === 'custom'"
+              v-model.number="settings.custom_eps"
+              type="number"
+              step="0.01"
+              placeholder="例：80（預估明年）"
+              class="mt-2 w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+            />
+          </div>
+
+          <!-- 安全邊際 -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+              安全邊際 <strong class="text-sky-700 ml-1">{{ settings.margin_of_safety }}%</strong>
+            </label>
+            <input
+              v-model.number="settings.margin_of_safety"
+              type="range"
+              min="0"
+              max="50"
+              step="5"
+              class="w-full accent-sky-600"
+            />
+            <p class="text-[11px] text-slate-500 mt-1 leading-snug">
+              套用 {{ settings.margin_of_safety }}% 折扣到便宜價與合理價（昂貴價不變，作為賣出參考）
+            </p>
+          </div>
+
+          <button
+            v-if="hasCustomization"
+            @click="resetSettings"
+            class="text-xs text-slate-500 hover:text-red-500 underline"
+          >重設為預設值</button>
+        </div>
+      </details>
 
       <!-- 殖利率法估值表 -->
       <section class="mb-6">
@@ -148,7 +377,8 @@ const peTier = computed(() => priceTier(data.value?.current_price, data.value?.v
           </table>
         </div>
         <p class="text-xs text-slate-500 mt-1">
-          使用最近一年股利 {{ fmt(data.dividend_used) }} 元 · 殖利率區間取自近 3 年
+          {{ dividendLabel }} {{ fmt(data.dividend_used) }} 元 · 殖利率區間取自近 3 年
+          <span v-if="settings.margin_of_safety > 0" class="text-amber-600">· 安全邊際 {{ settings.margin_of_safety }}%</span>
         </p>
       </section>
 
@@ -182,7 +412,8 @@ const peTier = computed(() => priceTier(data.value?.current_price, data.value?.v
           </table>
         </div>
         <p class="text-xs text-slate-500 mt-1">
-          使用近 4 季 EPS 合計 {{ fmt(data.eps_ttm) }} 元
+          {{ epsLabel }} {{ fmt(data.eps_ttm) }} 元
+          <span v-if="settings.margin_of_safety > 0" class="text-amber-600">· 安全邊際 {{ settings.margin_of_safety }}%</span>
         </p>
       </section>
 
@@ -217,7 +448,7 @@ const peTier = computed(() => priceTier(data.value?.current_price, data.value?.v
         </div>
       </section>
 
-      <!-- 歷年股利明細 -->
+      <!-- 歷年股利 -->
       <section v-if="data.dividend_history?.length" class="mb-6">
         <h2 class="text-lg font-semibold mb-2">歷年股利</h2>
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
@@ -240,7 +471,7 @@ const peTier = computed(() => priceTier(data.value?.current_price, data.value?.v
         </div>
       </section>
 
-      <!-- EPS 明細 -->
+      <!-- EPS 季度 -->
       <section v-if="data.eps_quarterly?.length" class="mb-6">
         <h2 class="text-lg font-semibold mb-2">EPS 季度明細</h2>
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
@@ -267,3 +498,8 @@ const peTier = computed(() => priceTier(data.value?.current_price, data.value?.v
     </div>
   </div>
 </template>
+
+<style scoped>
+summary::-webkit-details-marker { display: none; }
+summary::marker { display: none; }
+</style>

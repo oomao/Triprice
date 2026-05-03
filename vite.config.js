@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg'],
       manifest: {
-        name: 'Triprice — 三價儀',
+        name: 'Triprice',
         short_name: 'Triprice',
         description: '台股殖利率法 / PE 法估值，含美股 ADR 比較',
         lang: 'zh-Hant',

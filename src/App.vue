@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, provide } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 
 const lastUpdated = ref({})
@@ -13,9 +13,11 @@ onMounted(async () => {
   }
 })
 
+// Share with child views (HomeView etc.)
+provide('lastUpdated', lastUpdated)
+
 function fmtTime(iso) {
   if (!iso) return ''
-  // "2026-05-03 15:08:27+08:00" → "2026-05-03 15:08"
   return iso.replace(/:\d{2}\+\d{2}:\d{2}$/, '').replace('T', ' ')
 }
 
@@ -29,7 +31,6 @@ const usTime = computed(() => fmtTime(lastUpdated.value.us))
       <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
         <RouterLink to="/" class="flex items-center gap-2 font-bold">
           <span class="text-xl">Triprice</span>
-          <span class="text-xs opacity-75 hidden sm:inline">三價儀</span>
         </RouterLink>
         <nav class="flex gap-3 sm:gap-5 text-sm">
           <RouterLink to="/" class="hover:underline" active-class="underline">清單</RouterLink>
