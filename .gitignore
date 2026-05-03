@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-ssr/
+*.log
+.DS_Store
+.vite/
+.env
+.env.local
+.env.*.local
+__pycache__/
+*.pyc
+.venv/
+.idea/
+.vscode/
+*.swp
+*.swo

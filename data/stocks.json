@@ -1,0 +1,65 @@
+{
+  "version": "1.0",
+  "updated": "2026-05-03",
+  "categories": {
+    "etf": {
+      "label": "ETF",
+      "stocks": ["0050", "0056", "00878", "00929"]
+    },
+    "semiconductor": {
+      "label": "半導體",
+      "stocks": ["2330", "2454", "2303", "2308", "3711"]
+    },
+    "finance": {
+      "label": "金融",
+      "stocks": ["2880", "2881", "2882", "2884", "2885", "2886", "2887", "2890", "2891", "2892"]
+    },
+    "tech_other": {
+      "label": "電子其他",
+      "stocks": ["2317", "2382", "2412", "2409"]
+    },
+    "consumer": {
+      "label": "民生消費",
+      "stocks": ["1216", "2912"]
+    },
+    "traditional": {
+      "label": "傳產",
+      "stocks": ["2002"]
+    }
+  },
+  "tw_stocks": {
+    "0050": { "name": "元大台灣50", "valuation_method": "yield" },
+    "0056": { "name": "元大高股息", "valuation_method": "yield" },
+    "00878": { "name": "國泰永續高股息", "valuation_method": "yield" },
+    "00929": { "name": "復華台灣科技優息", "valuation_method": "yield" },
+    "2330": { "name": "台積電", "valuation_method": "yield", "adr": "TSM" },
+    "2454": { "name": "聯發科", "valuation_method": "yield" },
+    "2303": { "name": "聯電", "valuation_method": "yield", "adr": "UMC" },
+    "2308": { "name": "台達電", "valuation_method": "yield" },
+    "3711": { "name": "日月光投控", "valuation_method": "yield", "adr": "ASX" },
+    "2880": { "name": "華南金", "valuation_method": "yield" },
+    "2881": { "name": "富邦金", "valuation_method": "yield" },
+    "2882": { "name": "國泰金", "valuation_method": "yield" },
+    "2884": { "name": "玉山金", "valuation_method": "yield" },
+    "2885": { "name": "元大金", "valuation_method": "yield" },
+    "2886": { "name": "兆豐金", "valuation_method": "yield" },
+    "2887": { "name": "台新金", "valuation_method": "yield" },
+    "2890": { "name": "永豐金", "valuation_method": "yield" },
+    "2891": { "name": "中信金", "valuation_method": "yield" },
+    "2892": { "name": "第一金", "valuation_method": "yield" },
+    "2317": { "name": "鴻海", "valuation_method": "yield" },
+    "2382": { "name": "廣達", "valuation_method": "yield" },
+    "2412": { "name": "中華電", "valuation_method": "yield", "adr": "CHT" },
+    "2409": { "name": "友達", "valuation_method": "yield", "adr": "AUO" },
+    "1216": { "name": "統一", "valuation_method": "yield" },
+    "2912": { "name": "統一超", "valuation_method": "yield" },
+    "2002": { "name": "中鋼", "valuation_method": "yield" }
+  },
+  "adr_mapping": {
+    "TSM": { "tw_code": "2330", "ratio": 5 },
+    "UMC": { "tw_code": "2303", "ratio": 5 },
+    "ASX": { "tw_code": "3711", "ratio": 2 },
+    "CHT": { "tw_code": "2412", "ratio": 10 },
+    "AUO": { "tw_code": "2409", "ratio": 10 }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "code": "2330",
+  "name": "台積電",
+  "updated": "2026-05-03 14:56:49+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 2135.0,
+  "change": -45.0,
+  "change_pct": -2.06,
+  "dividend_used": 16.0001,
+  "dividend_year": 2025,
+  "eps_ttm": 66.26,
+  "valuation_yield": {
+    "cheap": 542.13,
+    "fair": 857.13,
+    "expensive": 1550.0
+  },
+  "yield_stats": {
+    "high": 0.0295,
+    "avg": 0.0187,
+    "low": 0.0103
+  },
+  "valuation_pe": {
+    "cheap": 830.9,
+    "fair": 1491.75,
+    "expensive": 2265.43
+  },
+  "pe_stats": {
+    "high": 34.19,
+    "avg": 22.51,
+    "low": 12.54
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 19.51,
+      "yoy": 0.3502
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 17.44,
+      "yoy": 0.3896
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 15.36,
+      "yoy": 0.6067
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 13.95,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2025,
+      "cash_dividend": 16.0001,
+      "yield": 0.0138
+    },
+    {
+      "year": 2024,
+      "cash_dividend": 16.9998,
+      "yield": 0.0191
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 12.9996,
+      "yield": 0.0235
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 10.9996,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 11.0,
+      "yield": null
+    }
+  ]
+}
