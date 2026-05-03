@@ -1,0 +1,73 @@
+{
+  "code": "2002",
+  "name": "中鋼",
+  "updated": "2026-05-03 15:00:54+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 18.75,
+  "change": -0.25,
+  "change_pct": -1.32,
+  "dividend_used": 0.33,
+  "dividend_year": 2024,
+  "eps_ttm": -0.28,
+  "valuation_yield": {
+    "cheap": 19.65,
+    "fair": 24.11,
+    "expensive": 28.33
+  },
+  "yield_stats": {
+    "high": 0.0168,
+    "avg": 0.0137,
+    "low": 0.0116
+  },
+  "valuation_pe": null,
+  "pe_stats": null,
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": -0.02,
+      "yoy": -3.0
+    },
+    {
+      "period": "2025-09-30",
+      "eps": -0.16,
+      "yoy": -15.0
+    },
+    {
+      "period": "2025-06-30",
+      "eps": -0.12,
+      "yoy": -2.3333
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 0.02,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 0.33,
+      "yield": 0.0142
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 0.35,
+      "yield": 0.0128
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 1.0,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 3.1,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 0.3,
+      "yield": null
+    }
+  ]
+}

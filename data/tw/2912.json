@@ -1,0 +1,81 @@
+{
+  "code": "2912",
+  "name": "統一超",
+  "updated": "2026-05-03 15:00:52+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 224.0,
+  "change": -0.5,
+  "change_pct": -0.22,
+  "dividend_used": 9.0,
+  "dividend_year": 2024,
+  "eps_ttm": 10.96,
+  "valuation_yield": {
+    "cheap": 256.5,
+    "fair": 274.29,
+    "expensive": 303.0
+  },
+  "yield_stats": {
+    "high": 0.0351,
+    "avg": 0.0328,
+    "low": 0.0297
+  },
+  "valuation_pe": {
+    "cheap": 212.95,
+    "fair": 274.58,
+    "expensive": 335.05
+  },
+  "pe_stats": {
+    "high": 30.57,
+    "avg": 25.05,
+    "low": 19.43
+  },
+  "eps_quarterly": [
+    {
+      "period": "2026-03-31",
+      "eps": 2.97,
+      "yoy": 0.0645
+    },
+    {
+      "period": "2025-12-31",
+      "eps": 2.22,
+      "yoy": 0.023
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 2.85,
+      "yoy": -0.007
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 2.92,
+      "yoy": -0.096
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 9.0,
+      "yield": 0.0326
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 9.0,
+      "yield": 0.033
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 9.0,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 9.0,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 9.0,
+      "yield": null
+    }
+  ]
+}

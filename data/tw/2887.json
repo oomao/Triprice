@@ -1,0 +1,81 @@
+{
+  "code": "2887",
+  "name": "台新金",
+  "updated": "2026-05-03 15:00:36+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 23.8,
+  "change": -0.25,
+  "change_pct": -1.04,
+  "dividend_used": 0.9,
+  "dividend_year": 2024,
+  "eps_ttm": 1.91,
+  "valuation_yield": {
+    "cheap": 16.85,
+    "fair": 21.01,
+    "expensive": 29.1
+  },
+  "yield_stats": {
+    "high": 0.0534,
+    "avg": 0.0428,
+    "low": 0.0309
+  },
+  "valuation_pe": {
+    "cheap": 18.97,
+    "fair": 28.06,
+    "expensive": 49.39
+  },
+  "pe_stats": {
+    "high": 25.86,
+    "avg": 14.69,
+    "low": 9.93
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 0.61,
+      "yoy": 1.7727
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 0.59,
+      "yoy": 0.3721
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 0.38,
+      "yoy": 0.0
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 0.33,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 0.9,
+      "yield": 0.0497
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 0.6,
+      "yield": 0.0331
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 0.51,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 0.605,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 0.5552,
+      "yield": null
+    }
+  ]
+}

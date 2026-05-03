@@ -50,7 +50,7 @@
     "2317": { "name": "鴻海", "valuation_method": "yield" },
     "2382": { "name": "廣達", "valuation_method": "yield" },
     "2412": { "name": "中華電", "valuation_method": "yield", "adr": "CHT" },
-    "2409": { "name": "友達", "valuation_method": "yield", "adr": "AUO" },
+    "2409": { "name": "友達", "valuation_method": "yield" },
     "1216": { "name": "統一", "valuation_method": "yield" },
     "2912": { "name": "統一超", "valuation_method": "yield" },
     "2002": { "name": "中鋼", "valuation_method": "yield" }
@@ -59,7 +59,6 @@
     "TSM": { "tw_code": "2330", "ratio": 5 },
     "UMC": { "tw_code": "2303", "ratio": 5 },
     "ASX": { "tw_code": "3711", "ratio": 2 },
-    "CHT": { "tw_code": "2412", "ratio": 10 },
-    "AUO": { "tw_code": "2409", "ratio": 10 }
+    "CHT": { "tw_code": "2412", "ratio": 10 }
   }
 }

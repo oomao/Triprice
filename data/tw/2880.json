@@ -1,0 +1,81 @@
+{
+  "code": "2880",
+  "name": "華南金",
+  "updated": "2026-05-03 15:00:25+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 32.05,
+  "change": -0.85,
+  "change_pct": -2.58,
+  "dividend_used": 1.25,
+  "dividend_year": 2024,
+  "eps_ttm": 1.9,
+  "valuation_yield": {
+    "cheap": 21.04,
+    "fair": 23.72,
+    "expensive": 28.4
+  },
+  "yield_stats": {
+    "high": 0.0594,
+    "avg": 0.0527,
+    "low": 0.044
+  },
+  "valuation_pe": {
+    "cheap": 26.47,
+    "fair": 30.85,
+    "expensive": 39.99
+  },
+  "pe_stats": {
+    "high": 21.05,
+    "avg": 16.24,
+    "low": 13.93
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 0.47,
+      "yoy": 0.2368
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 0.59,
+      "yoy": 0.2041
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 0.45,
+      "yoy": 0.125
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 0.39,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 1.25,
+      "yield": 0.0503
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 1.2,
+      "yield": 0.0555
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 0.59,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 0.78,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 0.265,
+      "yield": null
+    }
+  ]
+}

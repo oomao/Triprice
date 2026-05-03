@@ -1,0 +1,90 @@
+{
+  "code": "3711",
+  "name": "日月光投控",
+  "updated": "2026-05-03 15:00:24+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 478.0,
+  "change": -10.5,
+  "change_pct": -2.15,
+  "dividend_used": 5.2961,
+  "dividend_year": 2024,
+  "eps_ttm": 9.37,
+  "valuation_yield": {
+    "cheap": 102.31,
+    "fair": 135.71,
+    "expensive": 193.5
+  },
+  "yield_stats": {
+    "high": 0.0518,
+    "avg": 0.039,
+    "low": 0.0274
+  },
+  "valuation_pe": {
+    "cheap": 65.12,
+    "fair": 193.08,
+    "expensive": 500.26
+  },
+  "pe_stats": {
+    "high": 53.39,
+    "avg": 20.61,
+    "low": 6.95
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 3.38,
+      "yoy": 0.5576
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 2.5,
+      "yoy": 0.1161
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 1.74,
+      "yoy": -0.0333
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 1.75,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 5.2961,
+      "yield": 0.0346
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 5.2023,
+      "yield": 0.0447
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 8.7932,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 6.996,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 4.1915,
+      "yield": null
+    }
+  ],
+  "adr": {
+    "symbol": "ASX",
+    "close": 31.59,
+    "close_date": "2026-05-01",
+    "ratio": 2,
+    "fx_rate": 31.613,
+    "implied_tw_price": 499.33,
+    "premium_pct": 4.46
+  }
+}

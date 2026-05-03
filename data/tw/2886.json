@@ -1,0 +1,81 @@
+{
+  "code": "2886",
+  "name": "兆豐金",
+  "updated": "2026-05-03 15:00:34+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 39.1,
+  "change": -1.0,
+  "change_pct": -2.49,
+  "dividend_used": 1.6,
+  "dividend_year": 2024,
+  "eps_ttm": 2.36,
+  "valuation_yield": {
+    "cheap": 36.11,
+    "fair": 39.77,
+    "expensive": 43.31
+  },
+  "yield_stats": {
+    "high": 0.0443,
+    "avg": 0.0402,
+    "low": 0.0369
+  },
+  "valuation_pe": {
+    "cheap": 35.85,
+    "fair": 42.95,
+    "expensive": 64.71
+  },
+  "pe_stats": {
+    "high": 27.42,
+    "avg": 18.2,
+    "low": 15.19
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 0.45,
+      "yoy": 0.2162
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 0.68,
+      "yoy": 0.1333
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 0.69,
+      "yoy": 0.1897
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 0.54,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 1.6,
+      "yield": 0.0403
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 1.5,
+      "yield": 0.04
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 1.24,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 1.4,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 1.58,
+      "yield": null
+    }
+  ]
+}

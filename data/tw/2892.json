@@ -1,0 +1,81 @@
+{
+  "code": "2892",
+  "name": "第一金",
+  "updated": "2026-05-03 15:00:41+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 28.85,
+  "change": 0.3,
+  "change_pct": 1.05,
+  "dividend_used": 0.95,
+  "dividend_year": 2024,
+  "eps_ttm": 1.87,
+  "valuation_yield": {
+    "cheap": 26.1,
+    "fair": 28.65,
+    "expensive": 32.69
+  },
+  "yield_stats": {
+    "high": 0.0364,
+    "avg": 0.0332,
+    "low": 0.0291
+  },
+  "valuation_pe": {
+    "cheap": 25.21,
+    "fair": 29.84,
+    "expensive": 33.73
+  },
+  "pe_stats": {
+    "high": 18.04,
+    "avg": 15.96,
+    "low": 13.48
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 0.36,
+      "yoy": 0.0909
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 0.54,
+      "yoy": 0.08
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 0.46,
+      "yoy": 0.0
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 0.51,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 0.95,
+      "yield": 0.0346
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 0.85,
+      "yield": 0.0312
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 0.8,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 1.0,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 0.9,
+      "yield": null
+    }
+  ]
+}

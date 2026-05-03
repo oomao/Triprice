@@ -1,0 +1,81 @@
+{
+  "code": "2454",
+  "name": "聯發科",
+  "updated": "2026-05-03 15:00:18+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 2610.0,
+  "change": 35.0,
+  "change_pct": 1.36,
+  "dividend_used": 29.0,
+  "dividend_year": 2025,
+  "eps_ttm": 66.17,
+  "valuation_yield": {
+    "cheap": 342.17,
+    "fair": 664.48,
+    "expensive": 1560.0
+  },
+  "yield_stats": {
+    "high": 0.0848,
+    "avg": 0.0436,
+    "low": 0.0186
+  },
+  "valuation_pe": {
+    "cheap": 578.33,
+    "fair": 1321.78,
+    "expensive": 2622.32
+  },
+  "pe_stats": {
+    "high": 39.63,
+    "avg": 19.98,
+    "low": 8.74
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 14.4,
+      "yoy": -0.0361
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 15.84,
+      "yoy": -0.0063
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 17.5,
+      "yoy": 0.0809
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 18.43,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2025,
+      "cash_dividend": 29.0,
+      "yield": 0.0211
+    },
+    {
+      "year": 2024,
+      "cash_dividend": 54.0002,
+      "yield": 0.0451
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 55.0053,
+      "yield": 0.0709
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 76.0066,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 73.0011,
+      "yield": null
+    }
+  ]
+}

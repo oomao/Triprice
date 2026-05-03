@@ -1,0 +1,81 @@
+{
+  "code": "2409",
+  "name": "友達",
+  "updated": "2026-05-03 15:00:49+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 17.2,
+  "change": -0.1,
+  "change_pct": -0.58,
+  "dividend_used": 0.3048,
+  "dividend_year": 2024,
+  "eps_ttm": 0.9,
+  "valuation_yield": {
+    "cheap": 5.08,
+    "fair": 9.54,
+    "expensive": 19.75
+  },
+  "yield_stats": {
+    "high": 0.06,
+    "avg": 0.032,
+    "low": 0.0154
+  },
+  "valuation_pe": {
+    "cheap": 13.13,
+    "fair": 17.74,
+    "expensive": 24.75
+  },
+  "pe_stats": {
+    "high": 27.5,
+    "avg": 19.71,
+    "low": 14.59
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 0.38,
+      "yoy": 0.8095
+    },
+    {
+      "period": "2025-09-30",
+      "eps": -0.17,
+      "yoy": -0.4167
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 0.26,
+      "yoy": 9.6667
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 0.43,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 0.3048,
+      "yield": 0.0177
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 0.9,
+      "yield": 0.0515
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 0.8,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 1.0,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 0.3,
+      "yield": null
+    }
+  ]
+}

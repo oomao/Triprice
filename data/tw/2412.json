@@ -1,7 +1,7 @@
 {
   "code": "2412",
   "name": "中華電",
-  "updated": "2026-05-03 14:56:53+08:00",
+  "updated": "2026-05-03 15:00:47+08:00",
   "close_date": "2026-04-30",
   "current_price": 136.0,
   "change": -0.5,
@@ -77,5 +77,14 @@
       "cash_dividend": 4.306,
       "yield": null
     }
-  ]
+  ],
+  "adr": {
+    "symbol": "CHT",
+    "close": 43.15,
+    "close_date": "2026-05-01",
+    "ratio": 10,
+    "fx_rate": 31.613,
+    "implied_tw_price": 136.41,
+    "premium_pct": 0.3
+  }
 }

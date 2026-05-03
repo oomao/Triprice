@@ -1,0 +1,81 @@
+{
+  "code": "2382",
+  "name": "廣達",
+  "updated": "2026-05-03 15:00:45+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 312.5,
+  "change": -9.5,
+  "change_pct": -2.95,
+  "dividend_used": 13.0,
+  "dividend_year": 2024,
+  "eps_ttm": 19.44,
+  "valuation_yield": {
+    "cheap": 120.03,
+    "fair": 261.18,
+    "expensive": 393.61
+  },
+  "yield_stats": {
+    "high": 0.1083,
+    "avg": 0.0498,
+    "low": 0.033
+  },
+  "valuation_pe": {
+    "cheap": 215.2,
+    "fair": 387.27,
+    "expensive": 691.09
+  },
+  "pe_stats": {
+    "high": 35.55,
+    "avg": 19.92,
+    "low": 11.07
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 5.75,
+      "yoy": 0.3956
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 4.26,
+      "yoy": -0.0139
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 4.37,
+      "yoy": 0.1148
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 5.06,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 13.0,
+      "yield": 0.0474
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 9.0,
+      "yield": 0.0472
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 6.0,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 6.6,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 5.2,
+      "yield": null
+    }
+  ]
+}

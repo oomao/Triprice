@@ -1,0 +1,81 @@
+{
+  "code": "2891",
+  "name": "中信金",
+  "updated": "2026-05-03 15:00:40+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 52.3,
+  "change": -0.8,
+  "change_pct": -1.51,
+  "dividend_used": 2.3004,
+  "dividend_year": 2024,
+  "eps_ttm": 4.08,
+  "valuation_yield": {
+    "cheap": 27.55,
+    "fair": 33.14,
+    "expensive": 40.85
+  },
+  "yield_stats": {
+    "high": 0.0835,
+    "avg": 0.0694,
+    "low": 0.0563
+  },
+  "valuation_pe": {
+    "cheap": 38.76,
+    "fair": 52.14,
+    "expensive": 78.09
+  },
+  "pe_stats": {
+    "high": 19.14,
+    "avg": 12.78,
+    "low": 9.5
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 1.02,
+      "yoy": 0.4783
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 1.28,
+      "yoy": 0.1636
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 0.76,
+      "yoy": -0.0256
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 1.02,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 2.3004,
+      "yield": 0.0668
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 1.8001,
+      "yield": 0.0718
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 1.0,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 1.25,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 1.05,
+      "yield": null
+    }
+  ]
+}

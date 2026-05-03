@@ -1,0 +1,81 @@
+{
+  "code": "2308",
+  "name": "台達電",
+  "updated": "2026-05-03 15:00:22+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 2165.0,
+  "change": 0.0,
+  "change_pct": 0.0,
+  "dividend_used": 7.0,
+  "dividend_year": 2024,
+  "eps_ttm": 27.11,
+  "valuation_yield": {
+    "cheap": 277.0,
+    "fair": 353.74,
+    "expensive": 434.5
+  },
+  "yield_stats": {
+    "high": 0.0253,
+    "avg": 0.0198,
+    "low": 0.0161
+  },
+  "valuation_pe": {
+    "cheap": 560.91,
+    "fair": 920.16,
+    "expensive": 2536.41
+  },
+  "pe_stats": {
+    "high": 93.56,
+    "avg": 33.94,
+    "low": 20.69
+  },
+  "eps_quarterly": [
+    {
+      "period": "2026-03-31",
+      "eps": 7.91,
+      "yoy": 1.0076
+    },
+    {
+      "period": "2025-12-31",
+      "eps": 6.67,
+      "yoy": 1.4167
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 7.16,
+      "yoy": 0.5074
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 5.37,
+      "yoy": 0.4021
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 7.0,
+      "yield": 0.0195
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 6.43,
+      "yield": 0.0196
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 9.84,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 5.5,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 5.5,
+      "yield": null
+    }
+  ]
+}

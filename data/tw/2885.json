@@ -1,0 +1,81 @@
+{
+  "code": "2885",
+  "name": "元大金",
+  "updated": "2026-05-03 15:00:33+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 52.2,
+  "change": -0.1,
+  "change_pct": -0.19,
+  "dividend_used": 1.55,
+  "dividend_year": 2024,
+  "eps_ttm": 2.74,
+  "valuation_yield": {
+    "cheap": 25.8,
+    "fair": 32.42,
+    "expensive": 38.89
+  },
+  "yield_stats": {
+    "high": 0.0601,
+    "avg": 0.0478,
+    "low": 0.0399
+  },
+  "valuation_pe": {
+    "cheap": 27.02,
+    "fair": 37.89,
+    "expensive": 52.31
+  },
+  "pe_stats": {
+    "high": 19.09,
+    "avg": 13.83,
+    "low": 9.86
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 0.74,
+      "yoy": 0.0882
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 0.78,
+      "yoy": 0.0685
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 0.63,
+      "yoy": 0.0
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 0.59,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 1.55,
+      "yield": 0.0496
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 1.1,
+      "yield": 0.0447
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 0.8,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 1.5,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 1.2,
+      "yield": null
+    }
+  ]
+}

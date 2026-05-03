@@ -1,0 +1,90 @@
+{
+  "code": "2303",
+  "name": "聯電",
+  "updated": "2026-05-03 15:00:20+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 77.3,
+  "change": 2.8,
+  "change_pct": 3.76,
+  "dividend_used": 2.8502,
+  "dividend_year": 2024,
+  "eps_ttm": 4.0,
+  "valuation_yield": {
+    "cheap": 41.23,
+    "fair": 48.52,
+    "expensive": 57.7
+  },
+  "yield_stats": {
+    "high": 0.0691,
+    "avg": 0.0587,
+    "low": 0.0494
+  },
+  "valuation_pe": {
+    "cheap": 26.96,
+    "fair": 47.24,
+    "expensive": 95.24
+  },
+  "pe_stats": {
+    "high": 23.81,
+    "avg": 11.81,
+    "low": 6.74
+  },
+  "eps_quarterly": [
+    {
+      "period": "2026-03-31",
+      "eps": 1.29,
+      "yoy": 1.0806
+    },
+    {
+      "period": "2025-12-31",
+      "eps": 0.8,
+      "yoy": 0.1765
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 1.2,
+      "yoy": 0.0345
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 0.71,
+      "yoy": -0.3604
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 2.8502,
+      "yield": 0.0559
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 3.0001,
+      "yield": 0.0621
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 3.6005,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 3.0,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 1.5999,
+      "yield": null
+    }
+  ],
+  "adr": {
+    "symbol": "UMC",
+    "close": 13.05,
+    "close_date": "2026-05-01",
+    "ratio": 5,
+    "fx_rate": 31.613,
+    "implied_tw_price": 82.51,
+    "premium_pct": 6.74
+  }
+}

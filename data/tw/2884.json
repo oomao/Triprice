@@ -1,0 +1,81 @@
+{
+  "code": "2884",
+  "name": "玉山金",
+  "updated": "2026-05-03 15:00:31+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 31.85,
+  "change": -0.55,
+  "change_pct": -1.7,
+  "dividend_used": 1.2,
+  "dividend_year": 2024,
+  "eps_ttm": 2.12,
+  "valuation_yield": {
+    "cheap": 23.8,
+    "fair": 26.35,
+    "expensive": 30.45
+  },
+  "yield_stats": {
+    "high": 0.0504,
+    "avg": 0.0455,
+    "low": 0.0394
+  },
+  "valuation_pe": {
+    "cheap": 31.14,
+    "fair": 39.28,
+    "expensive": 48.27
+  },
+  "pe_stats": {
+    "high": 22.77,
+    "avg": 18.53,
+    "low": 14.69
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 0.5,
+      "yoy": 0.5625
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 0.58,
+      "yoy": 0.1154
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 0.49,
+      "yoy": 0.2564
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 0.55,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 1.2,
+      "yield": 0.044
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 1.2,
+      "yield": 0.0475
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 0.1894,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 0.67,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 0.61,
+      "yield": null
+    }
+  ]
+}

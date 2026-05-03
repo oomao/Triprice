@@ -1,0 +1,81 @@
+{
+  "code": "2317",
+  "name": "鴻海",
+  "updated": "2026-05-03 15:00:43+08:00",
+  "close_date": "2026-04-30",
+  "current_price": 219.5,
+  "change": -5.5,
+  "change_pct": -2.44,
+  "dividend_used": 5.8,
+  "dividend_year": 2024,
+  "eps_ttm": 13.6,
+  "valuation_yield": {
+    "cheap": 98.6,
+    "fair": 136.12,
+    "expensive": 226.5
+  },
+  "yield_stats": {
+    "high": 0.0588,
+    "avg": 0.0426,
+    "low": 0.0256
+  },
+  "valuation_pe": {
+    "cheap": 135.86,
+    "fair": 198.16,
+    "expensive": 282.34
+  },
+  "pe_stats": {
+    "high": 20.76,
+    "avg": 14.57,
+    "low": 9.99
+  },
+  "eps_quarterly": [
+    {
+      "period": "2025-12-31",
+      "eps": 3.23,
+      "yoy": -0.0329
+    },
+    {
+      "period": "2025-09-30",
+      "eps": 4.15,
+      "yoy": 0.169
+    },
+    {
+      "period": "2025-06-30",
+      "eps": 3.19,
+      "yoy": 0.2609
+    },
+    {
+      "period": "2025-03-31",
+      "eps": 3.03,
+      "yoy": null
+    }
+  ],
+  "dividend_history": [
+    {
+      "year": 2024,
+      "cash_dividend": 5.8,
+      "yield": 0.0341
+    },
+    {
+      "year": 2023,
+      "cash_dividend": 5.4,
+      "yield": 0.0513
+    },
+    {
+      "year": 2022,
+      "cash_dividend": 5.3,
+      "yield": null
+    },
+    {
+      "year": 2021,
+      "cash_dividend": 5.2,
+      "yield": null
+    },
+    {
+      "year": 2020,
+      "cash_dividend": 4.0,
+      "yield": null
+    }
+  ]
+}
