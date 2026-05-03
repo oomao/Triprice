@@ -116,7 +116,7 @@ function categoryBadge(c) {
 <template>
   <div>
     <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-      <h1 class="text-xl font-bold tracking-tight">ETF 全覽</h1>
+      <h1 class="text-2xl font-bold tracking-tight">ETF 全覽</h1>
       <span v-if="data" class="text-xs text-slate-500">
         共 {{ data.count }} 檔 · 更新 {{ data.updated?.replace(/:\d{2}\+\d{2}:\d{2}$/, '') }}
       </span>

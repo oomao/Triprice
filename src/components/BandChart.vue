@@ -260,14 +260,14 @@ const hover = computed(() => {
         >{{ fmt(currentY.v) }}</text>
       </g>
 
-      <!-- Hover crosshair + tooltip -->
+      <!-- Hover crosshair + tooltip (uses CSS vars so it themes) -->
       <g v-if="hover">
-        <line :x1="hover.x" :x2="hover.x" :y1="PAD_T" :y2="H - PAD_B" stroke="#475569" stroke-width="0.8" stroke-dasharray="3 2" />
-        <circle :cx="hover.x" :cy="hover.y" r="3" fill="#0284c7" />
+        <line :x1="hover.x" :x2="hover.x" :y1="PAD_T" :y2="H - PAD_B" stroke="var(--ink-muted)" stroke-width="0.8" stroke-dasharray="3 2" />
+        <circle :cx="hover.x" :cy="hover.y" r="3" fill="var(--accent)" />
         <g :transform="`translate(${Math.min(hover.x + 8, W - 110)}, ${Math.max(hover.y - 36, PAD_T + 4)})`">
-          <rect width="100" height="32" rx="4" fill="white" stroke="#cbd5e1" stroke-width="0.8" />
-          <text x="6" y="13" fill="#475569" font-size="10" font-family="ui-monospace, monospace">{{ hover.p.d }}</text>
-          <text x="6" y="26" fill="#0f172a" font-size="11" font-weight="700" font-family="ui-sans-serif, system-ui, sans-serif">{{ fmt(hover.p.c) }}</text>
+          <rect width="100" height="32" rx="4" fill="var(--surface)" stroke="var(--rule)" stroke-width="0.8" />
+          <text x="6" y="13" fill="var(--ink-muted)" font-size="10" font-family="ui-monospace, monospace">{{ hover.p.d }}</text>
+          <text x="6" y="26" fill="var(--ink)" font-size="11" font-weight="700" font-family="ui-sans-serif, system-ui, sans-serif">{{ fmt(hover.p.c) }}</text>
         </g>
       </g>
     </svg>

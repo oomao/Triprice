@@ -30,6 +30,7 @@ const NAV = [
   { to: '/market',   label: '大盤' },
   { to: '/watchlist',label: '自選' },
   { to: '/adr',      label: 'ADR' },
+  { to: '/settings', label: '設定' },
   { to: '/about',    label: '說明' },
 ]
 </script>
@@ -37,7 +38,7 @@ const NAV = [
 <template>
   <div class="min-h-screen flex flex-col">
     <!-- Header: charcoal bar, wordmark left, nav tabs right. Active tab gets a thin bottom rule. -->
-    <header class="sticky top-0 z-20 bg-[#0a0e16] text-white">
+    <header class="sticky top-0 z-20 text-white" :style="{ background: 'var(--header-bg)' }">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
         <RouterLink to="/" class="shrink-0 flex items-baseline gap-2 group">
           <span class="text-lg font-extrabold tracking-tight">Triprice</span>
@@ -67,7 +68,7 @@ const NAV = [
     </main>
 
     <!-- Footer: thin status bar, looks like a tool, not a marketing page. -->
-    <footer class="border-t border-[#e7e7e1] bg-[#f1efe9]">
+    <footer class="border-t" :style="{ borderColor: 'var(--rule)', background: 'var(--surface-2)' }">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-600 font-mono">
         <span class="text-[10px] uppercase tracking-widest text-slate-500 font-sans">Triprice</span>
         <span v-if="twTime" class="hidden sm:inline">TW <span class="text-slate-900 font-semibold">{{ twTime }}</span></span>

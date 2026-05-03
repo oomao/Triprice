@@ -1,17 +1,44 @@
 @import "tailwindcss";
 
-/* ---------- Design tokens ---------- */
+/* Class-based dark mode (Tailwind 4 syntax). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Design tokens (light) ---------- */
 :root {
   --bg: #f7f7f4;
   --surface: #ffffff;
-  --ink: #0a0e16;       /* nearly-black, slightly cooler than pure */
+  --surface-2: #f1efe9;
+  --ink: #0a0e16;
   --ink-muted: #525764;
   --rule: #e7e7e1;
-  --accent: #b4530b;    /* burnt orange — TW reds without screaming */
+  --accent: #b4530b;
   --gain: #d4242e;
   --loss: #088258;
   --neutral: #94959a;
+  --header-bg: #0a0e16;
+  --header-ink: #ffffff;
 }
+
+/* ---------- Design tokens (dark) ---------- */
+.dark {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface-2: #1f2530;
+  --ink: #e6e8eb;
+  --ink-muted: #9ca3af;
+  --rule: #2a2f38;
+  --accent: #f5a05a;
+  --gain: #f97373;       /* slightly lighter for AA contrast on dark bg */
+  --loss: #4ade80;
+  --neutral: #6b7280;
+  --header-bg: #050709;
+  --header-ink: #f4f4ed;
+}
+
+/* ---------- Font size profile (compact / normal / large) ---------- */
+:root, :root.font-normal { font-size: 16px; }
+:root.font-compact { font-size: 14px; }
+:root.font-large { font-size: 18px; }
 
 html, body, #app {
   font-family:
@@ -26,7 +53,35 @@ body {
   color: var(--ink);
 }
 
-/* All number-heavy cells get tabular figures so columns align. */
+/* ---------- Dark-mode bridge for hard-coded Tailwind palette colors ----------
+   Most components use bg-white / border-[#e7e7e1] / text-slate-*. We override the
+   common surfaces/borders/muted-text in dark via attribute selectors so we don't
+   need to touch every template. */
+.dark .bg-white { background-color: var(--surface); }
+.dark .bg-slate-50 { background-color: var(--surface-2); }
+.dark .bg-slate-100 { background-color: var(--surface-2); }
+.dark .bg-\[\#f1efe9\] { background-color: var(--surface-2); }
+.dark .bg-\[\#f7f5f0\] { background-color: var(--surface-2); }
+.dark .border-\[\#e7e7e1\] { border-color: var(--rule); }
+.dark .border-\[\#d8d8d2\] { border-color: var(--rule); }
+.dark .border-slate-100 { border-color: var(--rule); }
+.dark .border-slate-200 { border-color: var(--rule); }
+.dark .border-slate-300 { border-color: var(--rule); }
+.dark .text-slate-900 { color: var(--ink); }
+.dark .text-slate-800 { color: var(--ink); }
+.dark .text-slate-700 { color: #d1d5db; }
+.dark .text-slate-600 { color: #b8bcc4; }
+.dark .text-slate-500 { color: var(--ink-muted); }
+.dark .text-slate-400 { color: #6b7280; }
+.dark .text-\[\#0a0e16\] { color: var(--ink); }
+.dark input, .dark select, .dark textarea {
+  background-color: var(--surface);
+  color: var(--ink);
+  border-color: var(--rule);
+}
+.dark input::placeholder { color: var(--neutral); }
+
+/* ---------- Tabular numerals for data cells ---------- */
 .tnum, table td, table th, .font-mono {
   font-variant-numeric: tabular-nums;
 }
@@ -35,12 +90,11 @@ button, a {
   touch-action: manipulation;
 }
 
-/* Subtle rule between sections in non-card contexts. */
 .hairline {
   border-top: 1px solid var(--rule);
 }
 
-/* Skeleton shimmer for loading placeholders. */
+/* ---------- Skeleton shimmer ---------- */
 @keyframes tp-shimmer {
   0%   { background-position: 200% 50%; }
   100% { background-position: -200% 50%; }
@@ -52,7 +106,9 @@ button, a {
   animation: tp-shimmer 1.4s linear infinite;
   border-radius: 2px;
 }
+.dark .skel {
+  background-image: linear-gradient(90deg, #1f2530 0%, #2a2f38 50%, #1f2530 100%);
+}
 
-/* Kill default focus ring on detail page summary <details>; we ship our own */
 summary::-webkit-details-marker { display: none; }
 summary::marker { display: none; }

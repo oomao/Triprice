@@ -260,15 +260,15 @@ function fmtVol(n) {
         />
       </g>
 
-      <!-- Hover crosshair + tooltip -->
+      <!-- Hover crosshair + tooltip (uses CSS vars so it themes) -->
       <g v-if="hover">
-        <line :x1="hover.x" :x2="hover.x" :y1="PAD_T" :y2="PAD_T + H_PRICE + GAP + H_VOL" stroke="#475569" stroke-width="0.6" stroke-dasharray="2 2" />
+        <line :x1="hover.x" :x2="hover.x" :y1="PAD_T" :y2="PAD_T + H_PRICE + GAP + H_VOL" stroke="var(--ink-muted)" stroke-width="0.6" stroke-dasharray="2 2" />
         <g :transform="`translate(${Math.min(hover.x + 8, W - 130)}, ${PAD_T + 4})`">
-          <rect width="125" height="78" rx="4" fill="white" stroke="#cbd5e1" stroke-width="0.7" />
-          <text x="6" y="13" fill="#475569" font-size="10" font-family="ui-monospace, monospace">{{ hover.k.d }}</text>
-          <text x="6" y="26" fill="#0f172a" font-size="10" font-family="ui-sans-serif, system-ui, sans-serif">開 {{ fmt(hover.k.o, 0) }} 收 {{ fmt(hover.k.c, 0) }}</text>
-          <text x="6" y="38" fill="#0f172a" font-size="10" font-family="ui-sans-serif, system-ui, sans-serif">高 {{ fmt(hover.k.h, 0) }} 低 {{ fmt(hover.k.l, 0) }}</text>
-          <text x="6" y="50" fill="#475569" font-size="10" font-family="ui-sans-serif, system-ui, sans-serif">量 {{ fmtVol(hover.k.v) }}</text>
+          <rect width="125" height="78" rx="4" fill="var(--surface)" stroke="var(--rule)" stroke-width="0.7" />
+          <text x="6" y="13" fill="var(--ink-muted)" font-size="10" font-family="ui-monospace, monospace">{{ hover.k.d }}</text>
+          <text x="6" y="26" fill="var(--ink)" font-size="10" font-family="ui-sans-serif, system-ui, sans-serif">開 {{ fmt(hover.k.o, 0) }} 收 {{ fmt(hover.k.c, 0) }}</text>
+          <text x="6" y="38" fill="var(--ink)" font-size="10" font-family="ui-sans-serif, system-ui, sans-serif">高 {{ fmt(hover.k.h, 0) }} 低 {{ fmt(hover.k.l, 0) }}</text>
+          <text x="6" y="50" fill="var(--ink-muted)" font-size="10" font-family="ui-sans-serif, system-ui, sans-serif">量 {{ fmtVol(hover.k.v) }}</text>
           <text x="6" y="63" fill="#f59e0b" font-size="9" font-family="ui-sans-serif, system-ui, sans-serif">MA5 {{ hover.ma5 != null ? fmt(hover.ma5, 0) : '—' }}</text>
           <text x="65" y="63" fill="#0ea5e9" font-size="9" font-family="ui-sans-serif, system-ui, sans-serif">MA20 {{ hover.ma20 != null ? fmt(hover.ma20, 0) : '—' }}</text>
           <text x="6" y="74" fill="#8b5cf6" font-size="9" font-family="ui-sans-serif, system-ui, sans-serif">MA60 {{ hover.ma60 != null ? fmt(hover.ma60, 0) : '—' }}</text>

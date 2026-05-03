@@ -134,8 +134,8 @@ function fmt(n, d = 2) {
 
 <template>
   <div>
-    <h1 class="text-xl font-bold tracking-tight mb-1">自選股</h1>
-    <p class="text-xs text-slate-500 mb-4">手動加入任意股票代號（台股 4 碼，例：2330）</p>
+    <h1 class="text-2xl font-bold tracking-tight mb-1">自選股</h1>
+    <p class="text-sm text-slate-500 mb-4">手動加入任意股票代號（台股 4 碼，例：2330）</p>
 
     <div class="flex gap-2 mb-1">
       <input

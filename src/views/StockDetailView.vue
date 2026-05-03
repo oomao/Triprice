@@ -2,9 +2,16 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { useWatchlistStore } from '../stores/watchlist'
+import { useSettingsStore } from '../stores/settings'
+import { generateSummary, loadCachedSummary, clearCachedSummary } from '../lib/summarize.js'
 import BandChart from '../components/BandChart.vue'
 import CandleChart from '../components/CandleChart.vue'
 import ChipsChart from '../components/ChipsChart.vue'
+
+const settingsStore = useSettingsStore()
+const summaryState = ref(null)      // {text, generated_at, provider, model, fingerprint} | null
+const summaryLoading = ref(false)
+const summaryError = ref('')
 
 const route = useRoute()
 const watchlist = useWatchlistStore()
@@ -149,6 +156,8 @@ async function load() {
   loadingMessage.value = '載入中…'
   error.value = null
   rawData.value = null
+  summaryState.value = null
+  summaryError.value = ''
   loadSettings(code.value)
   try {
     const base = import.meta.env.BASE_URL
@@ -168,11 +177,45 @@ async function load() {
         error.value = `動態抓取失敗：${e.message}`
       }
     }
+    // Pull cached summary, if any (server-side `data.summary` takes precedence
+    // when present, but for new architecture we rely on the local cache).
+    const cached = loadCachedSummary(code.value)
+    if (cached) summaryState.value = cached
   } catch (e) {
     error.value = e.message
   } finally {
     loading.value = false
   }
+}
+
+async function handleGenerateSummary(force = false) {
+  if (!rawData.value) return
+  if (!settingsStore.hasActiveApiKey) {
+    summaryError.value = `請先到「設定」填入 ${settingsStore.llmProvider} 的 API key`
+    return
+  }
+  summaryLoading.value = true
+  summaryError.value = ''
+  try {
+    const result = await generateSummary({
+      data: rawData.value,
+      provider: settingsStore.llmProvider,
+      apiKey: settingsStore.activeApiKey(),
+      model: settingsStore.effectiveModel,
+      force,
+    })
+    summaryState.value = result
+  } catch (e) {
+    summaryError.value = e.message || String(e)
+  } finally {
+    summaryLoading.value = false
+  }
+}
+
+function handleClearSummary() {
+  clearCachedSummary(code.value)
+  summaryState.value = null
+  summaryError.value = ''
 }
 
 onMounted(load)
@@ -232,7 +275,7 @@ const epsLabel = computed(() =>
             <span class="font-mono text-[11px] text-slate-500 uppercase tracking-widest">{{ code }}</span>
             <span v-if="isDynamic" class="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 font-mono uppercase tracking-wider">live</span>
           </div>
-          <h1 class="text-xl font-bold tracking-tight leading-tight">{{ meta?.name || rawData?.name || code }}</h1>
+          <h1 class="text-2xl font-bold tracking-tight leading-tight">{{ meta?.name || rawData?.name || code }}</h1>
           <div class="mt-3 flex items-baseline gap-3 flex-wrap">
             <span class="text-4xl font-bold tabular-nums tracking-tight">{{ fmt(rawData.current_price) }}</span>
             <span
@@ -261,10 +304,51 @@ const epsLabel = computed(() =>
         </button>
       </div>
 
-      <!-- 摘要（若資料中有預先產生的 summary 則顯示） -->
-      <section v-if="data.summary?.text" class="mb-5 bg-white border-l-2 border-[#b4530b] px-4 py-3">
-        <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{{ data.summary.text }}</p>
-        <p class="text-[10px] text-slate-400 mt-1.5 font-mono">摘要生成於 {{ data.summary.generated_at?.replace(/:\d{2}\+\d{2}:\d{2}$/, '') }}</p>
+      <!-- 摘要（瀏覽器端用使用者本地的 LLM key 產生；快取在 localStorage） -->
+      <section class="mb-5 bg-white border border-[#e7e7e1] border-l-2 border-l-[#b4530b] px-4 py-3">
+        <div v-if="summaryState?.text">
+          <p class="text-sm leading-relaxed whitespace-pre-line">{{ summaryState.text }}</p>
+          <div class="flex items-center justify-between flex-wrap gap-x-3 gap-y-1 mt-2">
+            <span class="text-[10px] text-slate-400 font-mono">
+              {{ summaryState.provider }} · {{ summaryState.model }} · {{ summaryState.generated_at?.replace(/:\d{2}\+\d{2}:\d{2}$/, '').replace('T', ' ') }}
+            </span>
+            <div class="flex gap-2">
+              <button
+                @click="handleGenerateSummary(true)"
+                :disabled="summaryLoading"
+                class="text-[11px] text-[#b4530b] hover:text-[#0a0e16] disabled:opacity-50"
+              >{{ summaryLoading ? '生成中…' : '重新生成' }}</button>
+              <button @click="handleClearSummary" class="text-[11px] text-slate-400 hover:text-red-500">清除</button>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <div class="flex items-baseline justify-between gap-3 flex-wrap">
+            <div>
+              <div class="text-[10px] uppercase tracking-[0.18em] text-slate-500 mb-0.5">AI 摘要</div>
+              <p v-if="!settingsStore.hasActiveApiKey" class="text-xs text-slate-500 leading-relaxed">
+                需在
+                <RouterLink to="/settings" class="text-[#b4530b] hover:text-[#0a0e16] underline">設定</RouterLink>
+                填入 {{ settingsStore.llmProvider }} 的 API key 後即可生成。所有金鑰只存在你的瀏覽器。
+              </p>
+              <p v-else class="text-xs text-slate-500 leading-relaxed">
+                依目前估值與基本面資料生成 2~3 句客觀摘要。
+                供應商：<span class="font-mono">{{ settingsStore.llmProvider }}</span> ·
+                模型：<span class="font-mono">{{ settingsStore.effectiveModel }}</span>
+              </p>
+            </div>
+            <button
+              v-if="settingsStore.hasActiveApiKey"
+              @click="handleGenerateSummary(false)"
+              :disabled="summaryLoading"
+              class="px-3 py-1.5 border text-xs uppercase tracking-wider transition shrink-0 font-semibold"
+              :class="summaryLoading
+                ? 'bg-slate-200 text-slate-500 border-slate-300 cursor-wait'
+                : 'bg-[#0a0e16] text-white border-[#0a0e16] hover:bg-black'"
+            >{{ summaryLoading ? '生成中…' : '生成摘要' }}</button>
+          </div>
+          <p v-if="summaryError" class="mt-2 text-xs text-red-600 break-words">⚠ {{ summaryError }}</p>
+        </div>
       </section>
 
       <!-- 進階設定 -->
@@ -338,8 +422,11 @@ const epsLabel = computed(() =>
               step="5"
               class="w-full accent-[#0a0e16]"
             />
-            <p class="text-[11px] text-slate-500 mt-1 leading-snug">
-              套用 {{ settings.margin_of_safety }}% 折扣到便宜價與合理價（昂貴價不變，作為賣出參考）
+            <p class="text-[11px] text-slate-500 mt-1.5 leading-snug">
+              <span class="text-emerald-600 font-medium">便宜價 / 合理價</span>會打 {{ settings.margin_of_safety }}% 折扣
+              （要再便宜這麼多才視為合理進場），
+              <span class="text-red-500 font-medium">昂貴價刻意保持不動</span> ——
+              安全邊際是放寬「進場」的條件，不是放寬「賣出」的條件。
             </p>
           </div>
 
@@ -479,8 +566,14 @@ const epsLabel = computed(() =>
             <thead>
               <tr class="bg-slate-50 text-slate-600 text-xs">
                 <th class="px-3 py-2 text-left font-semibold w-1/4">&nbsp;</th>
-                <th class="px-3 py-2 text-center font-semibold">台股 {{ code }}</th>
-                <th class="px-3 py-2 text-center font-semibold">ADR {{ data.adr.symbol }}</th>
+                <th class="px-3 py-2 text-center font-semibold">
+                  台股 {{ code }}
+                  <div class="text-[10px] font-normal text-slate-500 mt-0.5">較早收盤</div>
+                </th>
+                <th class="px-3 py-2 text-center font-semibold">
+                  ADR {{ data.adr.symbol }}
+                  <div class="text-[10px] font-normal text-slate-500 mt-0.5">晚 ~14h 收盤</div>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -495,7 +588,7 @@ const epsLabel = computed(() =>
                 <td class="px-3 py-2 text-center font-bold">${{ fmt(data.adr.close) }}</td>
               </tr>
               <tr class="border-t border-slate-100">
-                <td class="px-3 py-2 text-slate-500 text-xs">今日漲跌</td>
+                <td class="px-3 py-2 text-slate-500 text-xs">當日漲跌</td>
                 <td
                   class="px-3 py-2 text-center font-bold"
                   :class="data.change >= 0 ? 'text-red-500' : 'text-emerald-600'"
@@ -536,10 +629,22 @@ const epsLabel = computed(() =>
             </div>
           </div>
         </div>
-        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-          ⏰ ADR 收盤晚於台股約 14~15 小時。「ADR 今日漲跌」反映美股最近一個交易日相對前一日的變化，可作為台股<strong>隔日開盤</strong>方向的參考訊號。
-          <br>1 ADR = {{ data.adr.ratio }} 股，匯率 USD/TWD = {{ fmt(data.adr.fx_rate, 3) }}
-        </p>
+        <div class="text-xs text-slate-600 mt-3 leading-relaxed bg-slate-50 border border-[#e7e7e1] p-3">
+          <p class="font-semibold mb-1.5">⏰ 為什麼能拿來預判台股隔日開盤？</p>
+          <p class="mb-1.5">
+            台股早上 13:30 收盤後，美股當天還沒開盤；美股 16:00 收盤（= 台北時間隔日 04:00）時，
+            ADR 已經把這 14~15 小時內全球新聞 + 美股表現都消化進價格。
+          </p>
+          <p class="mb-1.5">
+            因此「<strong>ADR 當日漲跌</strong>」其實是<strong>台股收盤之後</strong>那段時間的市場反應，
+            台股<strong>明天開盤</strong>會補上這段時差。
+          </p>
+          <p class="text-slate-500 text-[11px]">
+            例：台股今日收 +1%、ADR 今日 +3%，溢價率正向 → 隔日台股開盤偏多的可能性增加。
+            反之若 ADR 大跌但台股當日已先反映、溢價變負，則隔日開盤可能補跌或開低。
+            <br>1 ADR = {{ data.adr.ratio }} 股，匯率 USD/TWD = {{ fmt(data.adr.fx_rate, 3) }}
+          </p>
+        </div>
       </section>
 
       <!-- 歷年股利 -->

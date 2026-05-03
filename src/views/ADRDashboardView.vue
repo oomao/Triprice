@@ -99,8 +99,8 @@ const sparkZero = computed(() => {
 
 <template>
   <div>
-    <h1 class="text-xl font-bold tracking-tight mb-1">ADR 訊號儀表板</h1>
-    <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+    <h1 class="text-2xl font-bold tracking-tight mb-1">ADR 訊號儀表板</h1>
+    <p class="text-sm text-slate-500 mb-5 leading-relaxed">
       美股 ADR 收盤晚於台股約 14~15 小時，溢價可作為台股<strong>隔日開盤</strong>方向的領先訊號。
     </p>
 

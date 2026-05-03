@@ -95,8 +95,8 @@ const instBars = computed(() => buildBars(data.value?.institutional?.records))
 
 <template>
   <div>
-    <h1 class="text-xl font-bold tracking-tight mb-1">台股大盤</h1>
-    <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+    <h1 class="text-2xl font-bold tracking-tight mb-1">台股大盤</h1>
+    <p class="text-sm text-slate-500 mb-5 leading-relaxed">
       加權指數 (TAIEX) + 櫃買指數 (OTC) 即時概況，搭配三大法人近期買賣超彙總。
     </p>
 

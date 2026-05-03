@@ -32,16 +32,6 @@ jobs:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: python scripts/fetch_market.py
         continue-on-error: true
-      - name: Generate per-stock summaries (LLM)
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          if [ -z "$ANTHROPIC_API_KEY" ]; then
-            echo "ANTHROPIC_API_KEY not set; skipping LLM summary."
-          else
-            python scripts/generate_summary.py
-          fi
-        continue-on-error: true
       - name: Commit & push
         run: |
           git config user.name "github-actions[bot]"

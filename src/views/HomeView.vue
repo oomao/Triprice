@@ -57,10 +57,10 @@ const filteredCategories = computed(() => {
     <!-- Page header: tighter, single-line. No marketing copy. -->
     <div class="mb-5 flex items-end justify-between gap-3">
       <div>
-        <h1 class="text-xl font-bold tracking-tight">股票清單</h1>
-        <p class="text-xs text-slate-500 mt-0.5">點選任一股票查看 三價 估值</p>
+        <h1 class="text-2xl font-bold tracking-tight">股票清單</h1>
+        <p class="text-sm text-slate-500 mt-1">點選任一股票查看 三價 估值</p>
       </div>
-      <div class="text-[10px] text-slate-500 font-mono uppercase tracking-wider hidden sm:block">
+      <div class="text-xs text-slate-500 font-mono uppercase tracking-wider hidden sm:block">
         {{ stocks ? Object.values(stocks.categories).reduce((s, c) => s + c.stocks.length, 0) : '—' }} 檔預載
       </div>
     </div>
@@ -69,7 +69,7 @@ const filteredCategories = computed(() => {
       v-model="search"
       type="search"
       placeholder="搜尋代號或名稱"
-      class="w-full mb-5 px-3.5 py-2 rounded border border-[#d8d8d2] bg-white text-sm focus:outline-none focus:border-[#0a0e16] focus:ring-1 focus:ring-[#0a0e16]/20 transition"
+      class="w-full mb-5 px-3.5 py-2.5 rounded border border-[#d8d8d2] bg-white text-base focus:outline-none focus:border-[#0a0e16] focus:ring-1 focus:ring-[#0a0e16]/20 transition"
     />
 
     <!-- Loading skeleton -->
@@ -90,34 +90,34 @@ const filteredCategories = computed(() => {
       <div v-for="cat in filteredCategories" :key="cat.key" class="mb-6">
         <div class="flex items-baseline justify-between mb-2">
           <h2
-            class="text-[11px] uppercase tracking-[0.18em] font-semibold flex items-baseline gap-2"
-            :class="cat.isWatchlist ? 'text-amber-700' : 'text-slate-500'"
+            class="text-sm uppercase tracking-[0.16em] font-semibold flex items-baseline gap-2"
+            :class="cat.isWatchlist ? 'text-amber-700' : 'text-slate-600'"
           >
             <span v-if="cat.isWatchlist" class="text-amber-500">◆</span>
             {{ cat.label }}
-            <span class="text-[10px] font-mono text-slate-400 normal-case tracking-normal">{{ cat.stocks.length }}</span>
+            <span class="text-xs font-mono text-slate-400 normal-case tracking-normal">{{ cat.stocks.length }}</span>
           </h2>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
           <RouterLink
             v-for="code in cat.stocks"
             :key="cat.key + '-' + code"
             :to="`/stock/${code}`"
-            class="bg-white px-3 py-2 border transition relative group"
+            class="bg-white px-3 py-2.5 border transition relative group"
             :class="cat.isWatchlist
               ? 'border-amber-200 hover:border-amber-500 hover:bg-amber-50/50'
               : 'border-[#e7e7e1] hover:border-[#0a0e16] hover:bg-slate-50/50'"
           >
             <span
               v-if="!cat.isWatchlist && watchlist.has(code)"
-              class="absolute top-1 right-1.5 text-[10px] text-amber-500"
+              class="absolute top-1.5 right-2 text-xs text-amber-500"
               title="已加入自選"
             >◆</span>
-            <div class="font-mono text-[11px] text-slate-500 leading-none">{{ code }}</div>
-            <div class="font-medium text-[13px] truncate mt-1 leading-tight">
+            <div class="font-mono text-xs text-slate-500 leading-none">{{ code }}</div>
+            <div class="font-medium text-base truncate mt-1.5 leading-tight">
               {{ stocks.tw_stocks[code]?.name || '(自訂代號)' }}
             </div>
-            <div v-if="stocks.tw_stocks[code]?.adr" class="text-[10px] text-slate-500 mt-0.5 font-mono">
+            <div v-if="stocks.tw_stocks[code]?.adr" class="text-xs text-slate-500 mt-1 font-mono">
               ADR · {{ stocks.tw_stocks[code].adr }}
             </div>
           </RouterLink>
