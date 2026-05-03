@@ -7,6 +7,7 @@ import { generateSummary, loadCachedSummary, clearCachedSummary } from '../lib/s
 import BandChart from '../components/BandChart.vue'
 import CandleChart from '../components/CandleChart.vue'
 import ChipsChart from '../components/ChipsChart.vue'
+import DiffBars from '../components/DiffBars.vue'
 
 const settingsStore = useSettingsStore()
 const summaryState = ref(null)      // {text, generated_at, provider, model, fingerprint} | null
@@ -561,88 +562,55 @@ const epsLabel = computed(() =>
       <!-- ADR 比較 -->
       <section v-if="data.adr" class="mb-6">
         <h2 class="text-lg font-semibold mb-2">美股 ADR 比較</h2>
-        <div class="bg-white border border-[#e7e7e1] overflow-hidden">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="bg-slate-50 text-slate-600 text-xs">
-                <th class="px-3 py-2 text-left font-semibold w-1/4">&nbsp;</th>
-                <th class="px-3 py-2 text-center font-semibold">
-                  台股 {{ code }}
-                  <div class="text-[10px] font-normal text-slate-500 mt-0.5">較早收盤</div>
-                </th>
-                <th class="px-3 py-2 text-center font-semibold">
-                  ADR {{ data.adr.symbol }}
-                  <div class="text-[10px] font-normal text-slate-500 mt-0.5">晚 ~14h 收盤</div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-t border-slate-100">
-                <td class="px-3 py-2 text-slate-500 text-xs">收盤日</td>
-                <td class="px-3 py-2 text-center font-mono text-xs">{{ data.close_date }}</td>
-                <td class="px-3 py-2 text-center font-mono text-xs">{{ data.adr.close_date }}</td>
-              </tr>
-              <tr class="border-t border-slate-100">
-                <td class="px-3 py-2 text-slate-500 text-xs">收盤價</td>
-                <td class="px-3 py-2 text-center font-bold">{{ fmt(data.current_price) }}</td>
-                <td class="px-3 py-2 text-center font-bold">${{ fmt(data.adr.close) }}</td>
-              </tr>
-              <tr class="border-t border-slate-100">
-                <td class="px-3 py-2 text-slate-500 text-xs">當日漲跌</td>
-                <td
-                  class="px-3 py-2 text-center font-bold"
-                  :class="data.change >= 0 ? 'text-red-500' : 'text-emerald-600'"
-                >
-                  <span v-if="data.change != null">
-                    {{ data.change >= 0 ? '+' : '' }}{{ fmt(data.change) }}
-                    <span class="text-xs font-normal opacity-80">
-                      ({{ data.change >= 0 ? '+' : '' }}{{ fmt(data.change_pct, 2) }}%)
-                    </span>
-                  </span>
-                  <span v-else class="text-slate-400">—</span>
-                </td>
-                <td
-                  class="px-3 py-2 text-center font-bold"
-                  :class="data.adr.change >= 0 ? 'text-red-500' : 'text-emerald-600'"
-                >
-                  <span v-if="data.adr.change != null">
-                    {{ data.adr.change >= 0 ? '+' : '' }}{{ fmt(data.adr.change) }}
-                    <span class="text-xs font-normal opacity-80">
-                      ({{ data.adr.change_pct >= 0 ? '+' : '' }}{{ fmt(data.adr.change_pct, 2) }}%)
-                    </span>
-                  </span>
-                  <span v-else class="text-slate-400">—</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="border-t border-slate-200 px-4 py-3 bg-[#f7f5f0] grid grid-cols-2 gap-3 text-sm">
+
+        <div class="bg-white border border-[#e7e7e1] p-4">
+          <!-- 主視覺：當日漲跌對比 -->
+          <div class="text-xs text-slate-500 uppercase tracking-[0.16em] mb-3">當日漲跌對比 — 領先訊號</div>
+          <DiffBars
+            :tw-change-pct="data.change_pct"
+            :adr-change-pct="data.adr.change_pct"
+            :tw-label="`台股 ${code}`"
+            :adr-label="`ADR ${data.adr.symbol}`"
+            :tw-date="data.close_date"
+            :adr-date="data.adr.close_date"
+          />
+
+          <!-- 收盤價 + 隱含/溢價 grid -->
+          <div class="mt-4 pt-4 border-t border-[#e7e7e1] grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+            <div>
+              <div class="text-slate-500 text-xs">台股收盤</div>
+              <div class="font-bold font-mono">{{ fmt(data.current_price) }}</div>
+            </div>
+            <div>
+              <div class="text-slate-500 text-xs">ADR 收盤</div>
+              <div class="font-bold font-mono">${{ fmt(data.adr.close) }}</div>
+            </div>
             <div>
               <div class="text-slate-500 text-xs">ADR 隱含台股價</div>
-              <div class="font-bold">{{ fmt(data.adr.implied_tw_price) }}</div>
+              <div class="font-bold font-mono">{{ fmt(data.adr.implied_tw_price) }}</div>
             </div>
             <div>
               <div class="text-slate-500 text-xs">溢價率</div>
-              <div class="font-bold" :class="data.adr.premium_pct >= 0 ? 'text-red-500' : 'text-emerald-600'">
+              <div class="font-bold font-mono" :class="data.adr.premium_pct >= 0 ? 'text-red-500' : 'text-emerald-600'">
                 {{ data.adr.premium_pct >= 0 ? '+' : '' }}{{ fmt(data.adr.premium_pct, 2) }}%
               </div>
             </div>
           </div>
         </div>
+
         <div class="text-xs text-slate-600 mt-3 leading-relaxed bg-slate-50 border border-[#e7e7e1] p-3">
-          <p class="font-semibold mb-1.5">⏰ 為什麼能拿來預判台股隔日開盤？</p>
+          <p class="font-semibold mb-1.5">⏰ 為什麼這個對比是領先訊號？</p>
           <p class="mb-1.5">
-            台股早上 13:30 收盤後，美股當天還沒開盤；美股 16:00 收盤（= 台北時間隔日 04:00）時，
+            台股 13:30 收盤後，美股當天還沒開盤；美股 16:00 收盤（= 台北時間隔日 04:00）時，
             ADR 已經把這 14~15 小時內全球新聞 + 美股表現都消化進價格。
           </p>
-          <p class="mb-1.5">
-            因此「<strong>ADR 當日漲跌</strong>」其實是<strong>台股收盤之後</strong>那段時間的市場反應，
+          <p>
+            因此「<strong>ADR 當日漲跌 − 台股當日漲跌</strong>」這個差距，
+            就是「<strong>台股收盤之後</strong>」這段時間市場對該檔的態度變化 ──
             台股<strong>明天開盤</strong>會補上這段時差。
           </p>
-          <p class="text-slate-500 text-[11px]">
-            例：台股今日收 +1%、ADR 今日 +3%，溢價率正向 → 隔日台股開盤偏多的可能性增加。
-            反之若 ADR 大跌但台股當日已先反映、溢價變負，則隔日開盤可能補跌或開低。
-            <br>1 ADR = {{ data.adr.ratio }} 股，匯率 USD/TWD = {{ fmt(data.adr.fx_rate, 3) }}
+          <p class="text-slate-500 text-[11px] mt-2 pt-2 border-t border-slate-200">
+            1 ADR = {{ data.adr.ratio }} 股 · 匯率 USD/TWD = {{ fmt(data.adr.fx_rate, 3) }}
           </p>
         </div>
       </section>

@@ -93,6 +93,8 @@ def main():
         with open(tw_file, encoding='utf-8') as f:
             tw_data = json.load(f)
         tw_price = tw_data.get('current_price')
+        tw_change = tw_data.get('change')
+        tw_change_pct = tw_data.get('change_pct')
         if not tw_price:
             print('  TW price missing, skip')
             continue
@@ -122,8 +124,11 @@ def main():
             'tw_name': tw_data.get('name', tw_code),
             'tw_price': tw_price,
             'tw_close_date': tw_data.get('close_date'),
+            'tw_change': tw_change,
+            'tw_change_pct': tw_change_pct,
             'adr_close': round(adr_close, 2),
             'adr_close_date': adr_info['close_date'],
+            'adr_change': adr_info['change'],
             'adr_change_pct': adr_info['change_pct'],
             'implied_tw_price': round(implied, 2),
             'premium_pct': round(premium, 2),

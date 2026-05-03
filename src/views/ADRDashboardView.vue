@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import DiffBars from '../components/DiffBars.vue'
 
 const signal = ref(null)
 const history = ref([])
@@ -138,7 +139,7 @@ const sparkZero = computed(() => {
           :to="`/stock/${e.tw_code}`"
           class="block bg-white border border-[#e7e7e1] p-4 hover:border-[#0a0e16] transition"
         >
-          <div class="flex items-baseline justify-between">
+          <div class="flex items-baseline justify-between mb-3">
             <div>
               <div class="font-bold text-base">{{ e.tw_name }}</div>
               <div class="text-xs text-slate-500 mt-0.5 font-mono">{{ e.tw_code }} · ADR {{ e.adr }}</div>
@@ -150,20 +151,22 @@ const sparkZero = computed(() => {
               </div>
             </div>
           </div>
-          <div class="mt-3 grid grid-cols-3 gap-2 text-xs">
+
+          <DiffBars
+            :tw-change-pct="e.tw_change_pct"
+            :adr-change-pct="e.adr_change_pct"
+            :tw-date="e.tw_close_date"
+            :adr-date="e.adr_close_date"
+          />
+
+          <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
             <div>
-              <div class="text-slate-400">台股</div>
+              <div class="text-slate-400">台股收盤</div>
               <div class="font-mono">{{ fmt(e.tw_price) }}</div>
             </div>
             <div>
-              <div class="text-slate-400">ADR 隱含</div>
+              <div class="text-slate-400">ADR 隱含台股價</div>
               <div class="font-mono">{{ fmt(e.implied_tw_price) }}</div>
-            </div>
-            <div>
-              <div class="text-slate-400">ADR 漲跌</div>
-              <div :class="e.adr_change_pct >= 0 ? 'text-red-500' : 'text-emerald-600'" class="font-mono">
-                {{ e.adr_change_pct >= 0 ? '+' : '' }}{{ fmt(e.adr_change_pct) }}%
-              </div>
             </div>
           </div>
         </RouterLink>
