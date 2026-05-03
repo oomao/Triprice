@@ -417,7 +417,20 @@ def main():
             if data is None:
                 failures.append(code)
                 continue
-            with open(OUTPUT_DIR / f'{code}.json', 'w', encoding='utf-8') as f:
+            # Preserve fields populated by other fetchers (notably `adr` from
+            # fetch_us.py, which only re-runs once a day) so re-running fetch_tw
+            # mid-day doesn't blank out cross-pipeline state.
+            target_path = OUTPUT_DIR / f'{code}.json'
+            if target_path.exists():
+                try:
+                    with open(target_path, encoding='utf-8') as f:
+                        prev = json.load(f)
+                    for k in ('adr',):
+                        if k in prev and k not in data:
+                            data[k] = prev[k]
+                except Exception:
+                    pass
+            with open(target_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             success += 1
             tags = []

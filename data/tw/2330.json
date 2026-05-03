@@ -3454,5 +3454,16 @@
       "de": 114552,
       "t": -20472055
     }
-  ]
+  ],
+  "adr": {
+    "symbol": "TSM",
+    "close": 397.67,
+    "close_date": "2026-05-01",
+    "change": 1.61,
+    "change_pct": 0.41,
+    "ratio": 5,
+    "fx_rate": 31.613,
+    "implied_tw_price": 2514.31,
+    "premium_pct": 17.77
+  }
 }
