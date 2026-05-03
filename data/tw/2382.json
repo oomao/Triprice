@@ -1,7 +1,7 @@
 {
   "code": "2382",
   "name": "廣達",
-  "updated": "2026-05-03 20:36:01+08:00",
+  "updated": "2026-05-03 23:13:21+08:00",
   "close_date": "2026-04-30",
   "current_price": 312.5,
   "change": -9.5,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 19.44,
   "valuation_yield": {
-    "cheap": 214.0,
+    "cheap": 230.05,
     "fair": 271.64,
-    "expensive": 341.0
+    "expensive": 319.5
   },
   "yield_stats": {
-    "high": 0.0607,
+    "high": 0.0565,
     "avg": 0.0479,
-    "low": 0.0381
+    "low": 0.0407
   },
   "valuation_pe": {
-    "cheap": 223.95,
+    "cheap": 285.57,
     "fair": 373.59,
-    "expensive": 564.73
+    "expensive": 512.05
   },
   "pe_stats": {
-    "high": 29.05,
+    "high": 26.34,
     "avg": 19.22,
-    "low": 11.52
+    "low": 14.69
   },
   "eps_quarterly": [
     {

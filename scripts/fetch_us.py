@@ -26,13 +26,27 @@ TAIPEI = timezone(timedelta(hours=8))
 
 
 def get_close(symbol: str):
-    """Return (close, date_str) of most recent trading day, or (None, None)."""
+    """Return dict {close, close_date, change, change_pct} or None."""
     t = yf.Ticker(symbol)
     h = t.history(period='5d', auto_adjust=False)
     if h.empty:
-        return None, None
-    last = h.tail(1)
-    return float(last['Close'].iloc[0]), str(last.index[0].date())
+        return None
+    closes = [float(c) for c in h['Close'].tolist()]
+    dates = [str(d.date()) for d in h.index]
+    last = closes[-1]
+    prev = closes[-2] if len(closes) > 1 else None
+    if prev:
+        change = round(last - prev, 2)
+        change_pct = round((last - prev) / prev * 100, 2)
+    else:
+        change = 0.0
+        change_pct = 0.0
+    return {
+        'close': round(last, 4),
+        'close_date': dates[-1],
+        'change': change,
+        'change_pct': change_pct,
+    }
 
 
 def main():
@@ -43,10 +57,12 @@ def main():
         meta = json.load(f)
 
     # --- USD/TWD ---
-    fx, fx_date = get_close('USDTWD=X')
-    if fx is None:
+    fx_info = get_close('USDTWD=X')
+    if fx_info is None:
         print('FX rate fetch failed')
         sys.exit(1)
+    fx = fx_info['close']
+    fx_date = fx_info['close_date']
     print(f"USD/TWD = {fx:.3f} ({fx_date})")
     with open(FX_FILE, 'w', encoding='utf-8') as f:
         json.dump({
@@ -67,10 +83,11 @@ def main():
             print(f"  TW data missing ({tw_file.name}), skip")
             continue
 
-        adr_close, adr_date = get_close(adr)
-        if adr_close is None:
+        adr_info = get_close(adr)
+        if adr_info is None:
             print('  ADR close fetch failed')
             continue
+        adr_close = adr_info['close']
 
         with open(tw_file, encoding='utf-8') as f:
             tw_data = json.load(f)
@@ -85,7 +102,9 @@ def main():
         tw_data['adr'] = {
             'symbol': adr,
             'close': round(adr_close, 2),
-            'close_date': adr_date,
+            'close_date': adr_info['close_date'],
+            'change': adr_info['change'],
+            'change_pct': adr_info['change_pct'],
             'ratio': ratio,
             'fx_rate': round(fx, 4),
             'implied_tw_price': round(implied, 2),
@@ -94,7 +113,7 @@ def main():
 
         with open(tw_file, 'w', encoding='utf-8') as f:
             json.dump(tw_data, f, ensure_ascii=False, indent=2)
-        print(f"  ADR ${adr_close:.2f} -> implied {implied:.2f} (TW {tw_price:.2f}, premium {premium:+.2f}%)")
+        print(f"  ADR ${adr_close:.2f} ({adr_info['change']:+.2f}, {adr_info['change_pct']:+.2f}%) -> implied {implied:.2f} (TW {tw_price:.2f}, premium {premium:+.2f}%)")
         success += 1
 
     print(f"\nDone: {success}/{len(meta['adr_mapping'])} ADRs processed")

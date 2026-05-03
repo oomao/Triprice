@@ -420,18 +420,58 @@ const epsLabel = computed(() =>
       <!-- ADR 比較 -->
       <section v-if="data.adr" class="mb-6">
         <h2 class="text-lg font-semibold mb-2">美股 ADR 比較</h2>
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
-          <div class="grid grid-cols-2 gap-3 text-sm">
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-slate-50 text-slate-600 text-xs">
+                <th class="px-3 py-2 text-left font-semibold w-1/4">&nbsp;</th>
+                <th class="px-3 py-2 text-center font-semibold">台股 {{ code }}</th>
+                <th class="px-3 py-2 text-center font-semibold">ADR {{ data.adr.symbol }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t border-slate-100">
+                <td class="px-3 py-2 text-slate-500 text-xs">收盤日</td>
+                <td class="px-3 py-2 text-center font-mono text-xs">{{ data.close_date }}</td>
+                <td class="px-3 py-2 text-center font-mono text-xs">{{ data.adr.close_date }}</td>
+              </tr>
+              <tr class="border-t border-slate-100">
+                <td class="px-3 py-2 text-slate-500 text-xs">收盤價</td>
+                <td class="px-3 py-2 text-center font-bold">{{ fmt(data.current_price) }}</td>
+                <td class="px-3 py-2 text-center font-bold">${{ fmt(data.adr.close) }}</td>
+              </tr>
+              <tr class="border-t border-slate-100">
+                <td class="px-3 py-2 text-slate-500 text-xs">今日漲跌</td>
+                <td
+                  class="px-3 py-2 text-center font-bold"
+                  :class="data.change >= 0 ? 'text-red-500' : 'text-emerald-600'"
+                >
+                  <span v-if="data.change != null">
+                    {{ data.change >= 0 ? '+' : '' }}{{ fmt(data.change) }}
+                    <span class="text-xs font-normal opacity-80">
+                      ({{ data.change >= 0 ? '+' : '' }}{{ fmt(data.change_pct, 2) }}%)
+                    </span>
+                  </span>
+                  <span v-else class="text-slate-400">—</span>
+                </td>
+                <td
+                  class="px-3 py-2 text-center font-bold"
+                  :class="data.adr.change >= 0 ? 'text-red-500' : 'text-emerald-600'"
+                >
+                  <span v-if="data.adr.change != null">
+                    {{ data.adr.change >= 0 ? '+' : '' }}{{ fmt(data.adr.change) }}
+                    <span class="text-xs font-normal opacity-80">
+                      ({{ data.adr.change_pct >= 0 ? '+' : '' }}{{ fmt(data.adr.change_pct, 2) }}%)
+                    </span>
+                  </span>
+                  <span v-else class="text-slate-400">—</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="border-t border-slate-200 px-4 py-3 bg-sky-50/50 grid grid-cols-2 gap-3 text-sm">
             <div>
-              <div class="text-slate-500 text-xs">ADR 代號</div>
-              <div class="font-mono font-bold">{{ data.adr.symbol }}</div>
-            </div>
-            <div>
-              <div class="text-slate-500 text-xs">ADR 收盤 ({{ data.adr.close_date }})</div>
-              <div class="font-bold">${{ fmt(data.adr.close) }}</div>
-            </div>
-            <div>
-              <div class="text-slate-500 text-xs">隱含台股價</div>
+              <div class="text-slate-500 text-xs">ADR 隱含台股價</div>
               <div class="font-bold">{{ fmt(data.adr.implied_tw_price) }}</div>
             </div>
             <div>
@@ -441,11 +481,11 @@ const epsLabel = computed(() =>
               </div>
             </div>
           </div>
-          <p class="text-xs text-slate-500 mt-3 leading-relaxed">
-            ⏰ ADR 收盤晚於台股約 14~15 小時，此溢價率可作為台股<strong>隔日開盤</strong>方向的參考訊號。
-            <br>1 ADR = {{ data.adr.ratio }} 股，匯率 USD/TWD = {{ fmt(data.adr.fx_rate, 3) }}
-          </p>
         </div>
+        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+          ⏰ ADR 收盤晚於台股約 14~15 小時。「ADR 今日漲跌」反映美股最近一個交易日相對前一日的變化，可作為台股<strong>隔日開盤</strong>方向的參考訊號。
+          <br>1 ADR = {{ data.adr.ratio }} 股，匯率 USD/TWD = {{ fmt(data.adr.fx_rate, 3) }}
+        </p>
       </section>
 
       <!-- 歷年股利 -->

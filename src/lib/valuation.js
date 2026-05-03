@@ -27,11 +27,25 @@ export function pickLatestDividend(byYear, currentYear) {
   return [top, topDiv]
 }
 
+const HIGH_PCT = 0.95 // trim top 5%
+const LOW_PCT = 0.05  // trim bottom 5%
+
+function percentile(sortedData, p) {
+  if (!sortedData.length) return null
+  const n = sortedData.length
+  if (n === 1) return sortedData[0]
+  const k = (n - 1) * p
+  const f = Math.floor(k)
+  const c = k - f
+  if (f + 1 >= n) return sortedData[n - 1]
+  return sortedData[f] * (1 - c) + sortedData[f + 1] * c
+}
+
 export function computeYieldValuation(latestDividend, yields) {
-  const pos = yields.filter((y) => y > 0)
+  const pos = yields.filter((y) => y > 0).sort((a, b) => a - b)
   if (pos.length === 0 || !latestDividend) return [null, null]
-  const high = Math.max(...pos)
-  const low = Math.min(...pos)
+  const high = percentile(pos, HIGH_PCT)
+  const low = percentile(pos, LOW_PCT)
   const avg = pos.reduce((a, b) => a + b, 0) / pos.length
   return [
     {
@@ -44,10 +58,10 @@ export function computeYieldValuation(latestDividend, yields) {
 }
 
 export function computePeValuation(epsTtm, pes) {
-  const pos = pes.filter((p) => p > 0)
+  const pos = pes.filter((p) => p > 0).sort((a, b) => a - b)
   if (pos.length === 0 || !epsTtm || epsTtm <= 0) return [null, null]
-  const high = Math.max(...pos)
-  const low = Math.min(...pos)
+  const high = percentile(pos, HIGH_PCT)
+  const low = percentile(pos, LOW_PCT)
   const avg = pos.reduce((a, b) => a + b, 0) / pos.length
   return [
     {

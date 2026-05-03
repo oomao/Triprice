@@ -1,7 +1,7 @@
 {
   "code": "2882",
   "name": "國泰金",
-  "updated": "2026-05-03 20:34:46+08:00",
+  "updated": "2026-05-03 23:12:45+08:00",
   "close_date": "2026-04-30",
   "current_price": 77.2,
   "change": -1.4,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 7.06,
   "valuation_yield": {
-    "cheap": 43.3,
+    "cheap": 44.3,
     "fair": 56.39,
-    "expensive": 70.1
+    "expensive": 69.2
   },
   "yield_stats": {
-    "high": 0.0808,
+    "high": 0.079,
     "avg": 0.0621,
-    "low": 0.0499
+    "low": 0.0506
   },
   "valuation_pe": {
-    "cheap": 51.33,
+    "cheap": 62.69,
     "fair": 88.02,
-    "expensive": 129.2
+    "expensive": 119.53
   },
   "pe_stats": {
-    "high": 18.3,
+    "high": 16.93,
     "avg": 12.47,
-    "low": 7.27
+    "low": 8.88
   },
   "eps_quarterly": [
     {

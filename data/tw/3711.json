@@ -1,7 +1,7 @@
 {
   "code": "3711",
   "name": "日月光投控",
-  "updated": "2026-05-03 20:34:18+08:00",
+  "updated": "2026-05-03 23:12:31+08:00",
   "close_date": "2026-04-30",
   "current_price": 478.0,
   "change": -10.5,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 9.37,
   "valuation_yield": {
-    "cheap": 125.0,
+    "cheap": 129.52,
     "fair": 152.25,
-    "expensive": 193.5
+    "expensive": 172.5
   },
   "yield_stats": {
-    "high": 0.0424,
+    "high": 0.0409,
     "avg": 0.0348,
-    "low": 0.0274
+    "low": 0.0307
   },
   "valuation_pe": {
-    "cheap": 132.49,
+    "cheap": 145.23,
     "fair": 222.03,
-    "expensive": 500.26
+    "expensive": 378.74
   },
   "pe_stats": {
-    "high": 53.39,
+    "high": 40.42,
     "avg": 23.7,
-    "low": 14.14
+    "low": 15.5
   },
   "eps_quarterly": [
     {
@@ -82,6 +82,8 @@
     "symbol": "ASX",
     "close": 31.59,
     "close_date": "2026-05-01",
+    "change": 0.18,
+    "change_pct": 0.57,
     "ratio": 2,
     "fx_rate": 31.613,
     "implied_tw_price": 499.33,

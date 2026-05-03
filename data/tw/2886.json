@@ -1,7 +1,7 @@
 {
   "code": "2886",
   "name": "兆豐金",
-  "updated": "2026-05-03 20:35:14+08:00",
+  "updated": "2026-05-03 23:12:59+08:00",
   "close_date": "2026-04-30",
   "current_price": 39.1,
   "change": -1.0,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 2.36,
   "valuation_yield": {
-    "cheap": 37.3,
+    "cheap": 37.9,
     "fair": 39.64,
-    "expensive": 43.3
+    "expensive": 42.1
   },
   "yield_stats": {
-    "high": 0.0429,
+    "high": 0.0422,
     "avg": 0.0404,
-    "low": 0.037
+    "low": 0.038
   },
   "valuation_pe": {
-    "cheap": 35.85,
+    "cheap": 37.95,
     "fair": 41.05,
-    "expensive": 48.1
+    "expensive": 46.75
   },
   "pe_stats": {
-    "high": 20.38,
+    "high": 19.81,
     "avg": 17.4,
-    "low": 15.19
+    "low": 16.08
   },
   "eps_quarterly": [
     {

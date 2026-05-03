@@ -80,11 +80,32 @@ def pick_latest_dividend(by_year: dict, current_year: int):
     return top, top_div
 
 
+HIGH_PCT = 0.95  # trim top 5% of daily extremes
+LOW_PCT = 0.05   # trim bottom 5%
+
+
+def percentile(sorted_data, p):
+    """p in [0, 1]. sorted_data must be sorted ascending. Linear interpolation."""
+    if not sorted_data:
+        return None
+    n = len(sorted_data)
+    if n == 1:
+        return sorted_data[0]
+    k = (n - 1) * p
+    f = int(k)
+    c = k - f
+    if f + 1 >= n:
+        return sorted_data[-1]
+    return sorted_data[f] * (1 - c) + sorted_data[f + 1] * c
+
+
 def compute_yield_valuation(latest_dividend, yields):
-    pos = [y for y in yields if y and y > 0]
+    pos = sorted(y for y in yields if y and y > 0)
     if not pos or not latest_dividend:
         return None, None
-    high, low, avg = max(pos), min(pos), sum(pos) / len(pos)
+    high = percentile(pos, HIGH_PCT)
+    low = percentile(pos, LOW_PCT)
+    avg = sum(pos) / len(pos)
     return (
         {
             'cheap': round(latest_dividend / high, 2),
@@ -96,10 +117,12 @@ def compute_yield_valuation(latest_dividend, yields):
 
 
 def compute_pe_valuation(eps_ttm, pes):
-    pos = [p for p in pes if p and p > 0]
+    pos = sorted(p for p in pes if p and p > 0)
     if not pos or not eps_ttm or eps_ttm <= 0:
         return None, None
-    high, low, avg = max(pos), min(pos), sum(pos) / len(pos)
+    high = percentile(pos, HIGH_PCT)
+    low = percentile(pos, LOW_PCT)
+    avg = sum(pos) / len(pos)
     return (
         {
             'cheap': round(eps_ttm * low, 2),

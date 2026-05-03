@@ -1,7 +1,7 @@
 {
   "code": "2330",
   "name": "台積電",
-  "updated": "2026-05-03 20:33:28+08:00",
+  "updated": "2026-05-03 23:12:11+08:00",
   "close_date": "2026-04-30",
   "current_price": 2135.0,
   "change": -45.0,
@@ -10,24 +10,24 @@
   "dividend_year": 2025,
   "eps_ttm": 66.26,
   "valuation_yield": {
-    "cheap": 542.13,
+    "cheap": 646.41,
     "fair": 1011.59,
-    "expensive": 2265.0
+    "expensive": 1885.25
   },
   "yield_stats": {
-    "high": 0.0295,
+    "high": 0.0248,
     "avg": 0.0158,
-    "low": 0.0071
+    "low": 0.0085
   },
   "valuation_pe": {
-    "cheap": 1105.22,
+    "cheap": 1240.39,
     "fair": 1650.13,
-    "expensive": 2265.43
+    "expensive": 2019.6
   },
   "pe_stats": {
-    "high": 34.19,
+    "high": 30.48,
     "avg": 24.9,
-    "low": 16.68
+    "low": 18.72
   },
   "eps_quarterly": [
     {
@@ -82,6 +82,8 @@
     "symbol": "TSM",
     "close": 397.67,
     "close_date": "2026-05-01",
+    "change": 1.61,
+    "change_pct": 0.41,
     "ratio": 5,
     "fx_rate": 31.613,
     "implied_tw_price": 2514.31,

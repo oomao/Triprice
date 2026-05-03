@@ -1,7 +1,7 @@
 {
   "code": "2887",
   "name": "台新金",
-  "updated": "2026-05-03 20:35:21+08:00",
+  "updated": "2026-05-03 23:13:02+08:00",
   "close_date": "2026-04-30",
   "current_price": 23.8,
   "change": -0.25,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 1.91,
   "valuation_yield": {
-    "cheap": 16.85,
+    "cheap": 17.1,
     "fair": 18.06,
-    "expensive": 20.4
+    "expensive": 19.95
   },
   "yield_stats": {
-    "high": 0.0534,
+    "high": 0.0526,
     "avg": 0.0498,
-    "low": 0.0441
+    "low": 0.0451
   },
   "valuation_pe": {
-    "cheap": 18.97,
+    "cheap": 21.64,
     "fair": 28.92,
-    "expensive": 49.39
+    "expensive": 42.73
   },
   "pe_stats": {
-    "high": 25.86,
+    "high": 22.37,
     "avg": 15.14,
-    "low": 9.93
+    "low": 11.33
   },
   "eps_quarterly": [
     {

@@ -1,7 +1,7 @@
 {
   "code": "2912",
   "name": "統一超",
-  "updated": "2026-05-03 20:36:31+08:00",
+  "updated": "2026-05-03 23:13:35+08:00",
   "close_date": "2026-04-30",
   "current_price": 224.0,
   "change": -0.5,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 10.96,
   "valuation_yield": {
-    "cheap": 262.0,
+    "cheap": 265.0,
     "fair": 275.41,
-    "expensive": 303.0
+    "expensive": 295.5
   },
   "yield_stats": {
-    "high": 0.0344,
+    "high": 0.034,
     "avg": 0.0327,
-    "low": 0.0297
+    "low": 0.0305
   },
   "valuation_pe": {
-    "cheap": 212.95,
+    "cheap": 223.69,
     "fair": 263.7,
-    "expensive": 300.3
+    "expensive": 296.25
   },
   "pe_stats": {
-    "high": 27.4,
+    "high": 27.03,
     "avg": 24.06,
-    "low": 19.43
+    "low": 20.41
   },
   "eps_quarterly": [
     {

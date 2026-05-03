@@ -10,7 +10,7 @@ import {
 } from './valuation.js'
 
 const FINMIND_BASE = 'https://api.finmindtrade.com/api/v4/data'
-const CACHE_PREFIX = 'triprice.dynamic.'
+const CACHE_PREFIX = 'triprice.dynamic.v2.' // bumped after switching to 5/95 percentile method
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000 // 6 hours
 
 async function finmind(dataset, params) {
