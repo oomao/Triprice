@@ -8,26 +8,36 @@ const watchlist = useWatchlistStore()
 const data = ref(null)
 const stocksMeta = ref(null)
 const loading = ref(true)
+const loadingMessage = ref('載入中…')
 const error = ref(null)
 
 const code = computed(() => route.params.code)
 const meta = computed(() => stocksMeta.value?.tw_stocks?.[code.value])
+const isDynamic = computed(() => data.value?._dynamic === true)
 
 async function load() {
   loading.value = true
+  loadingMessage.value = '載入中…'
   error.value = null
   data.value = null
   try {
     const base = import.meta.env.BASE_URL
     const [stocksRes, dataRes] = await Promise.all([
       fetch(`${base}data/stocks.json`),
-      fetch(`${base}data/tw/${code.value}.json`)
+      fetch(`${base}data/tw/${code.value}.json`),
     ])
     stocksMeta.value = await stocksRes.json()
     if (dataRes.ok) {
       data.value = await dataRes.json()
     } else {
-      error.value = '尚無此股票的估值資料'
+      // No static data — fall back to live FinMind fetch.
+      loadingMessage.value = '此股票未預載，從 FinMind 即時抓取（約 5 秒）…'
+      try {
+        const { fetchStockDynamic } = await import('../lib/finmind.js')
+        data.value = await fetchStockDynamic(code.value)
+      } catch (e) {
+        error.value = `動態抓取失敗：${e.message}`
+      }
     }
   } catch (e) {
     error.value = e.message
@@ -63,10 +73,10 @@ const peTier = computed(() => priceTier(data.value?.current_price, data.value?.v
   <div>
     <RouterLink to="/" class="text-sm text-sky-600 hover:underline">← 回清單</RouterLink>
 
-    <div v-if="loading" class="text-slate-500 py-8 text-center">載入中…</div>
+    <div v-if="loading" class="text-slate-500 py-8 text-center">{{ loadingMessage }}</div>
     <div v-else-if="error && !data" class="py-8">
       <p class="text-slate-700">{{ error }}</p>
-      <p class="text-sm text-slate-500 mt-2">資料抓取 script 還沒跑過。執行 <code class="bg-slate-200 px-1 rounded">python scripts/fetch_tw.py {{ code }}</code> 後重試。</p>
+      <p class="text-sm text-slate-500 mt-2">請確認代號正確（4-6 碼數字 / 字母），或稍後重試。</p>
     </div>
     <div v-else-if="data">
       <!-- Header -->
