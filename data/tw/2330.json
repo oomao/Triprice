@@ -1,7 +1,7 @@
 {
   "code": "2330",
   "name": "台積電",
-  "updated": "2026-05-03 15:09:04+08:00",
+  "updated": "2026-05-03 20:33:28+08:00",
   "close_date": "2026-04-30",
   "current_price": 2135.0,
   "change": -45.0,
@@ -10,24 +10,24 @@
   "dividend_year": 2025,
   "eps_ttm": 66.26,
   "valuation_yield": {
-    "cheap": 681.59,
-    "fair": 851.79,
-    "expensive": 1163.06
+    "cheap": 542.13,
+    "fair": 1011.59,
+    "expensive": 2265.0
   },
   "yield_stats": {
-    "high": 0.0235,
-    "avg": 0.0188,
-    "low": 0.0138
+    "high": 0.0295,
+    "avg": 0.0158,
+    "low": 0.0071
   },
   "valuation_pe": {
-    "cheap": 978.18,
-    "fair": 1397.08,
-    "expensive": 1695.66
+    "cheap": 1105.22,
+    "fair": 1650.13,
+    "expensive": 2265.43
   },
   "pe_stats": {
-    "high": 25.59,
-    "avg": 21.08,
-    "low": 14.76
+    "high": 34.19,
+    "avg": 24.9,
+    "low": 16.68
   },
   "eps_quarterly": [
     {

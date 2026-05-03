@@ -1,7 +1,7 @@
 {
   "code": "0050",
   "name": "元大台灣50",
-  "updated": "2026-05-03 15:08:57+08:00",
+  "updated": "2026-05-03 20:32:35+08:00",
   "close_date": "2026-04-30",
   "current_price": 90.5,
   "change": -0.25,
@@ -10,14 +10,14 @@
   "dividend_year": 2025,
   "eps_ttm": null,
   "valuation_yield": {
-    "cheap": 86.13,
-    "fair": 106.28,
-    "expensive": 131.83
+    "cheap": 46.64,
+    "fair": 95.2,
+    "expensive": 204.4
   },
   "yield_stats": {
-    "high": 0.0355,
-    "avg": 0.0288,
-    "low": 0.0232
+    "high": 0.0656,
+    "avg": 0.0321,
+    "low": 0.015
   },
   "valuation_pe": null,
   "pe_stats": null,

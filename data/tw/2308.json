@@ -1,7 +1,7 @@
 {
   "code": "2308",
   "name": "台達電",
-  "updated": "2026-05-03 15:09:10+08:00",
+  "updated": "2026-05-03 20:34:07+08:00",
   "close_date": "2026-04-30",
   "current_price": 2165.0,
   "change": 0.0,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 27.11,
   "valuation_yield": {
-    "cheap": 356.91,
-    "fair": 357.78,
-    "expensive": 358.65
+    "cheap": 277.0,
+    "fair": 352.77,
+    "expensive": 434.5
   },
   "yield_stats": {
-    "high": 0.0196,
-    "avg": 0.0196,
-    "low": 0.0195
+    "high": 0.0253,
+    "avg": 0.0198,
+    "low": 0.0161
   },
   "valuation_pe": {
-    "cheap": 691.16,
-    "fair": 809.98,
-    "expensive": 991.6
+    "cheap": 560.91,
+    "fair": 990.77,
+    "expensive": 2536.41
   },
   "pe_stats": {
-    "high": 36.58,
-    "avg": 29.88,
-    "low": 25.49
+    "high": 93.56,
+    "avg": 36.55,
+    "low": 20.69
   },
   "eps_quarterly": [
     {

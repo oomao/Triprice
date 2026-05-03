@@ -171,26 +171,43 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
     except Exception:
         pass
 
-    # 5. Last 3 COMPLETE fiscal years (skip current year; incomplete data skews ranges).
-    # Yearly aggregation matches "近 3 年最高 / 平均 / 最低" convention used by 存股 community.
-    candidate_years = sorted(
-        (y for y in year_closes.keys() if y < today.year),
-        reverse=True,
-    )[:3]
+    # 5. Last 3 trailing years (include current year if it has >=30 trading days).
+    # Captures recent re-rating which "complete years only" misses (TSMC PE expanded
+    # from ~18 to ~32 across 2024-2026; skipping current year understates expensive band).
+    all_years = sorted(year_closes.keys(), reverse=True)
+    candidate_years = []
+    for y in all_years:
+        if y == today.year and len(year_closes[y]) < 30:
+            continue
+        candidate_years.append(y)
+        if len(candidate_years) >= 3:
+            break
 
-    yearly_yields = []  # one yield per complete fiscal year (max 3 entries)
-    yearly_pes = []     # one avg PE per complete fiscal year
+    # Use DAILY yields/PEs across the 3-year window — captures actual extremes.
+    # Yearly-avg approach was too tight for re-rated stocks (TSMC: 昂貴 was 91% of
+    # current price after 2024-2026 PE expansion); daily extremes track recent peaks.
+    all_yields = []
+    all_pes = []
     for year in candidate_years:
         closes = year_closes[year]
         if not closes:
             continue
-        avg_close = sum(closes) / len(closes)
+
+        # Yield: use that year's dividend. For incomplete current year (no dividend yet,
+        # or div < 50% of prev year), substitute previous year's annual dividend.
         div = by_year.get(year, 0)
-        if div > 0 and avg_close > 0:
-            yearly_yields.append(div / avg_close)
-        pes = year_pes.get(year, [])
-        if pes:
-            yearly_pes.append(sum(pes) / len(pes))
+        if year == today.year:
+            prev_div = by_year.get(year - 1, 0)
+            if prev_div > 0 and (div == 0 or div < 0.5 * prev_div):
+                div = prev_div
+
+        if div > 0:
+            all_yields.extend(div / c for c in closes if c > 0)
+        all_pes.extend(year_pes.get(year, []))
+
+    # Aliases kept for the compute_* function signature (which expects a flat list).
+    yearly_yields = all_yields
+    yearly_pes = all_pes
 
     # 5. Quarterly EPS (last 8 for YoY) — skipped for ETFs (will be empty list)
     eps_quarterly = []
@@ -302,6 +319,20 @@ def main():
             failures.append(code)
 
     print(f"\nDone: {success}/{len(targets)} succeeded")
+
+    # Update last_updated.json (preserve other keys like 'us' if present)
+    last_updated_file = ROOT / 'data' / 'last_updated.json'
+    existing = {}
+    if last_updated_file.exists():
+        try:
+            with open(last_updated_file, encoding='utf-8') as f:
+                existing = json.load(f)
+        except Exception:
+            existing = {}
+    existing['tw'] = now_taipei().strftime('%Y-%m-%d %H:%M:%S+08:00')
+    with open(last_updated_file, 'w', encoding='utf-8') as f:
+        json.dump(existing, f, ensure_ascii=False, indent=2)
+
     if failures:
         print(f"Failed: {', '.join(failures)}")
         sys.exit(1)

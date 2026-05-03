@@ -1,7 +1,7 @@
 {
   "code": "3711",
   "name": "日月光投控",
-  "updated": "2026-05-03 15:09:12+08:00",
+  "updated": "2026-05-03 20:34:18+08:00",
   "close_date": "2026-04-30",
   "current_price": 478.0,
   "change": -10.5,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 9.37,
   "valuation_yield": {
-    "cheap": 118.44,
-    "fair": 133.61,
-    "expensive": 153.24
+    "cheap": 125.0,
+    "fair": 152.25,
+    "expensive": 193.5
   },
   "yield_stats": {
-    "high": 0.0447,
-    "avg": 0.0396,
-    "low": 0.0346
+    "high": 0.0424,
+    "avg": 0.0348,
+    "low": 0.0274
   },
   "valuation_pe": {
-    "cheap": 99.21,
-    "fair": 164.83,
-    "expensive": 203.99
+    "cheap": 132.49,
+    "fair": 222.03,
+    "expensive": 500.26
   },
   "pe_stats": {
-    "high": 21.77,
-    "avg": 17.59,
-    "low": 10.59
+    "high": 53.39,
+    "avg": 23.7,
+    "low": 14.14
   },
   "eps_quarterly": [
     {

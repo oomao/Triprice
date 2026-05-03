@@ -1,7 +1,7 @@
 {
   "code": "2303",
   "name": "聯電",
-  "updated": "2026-05-03 15:09:09+08:00",
+  "updated": "2026-05-03 20:33:55+08:00",
   "close_date": "2026-04-30",
   "current_price": 77.3,
   "change": 2.8,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 4.0,
   "valuation_yield": {
-    "cheap": 45.89,
-    "fair": 48.31,
-    "expensive": 51.0
+    "cheap": 41.45,
+    "fair": 50.69,
+    "expensive": 57.7
   },
   "yield_stats": {
-    "high": 0.0621,
-    "avg": 0.059,
-    "low": 0.0559
+    "high": 0.0688,
+    "avg": 0.0562,
+    "low": 0.0494
   },
   "valuation_pe": {
-    "cheap": 31.6,
-    "fair": 42.72,
-    "expensive": 51.2
+    "cheap": 35.88,
+    "fair": 52.06,
+    "expensive": 95.24
   },
   "pe_stats": {
-    "high": 12.8,
-    "avg": 10.68,
-    "low": 7.9
+    "high": 23.81,
+    "avg": 13.01,
+    "low": 8.97
   },
   "eps_quarterly": [
     {

@@ -1,7 +1,7 @@
 {
   "code": "00929",
   "name": "復華台灣科技優息",
-  "updated": "2026-05-03 15:09:02+08:00",
+  "updated": "2026-05-03 20:33:15+08:00",
   "close_date": "2026-04-30",
   "current_price": 22.24,
   "change": 0.14,
@@ -10,14 +10,14 @@
   "dividend_year": 2026,
   "eps_ttm": null,
   "valuation_yield": {
-    "cheap": 4.42,
-    "fair": 7.16,
-    "expensive": 11.46
+    "cheap": 4.02,
+    "fair": 6.63,
+    "expensive": 22.6
   },
   "yield_stats": {
-    "high": 0.0995,
-    "avg": 0.0615,
-    "low": 0.0384
+    "high": 0.1094,
+    "avg": 0.0663,
+    "low": 0.0195
   },
   "valuation_pe": null,
   "pe_stats": null,

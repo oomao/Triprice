@@ -1,7 +1,7 @@
 {
   "code": "2890",
   "name": "永豐金",
-  "updated": "2026-05-03 15:09:26+08:00",
+  "updated": "2026-05-03 20:35:29+08:00",
   "close_date": "2026-04-30",
   "current_price": 30.95,
   "change": -0.95,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 1.97,
   "valuation_yield": {
-    "cheap": 21.73,
-    "fair": 22.33,
-    "expensive": 22.97
+    "cheap": 18.6,
+    "fair": 22.75,
+    "expensive": 27.25
   },
   "yield_stats": {
-    "high": 0.0419,
-    "avg": 0.0407,
-    "low": 0.0396
+    "high": 0.0489,
+    "avg": 0.04,
+    "low": 0.0334
   },
   "valuation_pe": {
-    "cheap": 24.9,
-    "fair": 26.17,
-    "expensive": 26.88
+    "cheap": 21.49,
+    "fair": 27.65,
+    "expensive": 35.85
   },
   "pe_stats": {
-    "high": 13.65,
-    "avg": 13.29,
-    "low": 12.64
+    "high": 18.2,
+    "avg": 14.03,
+    "low": 10.91
   },
   "eps_quarterly": [
     {

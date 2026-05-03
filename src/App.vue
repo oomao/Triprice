@@ -1,5 +1,26 @@
 <script setup>
+import { ref, onMounted, computed } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
+
+const lastUpdated = ref({})
+
+onMounted(async () => {
+  try {
+    const res = await fetch(`${import.meta.env.BASE_URL}data/last_updated.json`)
+    if (res.ok) lastUpdated.value = await res.json()
+  } catch {
+    // Silently ignore — file may not exist on first deploy
+  }
+})
+
+function fmtTime(iso) {
+  if (!iso) return ''
+  // "2026-05-03 15:08:27+08:00" → "2026-05-03 15:08"
+  return iso.replace(/:\d{2}\+\d{2}:\d{2}$/, '').replace('T', ' ')
+}
+
+const twTime = computed(() => fmtTime(lastUpdated.value.tw))
+const usTime = computed(() => fmtTime(lastUpdated.value.us))
 </script>
 
 <template>
@@ -26,8 +47,13 @@ import { RouterLink, RouterView } from 'vue-router'
       </RouterView>
     </main>
 
-    <footer class="bg-slate-100 text-slate-500 text-xs text-center py-3 px-4">
-      資料僅供參考，非投資建議 · 收盤資料每日更新
+    <footer class="bg-slate-100 text-slate-500 text-xs text-center py-3 px-4 leading-relaxed">
+      <div>資料僅供參考，非投資建議</div>
+      <div v-if="twTime || usTime" class="mt-1 text-[11px]">
+        <span v-if="twTime">台股更新 {{ twTime }}</span>
+        <span v-if="twTime && usTime" class="mx-1">·</span>
+        <span v-if="usTime">ADR 更新 {{ usTime }}</span>
+      </div>
     </footer>
   </div>
 </template>

@@ -1,7 +1,7 @@
 {
   "code": "2409",
   "name": "友達",
-  "updated": "2026-05-03 15:09:36+08:00",
+  "updated": "2026-05-03 20:36:19+08:00",
   "close_date": "2026-04-30",
   "current_price": 17.2,
   "change": -0.1,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 0.9,
   "valuation_yield": {
-    "cheap": 5.92,
-    "fair": 8.81,
-    "expensive": 17.25
+    "cheap": 14.4,
+    "fair": 17.18,
+    "expensive": 19.75
   },
   "yield_stats": {
-    "high": 0.0515,
-    "avg": 0.0346,
-    "low": 0.0177
+    "high": 0.0212,
+    "avg": 0.0177,
+    "low": 0.0154
   },
   "valuation_pe": {
-    "cheap": 17.74,
+    "cheap": 13.13,
     "fair": 17.74,
-    "expensive": 17.74
+    "expensive": 24.75
   },
   "pe_stats": {
-    "high": 19.71,
+    "high": 27.5,
     "avg": 19.71,
-    "low": 19.71
+    "low": 14.59
   },
   "eps_quarterly": [
     {

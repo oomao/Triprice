@@ -1,7 +1,7 @@
 {
   "code": "2412",
   "name": "中華電",
-  "updated": "2026-05-03 15:09:35+08:00",
+  "updated": "2026-05-03 20:36:10+08:00",
   "close_date": "2026-04-30",
   "current_price": 136.0,
   "change": -0.5,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 4.99,
   "valuation_yield": {
-    "cheap": 123.34,
-    "fair": 124.38,
-    "expensive": 125.44
+    "cheap": 118.5,
+    "fair": 123.29,
+    "expensive": 128.0
   },
   "yield_stats": {
-    "high": 0.0405,
-    "avg": 0.0402,
-    "low": 0.0399
+    "high": 0.0422,
+    "avg": 0.0406,
+    "low": 0.0391
   },
   "valuation_pe": {
-    "cheap": 124.49,
-    "fair": 129.64,
-    "expensive": 134.4
+    "cheap": 123.7,
+    "fair": 132.61,
+    "expensive": 140.97
   },
   "pe_stats": {
-    "high": 26.93,
-    "avg": 25.98,
-    "low": 24.95
+    "high": 28.25,
+    "avg": 26.58,
+    "low": 24.79
   },
   "eps_quarterly": [
     {

@@ -99,6 +99,19 @@ def main():
 
     print(f"\nDone: {success}/{len(meta['adr_mapping'])} ADRs processed")
 
+    # Update last_updated.json (preserve 'tw' if present)
+    last_updated_file = ROOT / 'data' / 'last_updated.json'
+    existing = {}
+    if last_updated_file.exists():
+        try:
+            with open(last_updated_file, encoding='utf-8') as f:
+                existing = json.load(f)
+        except Exception:
+            existing = {}
+    existing['us'] = datetime.now(TAIPEI).strftime('%Y-%m-%d %H:%M:%S+08:00')
+    with open(last_updated_file, 'w', encoding='utf-8') as f:
+        json.dump(existing, f, ensure_ascii=False, indent=2)
+
 
 if __name__ == '__main__':
     main()

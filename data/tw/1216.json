@@ -1,7 +1,7 @@
 {
   "code": "1216",
   "name": "統一",
-  "updated": "2026-05-03 15:09:38+08:00",
+  "updated": "2026-05-03 20:36:26+08:00",
   "close_date": "2026-04-30",
   "current_price": 69.3,
   "change": -0.7,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 3.46,
   "valuation_yield": {
-    "cheap": 72.84,
-    "fair": 76.71,
-    "expensive": 81.01
+    "cheap": 70.3,
+    "fair": 80.66,
+    "expensive": 90.2
   },
   "yield_stats": {
-    "high": 0.0412,
-    "avg": 0.0391,
-    "low": 0.037
+    "high": 0.0427,
+    "avg": 0.0372,
+    "low": 0.0333
   },
   "valuation_pe": {
-    "cheap": 76.95,
-    "fair": 79.86,
-    "expensive": 84.7
+    "cheap": 69.51,
+    "fair": 80.14,
+    "expensive": 95.43
   },
   "pe_stats": {
-    "high": 24.48,
-    "avg": 23.08,
-    "low": 22.24
+    "high": 27.58,
+    "avg": 23.16,
+    "low": 20.09
   },
   "eps_quarterly": [
     {
