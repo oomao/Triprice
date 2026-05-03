@@ -93,7 +93,7 @@ function fmtTurnover(n) {
 function scoreColor(s) {
   if (s == null) return 'text-slate-400'
   if (s >= 70) return 'text-emerald-600 font-bold'
-  if (s >= 50) return 'text-sky-600'
+  if (s >= 50) return 'text-[#0a0e16]'
   if (s >= 30) return 'text-amber-600'
   return 'text-red-500'
 }
@@ -104,7 +104,7 @@ function categoryLabel(c) {
 
 function categoryBadge(c) {
   switch (c) {
-    case 'tw_market': return 'bg-sky-100 text-sky-700'
+    case 'tw_market': return 'bg-[#0a0e16]/10 text-[#0a0e16]'
     case 'dividend':  return 'bg-emerald-100 text-emerald-700'
     case 'us_tech':   return 'bg-violet-100 text-violet-700'
     case 'foreign':   return 'bg-amber-100 text-amber-700'
@@ -116,7 +116,7 @@ function categoryBadge(c) {
 <template>
   <div>
     <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-      <h1 class="text-2xl font-bold">ETF 全覽</h1>
+      <h1 class="text-xl font-bold tracking-tight">ETF 全覽</h1>
       <span v-if="data" class="text-xs text-slate-500">
         共 {{ data.count }} 檔 · 更新 {{ data.updated?.replace(/:\d{2}\+\d{2}:\d{2}$/, '') }}
       </span>
@@ -127,29 +127,29 @@ function categoryBadge(c) {
     </p>
 
     <div v-if="loading" class="text-slate-500 py-8 text-center">載入中…</div>
-    <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-slate-700">
+    <div v-else-if="error" class="bg-red-50 border border-red-200 p-4 text-sm border text-slate-700">
       載入失敗：{{ error }}
     </div>
-    <div v-else-if="!data" class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm">
+    <div v-else-if="!data" class="bg-amber-50 border border-amber-200 p-4 text-sm border">
       尚無 ETF 資料 — 請執行 <code class="text-xs">python scripts/fetch_etf.py</code> 後重試。
     </div>
     <div v-else>
       <!-- Filters -->
-      <div class="bg-white rounded-lg border border-slate-200 p-3 mb-4 grid sm:grid-cols-3 gap-3">
+      <div class="bg-white border border-[#e7e7e1] p-3 mb-4 grid sm:grid-cols-3 gap-3">
         <div class="sm:col-span-2">
           <label class="block text-xs font-semibold text-slate-700 mb-1">搜尋（代號 / 名稱）</label>
           <input
             v-model="search"
             type="text"
             placeholder="例：0050、台灣 50、半導體"
-            class="w-full px-3 py-1.5 rounded border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+            class="w-full px-3 py-1.5 rounded border border-slate-300 text-sm focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16]"
           />
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">分類</label>
           <select
             v-model="categoryFilter"
-            class="w-full px-3 py-1.5 rounded border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+            class="w-full px-3 py-1.5 rounded border border-slate-300 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16]"
           >
             <option v-for="c in CATEGORIES" :key="c.v" :value="c.v">{{ c.label }}</option>
           </select>
@@ -171,7 +171,7 @@ function categoryBadge(c) {
       <div class="text-xs text-slate-500 mb-2">符合：{{ filtered.length }} 檔</div>
 
       <!-- Table -->
-      <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+      <div class="bg-white border border-[#e7e7e1] overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
@@ -206,7 +206,7 @@ function categoryBadge(c) {
                 <td class="px-3 py-2.5">
                   <RouterLink :to="`/stock/${e.code}`" class="block group">
                     <div class="font-mono text-slate-500 text-xs">{{ e.code }}</div>
-                    <div class="font-semibold group-hover:text-sky-600 transition leading-tight">{{ e.name }}</div>
+                    <div class="font-semibold group-hover:text-[#b4530b] transition leading-tight">{{ e.name }}</div>
                     <span :class="['inline-block text-[10px] px-1.5 py-0.5 rounded mt-0.5', categoryBadge(e.category)]">
                       {{ categoryLabel(e.category) }}
                     </span>
@@ -243,7 +243,7 @@ function categoryBadge(c) {
 
       <!-- Methodology -->
       <details class="mt-4 group">
-        <summary class="cursor-pointer text-xs text-sky-600 hover:text-sky-700 select-none">
+        <summary class="cursor-pointer text-xs text-[#b4530b] hover:text-[#0a0e16] select-none">
           <span class="inline-block transition-transform group-open:rotate-90 mr-1">▶</span>
           綜合分計算方式
         </summary>

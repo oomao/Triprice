@@ -212,58 +212,65 @@ const epsLabel = computed(() =>
 
 <template>
   <div>
-    <RouterLink to="/" class="text-sm text-sky-600 hover:underline">← 回清單</RouterLink>
+    <RouterLink to="/" class="text-[11px] text-slate-500 hover:text-[#0a0e16] uppercase tracking-widest font-mono">← 清單</RouterLink>
 
-    <div v-if="loading" class="text-slate-500 py-8 text-center">{{ loadingMessage }}</div>
+    <div v-if="loading" class="py-8">
+      <div class="skel h-7 w-48 mb-3"></div>
+      <div class="skel h-12 w-32 mb-2"></div>
+      <div class="skel h-4 w-64 mb-6"></div>
+      <div class="skel h-32 w-full"></div>
+    </div>
     <div v-else-if="error && !data" class="py-8">
       <p class="text-slate-700">{{ error }}</p>
       <p class="text-sm text-slate-500 mt-2">請確認代號正確（4-6 碼數字 / 字母），或稍後重試。</p>
     </div>
     <div v-else-if="data">
-      <!-- Header -->
-      <div class="flex items-start justify-between mt-2 mb-5 gap-3">
+      <!-- Hero header: code+name as small label, price huge, change inline -->
+      <div class="flex items-start justify-between mt-3 mb-6 gap-3">
         <div class="min-w-0">
-          <h1 class="text-2xl font-bold">
-            {{ meta?.name || rawData?.name || code }}
-            <span class="text-base font-mono text-slate-500 ml-2">{{ code }}</span>
-            <span v-if="isDynamic" class="ml-2 text-xs text-sky-600 font-normal align-middle">即時抓取</span>
-          </h1>
-          <div class="text-sm text-slate-500 mt-1">
-            收盤 {{ rawData.close_date }} ·
-            <span class="font-bold text-slate-900 text-base">{{ fmt(rawData.current_price) }}</span>
+          <div class="flex items-baseline gap-2 mb-1">
+            <span class="font-mono text-[11px] text-slate-500 uppercase tracking-widest">{{ code }}</span>
+            <span v-if="isDynamic" class="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 font-mono uppercase tracking-wider">live</span>
+          </div>
+          <h1 class="text-xl font-bold tracking-tight leading-tight">{{ meta?.name || rawData?.name || code }}</h1>
+          <div class="mt-3 flex items-baseline gap-3 flex-wrap">
+            <span class="text-4xl font-bold tabular-nums tracking-tight">{{ fmt(rawData.current_price) }}</span>
             <span
               v-if="rawData.change != null"
-              :class="rawData.change >= 0 ? 'text-red-500' : 'text-emerald-600'"
-              class="ml-2"
+              :class="rawData.change >= 0 ? 'text-red-600' : 'text-emerald-700'"
+              class="text-base font-semibold tabular-nums"
             >
               {{ rawData.change >= 0 ? '+' : '' }}{{ fmt(rawData.change) }}
-              ({{ rawData.change >= 0 ? '+' : '' }}{{ fmt(rawData.change_pct, 2) }}%)
+              <span class="text-sm font-medium opacity-90">
+                ({{ rawData.change >= 0 ? '+' : '' }}{{ fmt(rawData.change_pct, 2) }}%)
+              </span>
             </span>
           </div>
+          <div class="text-[11px] text-slate-500 mt-1 font-mono">收盤 {{ rawData.close_date }}</div>
         </div>
         <button
           @click="watchlist.toggle(code)"
-          class="px-3 py-1.5 rounded-lg border text-sm transition shrink-0"
+          class="px-3 py-1.5 border text-xs uppercase tracking-wider transition shrink-0 font-semibold"
           :class="
             watchlist.has(code)
-              ? 'bg-amber-50 border-amber-400 text-amber-700'
-              : 'bg-white border-slate-300 hover:border-sky-400'
+              ? 'bg-amber-100 border-amber-500 text-amber-800'
+              : 'bg-white border-[#0a0e16] text-[#0a0e16] hover:bg-[#0a0e16] hover:text-white'
           "
         >
-          {{ watchlist.has(code) ? '★ 已自選' : '☆ 加入自選' }}
+          {{ watchlist.has(code) ? '✓ 自選中' : '+ 加入自選' }}
         </button>
       </div>
 
       <!-- 摘要（若資料中有預先產生的 summary 則顯示） -->
-      <section v-if="data.summary?.text" class="mb-5 bg-slate-50 border-l-4 border-sky-400 rounded-r-lg px-4 py-3">
+      <section v-if="data.summary?.text" class="mb-5 bg-white border-l-2 border-[#b4530b] px-4 py-3">
         <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{{ data.summary.text }}</p>
-        <p class="text-[10px] text-slate-400 mt-1.5">摘要生成於 {{ data.summary.generated_at?.replace(/:\d{2}\+\d{2}:\d{2}$/, '') }}</p>
+        <p class="text-[10px] text-slate-400 mt-1.5 font-mono">摘要生成於 {{ data.summary.generated_at?.replace(/:\d{2}\+\d{2}:\d{2}$/, '') }}</p>
       </section>
 
       <!-- 進階設定 -->
       <details class="mb-5 group" :open="hasCustomization">
         <summary
-          class="cursor-pointer text-sm font-medium text-sky-600 hover:text-sky-700 inline-flex items-center gap-1.5 select-none list-none"
+          class="cursor-pointer text-sm font-medium text-[#b4530b] hover:text-[#0a0e16] inline-flex items-center gap-1.5 select-none list-none"
         >
           <span class="inline-block transition-transform group-open:rotate-90 text-xs">▶</span>
           進階設定
@@ -273,13 +280,13 @@ const epsLabel = computed(() =>
           >已自訂</span>
         </summary>
 
-        <div class="mt-3 bg-white rounded-lg border border-slate-200 p-4 space-y-4">
+        <div class="mt-3 bg-white border border-[#e7e7e1] p-4 space-y-4">
           <!-- 股利取值 -->
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1.5">股利取值</label>
             <select
               v-model="settings.dividend_mode"
-              class="w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              class="w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0a0e16]/30"
             >
               <option value="latest">最近一年（{{ fmt(rawData.dividend_used || 0) }}）</option>
               <option v-if="dividendAvgs[2]" value="avg2y">近 2 年平均（{{ fmt(dividendAvgs[2]) }}）</option>
@@ -294,7 +301,7 @@ const epsLabel = computed(() =>
               step="0.01"
               min="0"
               placeholder="例：18.5"
-              class="mt-2 w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              class="mt-2 w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0a0e16]/30"
             />
           </div>
 
@@ -303,7 +310,7 @@ const epsLabel = computed(() =>
             <label class="block text-xs font-semibold text-slate-700 mb-1.5">EPS（用於 PE 法）</label>
             <select
               v-model="settings.eps_mode"
-              class="w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              class="w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0a0e16]/30"
             >
               <option value="ttm">TTM 近 4 季合計（{{ fmt(rawData.eps_ttm) }}）</option>
               <option value="custom">自訂 EPS…</option>
@@ -314,14 +321,14 @@ const epsLabel = computed(() =>
               type="number"
               step="0.01"
               placeholder="例：80（預估明年）"
-              class="mt-2 w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              class="mt-2 w-full px-3 py-1.5 rounded border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0a0e16]/30"
             />
           </div>
 
           <!-- 安全邊際 -->
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-              安全邊際 <strong class="text-sky-700 ml-1">{{ settings.margin_of_safety }}%</strong>
+              安全邊際 <strong class="text-[#0a0e16] ml-1">{{ settings.margin_of_safety }}%</strong>
             </label>
             <input
               v-model.number="settings.margin_of_safety"
@@ -329,7 +336,7 @@ const epsLabel = computed(() =>
               min="0"
               max="50"
               step="5"
-              class="w-full accent-sky-600"
+              class="w-full accent-[#0a0e16]"
             />
             <p class="text-[11px] text-slate-500 mt-1 leading-snug">
               套用 {{ settings.margin_of_safety }}% 折扣到便宜價與合理價（昂貴價不變，作為賣出參考）
@@ -358,7 +365,7 @@ const epsLabel = computed(() =>
         >
           ⚠️ 此股殖利率偏低（平均 {{ fmt(data.yield_stats.avg * 100, 2) }}%）—— 殖利率法對成長股會嚴重低估合理價，請以下方 PE 法為主要參考。
         </div>
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white border border-[#e7e7e1] overflow-hidden">
           <table class="w-full text-sm">
             <tbody>
               <tr class="border-b border-slate-100">
@@ -370,7 +377,7 @@ const epsLabel = computed(() =>
               </tr>
               <tr class="border-b border-slate-100">
                 <td class="px-4 py-2.5 bg-slate-50">合理價</td>
-                <td class="px-4 py-2.5 text-sky-600 font-bold">{{ fmt(data.valuation_yield?.fair) }}</td>
+                <td class="px-4 py-2.5 text-[#0a0e16] font-bold">{{ fmt(data.valuation_yield?.fair) }}</td>
                 <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
                   股利 {{ fmt(data.dividend_used) }} / 平均殖利率 {{ fmt(data.yield_stats?.avg * 100, 2) }}%
                 </td>
@@ -392,7 +399,7 @@ const epsLabel = computed(() =>
 
         <div
           v-if="data.valuation_yield && data.price_history?.length"
-          class="mt-3 bg-white rounded-lg border border-slate-200 p-3"
+          class="mt-3 bg-white border border-[#e7e7e1] p-3"
         >
           <BandChart
             :history="data.price_history"
@@ -410,7 +417,7 @@ const epsLabel = computed(() =>
             目前位置：{{ peTier.label }}
           </span>
         </div>
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white border border-[#e7e7e1] overflow-hidden">
           <table class="w-full text-sm">
             <tbody>
               <tr class="border-b border-slate-100">
@@ -420,7 +427,7 @@ const epsLabel = computed(() =>
               </tr>
               <tr class="border-b border-slate-100">
                 <td class="px-4 py-2.5 bg-slate-50">合理價</td>
-                <td class="px-4 py-2.5 text-sky-600 font-bold">{{ fmt(data.valuation_pe.fair) }}</td>
+                <td class="px-4 py-2.5 text-[#0a0e16] font-bold">{{ fmt(data.valuation_pe.fair) }}</td>
                 <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">EPS × 平均 PE {{ fmt(data.pe_stats?.avg, 1) }}</td>
               </tr>
               <tr>
@@ -438,7 +445,7 @@ const epsLabel = computed(() =>
 
         <div
           v-if="data.valuation_pe && data.price_history?.length"
-          class="mt-3 bg-white rounded-lg border border-slate-200 p-3"
+          class="mt-3 bg-white border border-[#e7e7e1] p-3"
         >
           <BandChart
             :history="data.price_history"
@@ -451,7 +458,7 @@ const epsLabel = computed(() =>
       <!-- K 線 -->
       <section v-if="data.kline?.length" class="mb-6">
         <h2 class="text-lg font-semibold mb-2">K 線走勢</h2>
-        <div class="bg-white rounded-lg border border-slate-200 p-3">
+        <div class="bg-white border border-[#e7e7e1] p-3">
           <CandleChart :kline="data.kline" />
         </div>
       </section>
@@ -459,7 +466,7 @@ const epsLabel = computed(() =>
       <!-- 三大法人籌碼 -->
       <section v-if="data.chips?.length" class="mb-6">
         <h2 class="text-lg font-semibold mb-2">三大法人籌碼</h2>
-        <div class="bg-white rounded-lg border border-slate-200 p-3">
+        <div class="bg-white border border-[#e7e7e1] p-3">
           <ChipsChart :chips="data.chips" />
         </div>
       </section>
@@ -467,7 +474,7 @@ const epsLabel = computed(() =>
       <!-- ADR 比較 -->
       <section v-if="data.adr" class="mb-6">
         <h2 class="text-lg font-semibold mb-2">美股 ADR 比較</h2>
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white border border-[#e7e7e1] overflow-hidden">
           <table class="w-full text-sm">
             <thead>
               <tr class="bg-slate-50 text-slate-600 text-xs">
@@ -516,7 +523,7 @@ const epsLabel = computed(() =>
               </tr>
             </tbody>
           </table>
-          <div class="border-t border-slate-200 px-4 py-3 bg-sky-50/50 grid grid-cols-2 gap-3 text-sm">
+          <div class="border-t border-slate-200 px-4 py-3 bg-[#f7f5f0] grid grid-cols-2 gap-3 text-sm">
             <div>
               <div class="text-slate-500 text-xs">ADR 隱含台股價</div>
               <div class="font-bold">{{ fmt(data.adr.implied_tw_price) }}</div>
@@ -538,7 +545,7 @@ const epsLabel = computed(() =>
       <!-- 歷年股利 -->
       <section v-if="data.dividend_history?.length" class="mb-6">
         <h2 class="text-lg font-semibold mb-2">歷年股利</h2>
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white border border-[#e7e7e1] overflow-hidden">
           <table class="w-full text-sm">
             <thead>
               <tr class="bg-slate-50 text-slate-600">
@@ -561,7 +568,7 @@ const epsLabel = computed(() =>
       <!-- EPS 季度 -->
       <section v-if="data.eps_quarterly?.length" class="mb-6">
         <h2 class="text-lg font-semibold mb-2">EPS 季度明細</h2>
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white border border-[#e7e7e1] overflow-hidden">
           <table class="w-full text-sm">
             <thead>
               <tr class="bg-slate-50 text-slate-600">

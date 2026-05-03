@@ -134,8 +134,8 @@ function fmt(n, d = 2) {
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold mb-1">自選股</h1>
-    <p class="text-sm text-slate-500 mb-4">手動加入任意股票代號（台股 4 碼，例：2330）</p>
+    <h1 class="text-xl font-bold tracking-tight mb-1">自選股</h1>
+    <p class="text-xs text-slate-500 mb-4">手動加入任意股票代號（台股 4 碼，例：2330）</p>
 
     <div class="flex gap-2 mb-1">
       <input
@@ -144,31 +144,31 @@ function fmt(n, d = 2) {
         @input="errMsg = ''"
         type="text"
         placeholder="輸入股票代號…"
-        class="flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+        class="flex-1 px-3 py-2 border border-[#d8d8d2] focus:outline-none focus:ring-1 focus:ring-[#0a0e16]/30 focus:border-[#0a0e16] bg-white transition"
       />
       <button
         @click="addCustom"
-        class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition font-medium"
+        class="px-4 py-2 bg-[#0a0e16] text-white hover:bg-black transition font-medium text-sm"
       >新增</button>
     </div>
     <p v-if="errMsg" class="text-sm text-red-600 mb-4">{{ errMsg }}</p>
     <div v-else class="mb-4"></div>
 
     <!-- Aggregate summary -->
-    <section v-if="summary" class="bg-white rounded-lg border border-slate-200 p-4 mb-4">
+    <section v-if="summary" class="bg-white border border-[#e7e7e1] p-4 mb-4">
       <div class="flex items-baseline justify-between mb-2">
         <h2 class="text-base font-semibold">組合便宜度</h2>
         <span class="text-xs text-slate-500">{{ summary.count }} / {{ summary.total }} 檔已載入估值資料</span>
       </div>
       <div class="grid sm:grid-cols-3 gap-3">
-        <div :class="['rounded p-3 border border-slate-200', tierBg(summary.avg)]">
+        <div :class="['p-3 border border-slate-200', tierBg(summary.avg)]">
           <div class="text-xs text-slate-500">平均位置</div>
           <div :class="tierColor(summary.avg)" class="text-2xl font-bold">{{ summary.avg }}%</div>
           <div class="text-[11px] text-slate-500">{{ tierLabel(summary.avg) }}</div>
         </div>
         <RouterLink
           :to="`/stock/${summary.cheapest.code}`"
-          class="rounded p-3 border border-emerald-200 bg-emerald-50 hover:border-emerald-400 transition block"
+          class="p-3 border border-emerald-200 bg-emerald-50 hover:border-emerald-400 transition block"
         >
           <div class="text-xs text-slate-500">最便宜</div>
           <div class="font-bold leading-tight">{{ summary.cheapest.name }}</div>
@@ -177,7 +177,7 @@ function fmt(n, d = 2) {
         </RouterLink>
         <RouterLink
           :to="`/stock/${summary.priciest.code}`"
-          class="rounded p-3 border border-red-200 bg-red-50 hover:border-red-400 transition block"
+          class="p-3 border border-red-200 bg-red-50 hover:border-red-400 transition block"
         >
           <div class="text-xs text-slate-500">最貴</div>
           <div class="font-bold leading-tight">{{ summary.priciest.name }}</div>
@@ -191,7 +191,7 @@ function fmt(n, d = 2) {
     </section>
 
     <!-- Empty state -->
-    <div v-if="entries.length === 0" class="text-slate-500 py-8 text-center bg-white rounded-lg border border-dashed border-slate-300">
+    <div v-if="entries.length === 0" class="text-slate-500 py-8 text-center bg-white border border-dashed border-[#d8d8d2]">
       還沒加入自選股<br>
       <span class="text-xs">可從清單頁的個股詳情點「加入自選」，或在上方手動輸入代號</span>
     </div>
@@ -201,7 +201,7 @@ function fmt(n, d = 2) {
       <div
         v-for="e in entries"
         :key="e.code"
-        class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden"
+        class="bg-white border border-[#e7e7e1] overflow-hidden"
       >
         <div class="px-4 py-3 flex items-center justify-between gap-3">
           <RouterLink :to="`/stock/${e.code}`" class="flex-1 hover:opacity-70 min-w-0">

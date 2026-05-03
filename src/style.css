@@ -1,12 +1,58 @@
 @import "tailwindcss";
 
-html, body, #app {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC",
-    "Microsoft JhengHei", "Heiti TC", sans-serif;
-  -webkit-tap-highlight-color: transparent;
+/* ---------- Design tokens ---------- */
+:root {
+  --bg: #f7f7f4;
+  --surface: #ffffff;
+  --ink: #0a0e16;       /* nearly-black, slightly cooler than pure */
+  --ink-muted: #525764;
+  --rule: #e7e7e1;
+  --accent: #b4530b;    /* burnt orange — TW reds without screaming */
+  --gain: #d4242e;
+  --loss: #088258;
+  --neutral: #94959a;
 }
 
-/* Disable double-tap zoom on iOS for action elements */
+html, body, #app {
+  font-family:
+    "Inter", "PingFang TC", "Microsoft JhengHei", "Heiti TC",
+    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  font-feature-settings: "ss01" 1, "cv02" 1;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* All number-heavy cells get tabular figures so columns align. */
+.tnum, table td, table th, .font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
 button, a {
   touch-action: manipulation;
 }
+
+/* Subtle rule between sections in non-card contexts. */
+.hairline {
+  border-top: 1px solid var(--rule);
+}
+
+/* Skeleton shimmer for loading placeholders. */
+@keyframes tp-shimmer {
+  0%   { background-position: 200% 50%; }
+  100% { background-position: -200% 50%; }
+}
+.skel {
+  background-image: linear-gradient(90deg, #ececea 0%, #f4f4f1 50%, #ececea 100%);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: tp-shimmer 1.4s linear infinite;
+  border-radius: 2px;
+}
+
+/* Kill default focus ring on detail page summary <details>; we ship our own */
+summary::-webkit-details-marker { display: none; }
+summary::marker { display: none; }

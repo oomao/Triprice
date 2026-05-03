@@ -185,10 +185,10 @@ function fmtVol(n) {
           v-for="r in RANGES" :key="r.v"
           @click="range = r.v"
           :class="[
-            'px-2 py-0.5 rounded border transition',
+            'px-2 py-0.5 border transition',
             range === r.v
-              ? 'bg-sky-600 text-white border-sky-600'
-              : 'bg-white text-slate-600 border-slate-300 hover:border-sky-400',
+              ? 'bg-[#0a0e16] text-white border-[#0a0e16]'
+              : 'bg-white text-slate-600 border-[#d8d8d2] hover:border-[#0a0e16]',
           ]"
         >{{ r.label }}</button>
       </div>

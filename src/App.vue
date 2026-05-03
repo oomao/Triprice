@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, computed, provide } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
 
+const route = useRoute()
 const lastUpdated = ref({})
 
 onMounted(async () => {
@@ -9,11 +10,10 @@ onMounted(async () => {
     const res = await fetch(`${import.meta.env.BASE_URL}data/last_updated.json`)
     if (res.ok) lastUpdated.value = await res.json()
   } catch {
-    // Silently ignore — file may not exist on first deploy
+    // Silent: file may not exist on first deploy
   }
 })
 
-// Share with child views (HomeView etc.)
 provide('lastUpdated', lastUpdated)
 
 function fmtTime(iso) {
@@ -23,27 +23,42 @@ function fmtTime(iso) {
 
 const twTime = computed(() => fmtTime(lastUpdated.value.tw))
 const usTime = computed(() => fmtTime(lastUpdated.value.us))
+
+const NAV = [
+  { to: '/',         label: '清單' },
+  { to: '/etf',      label: 'ETF' },
+  { to: '/market',   label: '大盤' },
+  { to: '/watchlist',label: '自選' },
+  { to: '/adr',      label: 'ADR' },
+  { to: '/about',    label: '說明' },
+]
 </script>
 
 <template>
   <div class="min-h-screen flex flex-col">
-    <header class="bg-sky-600 text-white shadow sticky top-0 z-10">
-      <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-        <RouterLink to="/" class="flex items-center gap-2 font-bold">
-          <span class="text-xl">Triprice</span>
+    <!-- Header: charcoal bar, wordmark left, nav tabs right. Active tab gets a thin bottom rule. -->
+    <header class="sticky top-0 z-20 bg-[#0a0e16] text-white">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
+        <RouterLink to="/" class="shrink-0 flex items-baseline gap-2 group">
+          <span class="text-lg font-extrabold tracking-tight">Triprice</span>
+          <span class="hidden sm:inline text-[10px] uppercase tracking-[0.18em] text-slate-400 group-hover:text-amber-400 transition">TW · valuation tool</span>
         </RouterLink>
-        <nav class="flex gap-3 sm:gap-5 text-sm">
-          <RouterLink to="/" class="hover:underline" active-class="underline">清單</RouterLink>
-          <RouterLink to="/etf" class="hover:underline" active-class="underline">ETF</RouterLink>
-          <RouterLink to="/market" class="hover:underline" active-class="underline">大盤</RouterLink>
-          <RouterLink to="/watchlist" class="hover:underline" active-class="underline">自選</RouterLink>
-          <RouterLink to="/adr" class="hover:underline" active-class="underline">ADR</RouterLink>
-          <RouterLink to="/about" class="hover:underline" active-class="underline">說明</RouterLink>
+        <nav class="ml-auto flex items-center text-[13px]">
+          <RouterLink
+            v-for="n in NAV"
+            :key="n.to"
+            :to="n.to"
+            class="px-2.5 sm:px-3 py-2 transition relative"
+            active-class="active-nav"
+            :exact-active-class="n.to === '/' ? 'active-nav' : undefined"
+          >
+            <span class="text-slate-300 hover:text-white">{{ n.label }}</span>
+          </RouterLink>
         </nav>
       </div>
     </header>
 
-    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-5">
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-5 sm:py-7">
       <RouterView v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -51,12 +66,13 @@ const usTime = computed(() => fmtTime(lastUpdated.value.us))
       </RouterView>
     </main>
 
-    <footer class="bg-slate-100 text-slate-500 text-xs text-center py-3 px-4 leading-relaxed">
-      <div>資料僅供參考，非投資建議</div>
-      <div v-if="twTime || usTime" class="mt-1 text-[11px]">
-        <span v-if="twTime">台股更新 {{ twTime }}</span>
-        <span v-if="twTime && usTime" class="mx-1">·</span>
-        <span v-if="usTime">ADR 更新 {{ usTime }}</span>
+    <!-- Footer: thin status bar, looks like a tool, not a marketing page. -->
+    <footer class="border-t border-[#e7e7e1] bg-[#f1efe9]">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-600 font-mono">
+        <span class="text-[10px] uppercase tracking-widest text-slate-500 font-sans">Triprice</span>
+        <span v-if="twTime" class="hidden sm:inline">TW <span class="text-slate-900 font-semibold">{{ twTime }}</span></span>
+        <span v-if="usTime" class="hidden sm:inline">ADR <span class="text-slate-900 font-semibold">{{ usTime }}</span></span>
+        <span class="ml-auto text-slate-500 font-sans text-[10px] uppercase tracking-widest">資料僅供參考 · 非投資建議</span>
       </div>
     </footer>
   </div>
@@ -64,11 +80,19 @@ const usTime = computed(() => fmtTime(lastUpdated.value.us))
 
 <style scoped>
 .fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.15s ease;
-}
+.fade-leave-active { transition: opacity 0.15s ease; }
 .fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+.fade-leave-to { opacity: 0; }
+
+/* Active nav tab: white text + thin amber underline. */
+.active-nav span { color: #ffffff; }
+.active-nav::after {
+  content: "";
+  position: absolute;
+  left: 0.625rem;
+  right: 0.625rem;
+  bottom: 0;
+  height: 2px;
+  background: #f59e0b;
 }
 </style>

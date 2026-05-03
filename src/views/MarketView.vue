@@ -95,16 +95,16 @@ const instBars = computed(() => buildBars(data.value?.institutional?.records))
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold mb-1">台股大盤</h1>
-    <p class="text-sm text-slate-500 mb-5 leading-relaxed">
+    <h1 class="text-xl font-bold tracking-tight mb-1">台股大盤</h1>
+    <p class="text-xs text-slate-500 mb-5 leading-relaxed">
       加權指數 (TAIEX) + 櫃買指數 (OTC) 即時概況，搭配三大法人近期買賣超彙總。
     </p>
 
     <div v-if="loading" class="text-slate-500 py-8 text-center">載入中…</div>
-    <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-slate-700">
+    <div v-else-if="error" class="bg-red-50 border border-red-200 p-4 text-sm text-slate-700">
       載入失敗：{{ error }}
     </div>
-    <div v-else-if="!data" class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm">
+    <div v-else-if="!data" class="bg-amber-50 border border-amber-200 p-4 text-sm">
       尚無大盤資料 — 請執行 <code class="text-xs">python scripts/fetch_market.py</code> 後重試。
     </div>
     <div v-else>
@@ -113,7 +113,7 @@ const instBars = computed(() => buildBars(data.value?.institutional?.records))
         <div
           v-for="(idx, label) in data.indices"
           :key="label"
-          class="bg-white rounded-lg border border-slate-200 p-4"
+          class="bg-white border border-[#e7e7e1] p-4"
         >
           <div class="flex items-baseline justify-between mb-1">
             <div class="font-bold">{{ label === 'TAIEX' ? '加權指數' : '櫃買指數' }}</div>
@@ -152,7 +152,7 @@ const instBars = computed(() => buildBars(data.value?.institutional?.records))
       </section>
 
       <!-- Institutional flow -->
-      <section v-if="data.institutional.latest" class="bg-white rounded-lg border border-slate-200 p-4 mb-6">
+      <section v-if="data.institutional.latest" class="bg-white border border-[#e7e7e1] p-4 mb-6">
         <div class="flex items-baseline justify-between mb-3">
           <h2 class="text-base font-semibold">三大法人買賣超</h2>
           <span class="text-xs text-slate-500 font-mono">{{ data.institutional.latest.date }}</span>
