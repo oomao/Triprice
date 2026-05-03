@@ -33,6 +33,8 @@
 | **ADR 訊號儀表板** | **`/adr` 頁：4 檔 ADR 平均溢價匯總成 5 段訊號（強烈偏空 → 強烈偏多），作為台股隔日開盤方向參考。每日累積至 `adr_history.json`** |
 | **ETF 全覽 + 評分** | **`/etf` 頁：列出全部主流台股 ETF（過濾掉債券/槓桿）。4 維相對評分（殖利率、1Y 報酬、規模、穩定度）。可依分類過濾、欄位排序** |
 | **大盤儀表板** | **`/market` 頁：加權指數 + 櫃買指數現況（含 1Y 走勢）+ 三大法人近 30 日買賣超。** |
+| **K 線 + 均線** | **個股頁：日 K 線（紅漲綠跌）+ MA5/MA20/MA60 + 成交量副圖。可切換 1M / 3M / 6M / 1Y 區間** |
+| **三大法人籌碼** | **個股頁：近 30 日外資 / 投信 / 自營商買賣超堆疊柱狀圖 + 5 日累計卡片** |
 | 財報明細 | 近 4 季 EPS、YoY 成長率、近 5 年股利歷史 |
 | 自選股 | 自訂任意股票代號，存於 localStorage |
 | PWA | 可安裝到主畫面、離線可用、自動更新 |
@@ -195,7 +197,9 @@ python scripts/fetch_market.py
 │   ├── router/index.js          # 路由（hash router）
 │   ├── stores/watchlist.js      # 自選股 store（localStorage）
 │   ├── components/
-│   │   └── BandChart.vue        # 估值帶狀圖（純 SVG，無依賴）
+│   │   ├── BandChart.vue        # 估值帶狀圖（純 SVG，無依賴）
+│   │   ├── CandleChart.vue      # 日 K + MA + 成交量
+│   │   └── ChipsChart.vue       # 三大法人堆疊柱狀
 │   └── views/
 │       ├── HomeView.vue         # 清單頁
 │       ├── StockDetailView.vue  # 個股估值頁（嵌入 BandChart）

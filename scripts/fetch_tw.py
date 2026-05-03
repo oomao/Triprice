@@ -296,6 +296,66 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
             point['p'] = round(pe, 2)
         history.append(point)
 
+    # 7b. Daily OHLC for the K-line chart (last ~250 trading days = 1Y).
+    kline = []
+    for row in prices_3y[-260:]:
+        try:
+            o = float(row.get('open') or 0)
+            h = float(row.get('max') or row.get('high') or 0)
+            lo = float(row.get('min') or row.get('low') or 0)
+            c = float(row.get('close') or 0)
+            v = float(row.get('Trading_Volume') or 0)
+            if c <= 0 or o <= 0 or h <= 0 or lo <= 0:
+                continue
+        except (TypeError, ValueError):
+            continue
+        kline.append({
+            'd': row['date'],
+            'o': round(o, 2),
+            'h': round(h, 2),
+            'l': round(lo, 2),
+            'c': round(c, 2),
+            'v': int(v),
+        })
+
+    # 7c. Institutional flow for last 60 trading days (foreign/dealer/trust net).
+    chips = []
+    try:
+        chip_start = (today - timedelta(days=90)).strftime('%Y-%m-%d')
+        chip_data = finmind('TaiwanStockInstitutionalInvestorsBuySell',
+                            data_id=code, start_date=chip_start, end_date=today_str)
+        by_date = defaultdict(lambda: {'foreign': 0, 'dealer': 0, 'trust': 0})
+        for r in chip_data:
+            try:
+                d = r.get('date')
+                name = r.get('name', '')
+                buy = float(r.get('buy') or 0)
+                sell = float(r.get('sell') or 0)
+                net = buy - sell
+            except (TypeError, ValueError):
+                continue
+            if not d:
+                continue
+            if name.startswith('Foreign'):
+                # Foreign_Investor / Foreign_Dealer_Self all roll up here
+                by_date[d]['foreign'] += net
+            elif name.startswith('Investment_Trust') or name.startswith('Trust'):
+                by_date[d]['trust'] += net
+            elif name.startswith('Dealer'):
+                by_date[d]['dealer'] += net
+        for d in sorted(by_date.keys())[-60:]:
+            b = by_date[d]
+            total = b['foreign'] + b['dealer'] + b['trust']
+            chips.append({
+                'd': d,
+                'f': round(b['foreign']),
+                'tr': round(b['trust']),
+                'de': round(b['dealer']),
+                't': round(total),
+            })
+    except Exception as e:
+        print(f"  [{code}] chips fetch failed: {e}")
+
     # 8. Per-year dividend history with avg yield
     dividend_history = []
     for year in sorted(by_year.keys(), reverse=True)[:5]:
@@ -330,6 +390,8 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
         'eps_quarterly': eps_quarterly[:4],
         'dividend_history': dividend_history,
         'price_history': history,
+        'kline': kline,
+        'chips': chips,
     }
 
 

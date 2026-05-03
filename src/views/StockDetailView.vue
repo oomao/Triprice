@@ -3,6 +3,8 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { useWatchlistStore } from '../stores/watchlist'
 import BandChart from '../components/BandChart.vue'
+import CandleChart from '../components/CandleChart.vue'
+import ChipsChart from '../components/ChipsChart.vue'
 
 const route = useRoute()
 const watchlist = useWatchlistStore()
@@ -437,6 +439,22 @@ const epsLabel = computed(() =>
             :bands="data.valuation_pe"
             :current-price="data.current_price"
           />
+        </div>
+      </section>
+
+      <!-- K 線 -->
+      <section v-if="data.kline?.length" class="mb-6">
+        <h2 class="text-lg font-semibold mb-2">K 線走勢</h2>
+        <div class="bg-white rounded-lg border border-slate-200 p-3">
+          <CandleChart :kline="data.kline" />
+        </div>
+      </section>
+
+      <!-- 三大法人籌碼 -->
+      <section v-if="data.chips?.length" class="mb-6">
+        <h2 class="text-lg font-semibold mb-2">三大法人籌碼</h2>
+        <div class="bg-white rounded-lg border border-slate-200 p-3">
+          <ChipsChart :chips="data.chips" />
         </div>
       </section>
 
