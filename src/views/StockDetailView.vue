@@ -254,6 +254,12 @@ const epsLabel = computed(() =>
         </button>
       </div>
 
+      <!-- 摘要（若資料中有預先產生的 summary 則顯示） -->
+      <section v-if="data.summary?.text" class="mb-5 bg-slate-50 border-l-4 border-sky-400 rounded-r-lg px-4 py-3">
+        <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{{ data.summary.text }}</p>
+        <p class="text-[10px] text-slate-400 mt-1.5">摘要生成於 {{ data.summary.generated_at?.replace(/:\d{2}\+\d{2}:\d{2}$/, '') }}</p>
+      </section>
+
       <!-- 進階設定 -->
       <details class="mb-5 group" :open="hasCustomization">
         <summary

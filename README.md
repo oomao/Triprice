@@ -35,6 +35,8 @@
 | **大盤儀表板** | **`/market` 頁：加權指數 + 櫃買指數現況（含 1Y 走勢）+ 三大法人近 30 日買賣超。** |
 | **K 線 + 均線** | **個股頁：日 K 線（紅漲綠跌）+ MA5/MA20/MA60 + 成交量副圖。可切換 1M / 3M / 6M / 1Y 區間** |
 | **三大法人籌碼** | **個股頁：近 30 日外資 / 投信 / 自營商買賣超堆疊柱狀圖 + 5 日累計卡片** |
+| **自選組合估值** | **自選頁：彙總所有自選股的「位置百分位」，平均便宜度 + 最便宜/最貴標示 + 每檔位置條** |
+| **個股摘要** | **個股頁：可選功能。設定 `ANTHROPIC_API_KEY` 後 cron 會用 Claude API 為每檔生成 2~3 句客觀摘要（fingerprint 比對避免重複生成）** |
 | 財報明細 | 近 4 季 EPS、YoY 成長率、近 5 年股利歷史 |
 | 自選股 | 自訂任意股票代號，存於 localStorage |
 | PWA | 可安裝到主畫面、離線可用、自動更新 |
@@ -166,6 +168,10 @@ python scripts/fetch_etf.py --limit 40 # 只抓前 40 檔（本地測試用）
 
 # 抓大盤（TAIEX + OTC + 三大法人）
 python scripts/fetch_market.py
+
+# 產生個股摘要（需 ANTHROPIC_API_KEY）
+ANTHROPIC_API_KEY=sk-ant-... python scripts/generate_summary.py
+ANTHROPIC_API_KEY=sk-ant-... python scripts/generate_summary.py 2330 0050 --force
 ```
 
 抓完的 JSON 會寫到 `data/tw/{code}.json`、`data/fx.json` 與 `data/last_updated.json`。
