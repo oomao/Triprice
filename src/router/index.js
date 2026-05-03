@@ -18,6 +18,16 @@ const routes = [
     props: true
   },
   {
+    path: '/etf',
+    name: 'etf',
+    component: () => import('../views/ETFListView.vue')
+  },
+  {
+    path: '/market',
+    name: 'market',
+    component: () => import('../views/MarketView.vue')
+  },
+  {
     path: '/adr',
     name: 'adr',
     component: () => import('../views/ADRDashboardView.vue')

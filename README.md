@@ -31,6 +31,8 @@
 | 標籤分級 | 目前股價自動標示「便宜 / 合理偏便宜 / 合理偏貴 / 昂貴」 |
 | ADR 比較 | TSM、UMC、ASX、CHT 四檔 ADR 的隱含台股價 + 溢價率 |
 | **ADR 訊號儀表板** | **`/adr` 頁：4 檔 ADR 平均溢價匯總成 5 段訊號（強烈偏空 → 強烈偏多），作為台股隔日開盤方向參考。每日累積至 `adr_history.json`** |
+| **ETF 全覽 + 評分** | **`/etf` 頁：列出全部主流台股 ETF（過濾掉債券/槓桿）。4 維相對評分（殖利率、1Y 報酬、規模、穩定度）。可依分類過濾、欄位排序** |
+| **大盤儀表板** | **`/market` 頁：加權指數 + 櫃買指數現況（含 1Y 走勢）+ 三大法人近 30 日買賣超。** |
 | 財報明細 | 近 4 季 EPS、YoY 成長率、近 5 年股利歷史 |
 | 自選股 | 自訂任意股票代號，存於 localStorage |
 | PWA | 可安裝到主畫面、離線可用、自動更新 |
@@ -155,6 +157,13 @@ python scripts/fetch_tw.py 2330 0050
 
 # 抓美股 ADR + 匯率（需先跑過 fetch_tw.py）
 python scripts/fetch_us.py
+
+# 抓 ETF 全覽（含評分）
+python scripts/fetch_etf.py            # 全部主流 ETF（過濾債券/槓桿）
+python scripts/fetch_etf.py --limit 40 # 只抓前 40 檔（本地測試用）
+
+# 抓大盤（TAIEX + OTC + 三大法人）
+python scripts/fetch_market.py
 ```
 
 抓完的 JSON 會寫到 `data/tw/{code}.json`、`data/fx.json` 與 `data/last_updated.json`。
@@ -191,6 +200,8 @@ python scripts/fetch_us.py
 │       ├── HomeView.vue         # 清單頁
 │       ├── StockDetailView.vue  # 個股估值頁（嵌入 BandChart）
 │       ├── WatchlistView.vue    # 自選股頁
+│       ├── ETFListView.vue      # ETF 全覽 + 評分
+│       ├── MarketView.vue       # 大盤（TAIEX/OTC + 三大法人）
 │       ├── ADRDashboardView.vue # ADR 訊號儀表板
 │       └── AboutView.vue        # 估值方法說明
 ├── public/
@@ -201,6 +212,8 @@ python scripts/fetch_us.py
 │   ├── last_updated.json        # 全站資料更新時間（顯示在 footer）
 │   ├── adr_signal.json          # ADR 訊號當日快照（彙總 4 檔 + 平均溢價）
 │   ├── adr_history.json         # ADR 訊號滾動歷史（365 天）
+│   ├── etf_list.json            # 全 ETF 清單 + 4 維相對評分
+│   ├── market.json              # TAIEX/OTC + 三大法人 30 日買賣超
 │   └── tw/{code}.json           # 每檔股票估值資料 + price_history（3Y 帶狀圖原料）
 ├── scripts/
 │   ├── fetch_tw.py              # 抓台股 + 計算估值

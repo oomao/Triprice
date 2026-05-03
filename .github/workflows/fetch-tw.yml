@@ -18,10 +18,20 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r scripts/requirements.txt
-      - name: Fetch TW data
+      - name: Fetch TW stocks
         env:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: python scripts/fetch_tw.py
+      - name: Fetch ETF universe
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: python scripts/fetch_etf.py
+        continue-on-error: true
+      - name: Fetch market (TAIEX/OTC + institutional)
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: python scripts/fetch_market.py
+        continue-on-error: true
       - name: Commit & push
         run: |
           git config user.name "github-actions[bot]"
@@ -30,6 +40,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes"
           else
-            git commit -m "data: update TW $(date -u +%Y-%m-%d)"
+            git commit -m "data: update TW + ETF + market $(date -u +%Y-%m-%d)"
             git push
           fi
