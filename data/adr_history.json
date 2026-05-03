@@ -1,0 +1,29 @@
+{
+  "records": [
+    {
+      "date": "2026-05-04",
+      "updated": "2026-05-04 00:00:11+08:00",
+      "avg_premium_pct": 7.32,
+      "avg_adr_change_pct": 0.11,
+      "signal_code": "strong_bull",
+      "per_adr": {
+        "TSM": {
+          "premium_pct": 17.77,
+          "adr_change_pct": 0.41
+        },
+        "UMC": {
+          "premium_pct": 6.74,
+          "adr_change_pct": -0.08
+        },
+        "ASX": {
+          "premium_pct": 4.46,
+          "adr_change_pct": 0.57
+        },
+        "CHT": {
+          "premium_pct": 0.3,
+          "adr_change_pct": -0.44
+        }
+      }
+    }
+  ]
+}

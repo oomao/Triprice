@@ -27,8 +27,10 @@
 | 功能 | 說明 |
 |------|------|
 | 三價估值 | 便宜 / 合理 / 昂貴三檔目標價，殖利率法 + PE 法雙計算 |
+| **估值帶狀圖** | **個股頁顯示 3 年股價走勢 + 三檔估值參考線，一眼看出目前位置（0% = 便宜、100% = 昂貴）** |
 | 標籤分級 | 目前股價自動標示「便宜 / 合理偏便宜 / 合理偏貴 / 昂貴」 |
 | ADR 比較 | TSM、UMC、ASX、CHT 四檔 ADR 的隱含台股價 + 溢價率 |
+| **ADR 訊號儀表板** | **`/adr` 頁：4 檔 ADR 平均溢價匯總成 5 段訊號（強烈偏空 → 強烈偏多），作為台股隔日開盤方向參考。每日累積至 `adr_history.json`** |
 | 財報明細 | 近 4 季 EPS、YoY 成長率、近 5 年股利歷史 |
 | 自選股 | 自訂任意股票代號，存於 localStorage |
 | PWA | 可安裝到主畫面、離線可用、自動更新 |
@@ -79,6 +81,18 @@ ADR 溢價率   = (ADR 隱含台股價 − 台股收盤) / 台股收盤
 ```
 
 由於 ADR 收盤晚於台股約 14~15 小時（美東 16:00 = 台北隔日 04:00），這個溢價率反映「ADR 比較新的收盤」vs「台股比較舊的收盤」的差距，**可作為台股隔日開盤方向的參考訊號**。
+
+`/adr` 儀表板把四檔 ADR 等權平均成單一指標：
+
+| 平均溢價 | 訊號 |
+|---|---|
+| ≥ +5%   | 強烈偏多 |
+| +1% ~ +5% | 偏多 |
+| -1% ~ +1% | 中性 |
+| -5% ~ -1% | 偏空 |
+| ≤ -5%   | 強烈偏空 |
+
+每日抓完美股後寫入 `data/adr_signal.json`（當日快照）+ `data/adr_history.json`（滾動 365 天歷史），前端用 sparkline 顯示近 30 日趨勢。
 
 | ADR | 台股 | 1 ADR : 台股股數 |
 |-----|------|------|
@@ -171,10 +185,13 @@ python scripts/fetch_us.py
 │   ├── style.css                # Tailwind 入口
 │   ├── router/index.js          # 路由（hash router）
 │   ├── stores/watchlist.js      # 自選股 store（localStorage）
+│   ├── components/
+│   │   └── BandChart.vue        # 估值帶狀圖（純 SVG，無依賴）
 │   └── views/
 │       ├── HomeView.vue         # 清單頁
-│       ├── StockDetailView.vue  # 個股估值頁
+│       ├── StockDetailView.vue  # 個股估值頁（嵌入 BandChart）
 │       ├── WatchlistView.vue    # 自選股頁
+│       ├── ADRDashboardView.vue # ADR 訊號儀表板
 │       └── AboutView.vue        # 估值方法說明
 ├── public/
 │   └── icon.svg                 # App / PWA / favicon 圖示
@@ -182,7 +199,9 @@ python scripts/fetch_us.py
 │   ├── stocks.json              # 預載清單 + ADR 對應
 │   ├── fx.json                  # USD/TWD 匯率
 │   ├── last_updated.json        # 全站資料更新時間（顯示在 footer）
-│   └── tw/{code}.json           # 每檔股票估值資料
+│   ├── adr_signal.json          # ADR 訊號當日快照（彙總 4 檔 + 平均溢價）
+│   ├── adr_history.json         # ADR 訊號滾動歷史（365 天）
+│   └── tw/{code}.json           # 每檔股票估值資料 + price_history（3Y 帶狀圖原料）
 ├── scripts/
 │   ├── fetch_tw.py              # 抓台股 + 計算估值
 │   ├── fetch_us.py              # 抓 ADR + 匯率

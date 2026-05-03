@@ -124,6 +124,7 @@ export async function fetchStockDynamic(code, { useCache = true } = {}) {
 
   // 4. PER history (skip silently if 404 — ETFs)
   const yearPes = {}
+  const perByDate = {}
   try {
     const perData = await finmind('TaiwanStockPER', {
       data_id: code,
@@ -136,6 +137,7 @@ export async function fetchStockDynamic(code, { useCache = true } = {}) {
       if (pe > 0) {
         if (!yearPes[year]) yearPes[year] = []
         yearPes[year].push(pe)
+        perByDate[d.date] = pe
       }
     }
   } catch {
@@ -233,6 +235,20 @@ export async function fetchStockDynamic(code, { useCache = true } = {}) {
     })
   }
 
+  // 8b. Sampled price+PE history for the band chart (mirrors fetch_tw.py).
+  const SAMPLE_STRIDE = 4
+  const history = []
+  for (let i = 0; i < prices.length; i++) {
+    if (i !== 0 && i !== prices.length - 1 && i % SAMPLE_STRIDE !== 0) continue
+    const row = prices[i]
+    const close = parseFloat(row.close)
+    if (!(close > 0)) continue
+    const point = { d: row.date, c: round(close, 2) }
+    const pe = perByDate[row.date]
+    if (pe != null) point.p = round(pe, 2)
+    history.push(point)
+  }
+
   const result = {
     code,
     name: code,
@@ -251,6 +267,7 @@ export async function fetchStockDynamic(code, { useCache = true } = {}) {
     pe_stats: peStats,
     eps_quarterly: epsQuarterly.slice(0, 4),
     dividend_history: dividendHistory,
+    price_history: history,
     _dynamic: true,
   }
 

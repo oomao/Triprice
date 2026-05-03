@@ -2,6 +2,7 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { useWatchlistStore } from '../stores/watchlist'
+import BandChart from '../components/BandChart.vue'
 
 const route = useRoute()
 const watchlist = useWatchlistStore()
@@ -380,6 +381,17 @@ const epsLabel = computed(() =>
           {{ dividendLabel }} {{ fmt(data.dividend_used) }} 元 · 殖利率區間取自近 3 年
           <span v-if="settings.margin_of_safety > 0" class="text-amber-600">· 安全邊際 {{ settings.margin_of_safety }}%</span>
         </p>
+
+        <div
+          v-if="data.valuation_yield && data.price_history?.length"
+          class="mt-3 bg-white rounded-lg border border-slate-200 p-3"
+        >
+          <BandChart
+            :history="data.price_history"
+            :bands="data.valuation_yield"
+            :current-price="data.current_price"
+          />
+        </div>
       </section>
 
       <!-- PE 法估值表 -->
@@ -415,6 +427,17 @@ const epsLabel = computed(() =>
           {{ epsLabel }} {{ fmt(data.eps_ttm) }} 元
           <span v-if="settings.margin_of_safety > 0" class="text-amber-600">· 安全邊際 {{ settings.margin_of_safety }}%</span>
         </p>
+
+        <div
+          v-if="data.valuation_pe && data.price_history?.length"
+          class="mt-3 bg-white rounded-lg border border-slate-200 p-3"
+        >
+          <BandChart
+            :history="data.price_history"
+            :bands="data.valuation_pe"
+            :current-price="data.current_price"
+          />
+        </div>
       </section>
 
       <!-- ADR 比較 -->

@@ -1,0 +1,63 @@
+{
+  "updated": "2026-05-04 00:00:11+08:00",
+  "avg_premium_pct": 7.32,
+  "avg_adr_change_pct": 0.11,
+  "signal_label": "強烈偏多",
+  "signal_code": "strong_bull",
+  "fx_rate": 31.613,
+  "fx_date": "2026-05-02",
+  "adrs": [
+    {
+      "adr": "TSM",
+      "tw_code": "2330",
+      "tw_name": "台積電",
+      "tw_price": 2135.0,
+      "tw_close_date": "2026-04-30",
+      "adr_close": 397.67,
+      "adr_close_date": "2026-05-01",
+      "adr_change_pct": 0.41,
+      "implied_tw_price": 2514.31,
+      "premium_pct": 17.77,
+      "ratio": 5
+    },
+    {
+      "adr": "UMC",
+      "tw_code": "2303",
+      "tw_name": "聯電",
+      "tw_price": 77.3,
+      "tw_close_date": "2026-04-30",
+      "adr_close": 13.05,
+      "adr_close_date": "2026-05-01",
+      "adr_change_pct": -0.08,
+      "implied_tw_price": 82.51,
+      "premium_pct": 6.74,
+      "ratio": 5
+    },
+    {
+      "adr": "ASX",
+      "tw_code": "3711",
+      "tw_name": "日月光投控",
+      "tw_price": 478.0,
+      "tw_close_date": "2026-04-30",
+      "adr_close": 31.59,
+      "adr_close_date": "2026-05-01",
+      "adr_change_pct": 0.57,
+      "implied_tw_price": 499.33,
+      "premium_pct": 4.46,
+      "ratio": 2
+    },
+    {
+      "adr": "CHT",
+      "tw_code": "2412",
+      "tw_name": "中華電",
+      "tw_price": 136.0,
+      "tw_close_date": "2026-04-30",
+      "adr_close": 43.15,
+      "adr_close_date": "2026-05-01",
+      "adr_change_pct": -0.44,
+      "implied_tw_price": 136.41,
+      "premium_pct": 0.3,
+      "ratio": 10
+    }
+  ]
+}

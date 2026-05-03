@@ -35,6 +35,7 @@ const usTime = computed(() => fmtTime(lastUpdated.value.us))
         <nav class="flex gap-3 sm:gap-5 text-sm">
           <RouterLink to="/" class="hover:underline" active-class="underline">清單</RouterLink>
           <RouterLink to="/watchlist" class="hover:underline" active-class="underline">自選</RouterLink>
+          <RouterLink to="/adr" class="hover:underline" active-class="underline">ADR 訊號</RouterLink>
           <RouterLink to="/about" class="hover:underline" active-class="underline">說明</RouterLink>
         </nav>
       </div>

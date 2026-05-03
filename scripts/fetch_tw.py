@@ -179,7 +179,9 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
             continue
 
     # 4. PER history (3 years; empty for ETFs without earnings) — aggregate by year
+    #    Also keep a date->PER lookup for the band-chart time series.
     year_pes = defaultdict(list)
+    per_by_date = {}
     try:
         per_data = finmind('TaiwanStockPER', data_id=code,
                            start_date=three_y, end_date=today_str)
@@ -189,6 +191,7 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
                 pe = float(d.get('PER') or 0)
                 if pe > 0:
                     year_pes[y].append(pe)
+                    per_by_date[d['date']] = pe
             except (KeyError, ValueError, TypeError):
                 continue
     except Exception:
@@ -270,7 +273,30 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
     valuation_yield, yield_stats = compute_yield_valuation(latest_dividend, yearly_yields)
     valuation_pe, pe_stats = compute_pe_valuation(eps_ttm, yearly_pes)
 
-    # 7. Per-year dividend history with avg yield
+    # 7. Build sampled price history time series for band chart.
+    #    Sample every Nth trading day to keep JSON small while preserving shape.
+    #    Always include first + last point so the chart spans the full window.
+    SAMPLE_STRIDE = 4  # ~one point per business week
+    history = []
+    n_prices = len(prices_3y)
+    for i, row in enumerate(prices_3y):
+        if i != 0 and i != n_prices - 1 and i % SAMPLE_STRIDE != 0:
+            continue
+        try:
+            close = float(row['close'])
+            if close <= 0:
+                continue
+        except (KeyError, ValueError, TypeError):
+            continue
+        date = row['date']
+        point = {'d': date, 'c': round(close, 2)}
+        # Attach PER if we have one for this date (skipped silently for ETFs).
+        pe = per_by_date.get(date)
+        if pe is not None:
+            point['p'] = round(pe, 2)
+        history.append(point)
+
+    # 8. Per-year dividend history with avg yield
     dividend_history = []
     for year in sorted(by_year.keys(), reverse=True)[:5]:
         dividend = by_year[year]
@@ -303,6 +329,7 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
         'pe_stats': pe_stats,
         'eps_quarterly': eps_quarterly[:4],
         'dividend_history': dividend_history,
+        'price_history': history,
     }
 
 

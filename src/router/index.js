@@ -18,6 +18,11 @@ const routes = [
     props: true
   },
   {
+    path: '/adr',
+    name: 'adr',
+    component: () => import('../views/ADRDashboardView.vue')
+  },
+  {
     path: '/about',
     name: 'about',
     component: () => import('../views/AboutView.vue')
