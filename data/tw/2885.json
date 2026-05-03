@@ -1,7 +1,7 @@
 {
   "code": "2885",
   "name": "元大金",
-  "updated": "2026-05-03 15:00:33+08:00",
+  "updated": "2026-05-03 15:09:21+08:00",
   "close_date": "2026-04-30",
   "current_price": 52.2,
   "change": -0.1,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 2.74,
   "valuation_yield": {
-    "cheap": 25.8,
-    "fair": 32.42,
-    "expensive": 38.89
+    "cheap": 31.22,
+    "fair": 32.86,
+    "expensive": 34.67
   },
   "yield_stats": {
-    "high": 0.0601,
-    "avg": 0.0478,
-    "low": 0.0399
+    "high": 0.0496,
+    "avg": 0.0472,
+    "low": 0.0447
   },
   "valuation_pe": {
-    "cheap": 27.02,
-    "fair": 37.89,
-    "expensive": 52.31
+    "cheap": 35.84,
+    "fair": 36.95,
+    "expensive": 38.37
   },
   "pe_stats": {
-    "high": 19.09,
-    "avg": 13.83,
-    "low": 9.86
+    "high": 14.0,
+    "avg": 13.49,
+    "low": 13.08
   },
   "eps_quarterly": [
     {

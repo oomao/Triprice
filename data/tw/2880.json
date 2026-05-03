@@ -1,7 +1,7 @@
 {
   "code": "2880",
   "name": "華南金",
-  "updated": "2026-05-03 15:00:25+08:00",
+  "updated": "2026-05-03 15:09:14+08:00",
   "close_date": "2026-04-30",
   "current_price": 32.05,
   "change": -0.85,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 1.9,
   "valuation_yield": {
-    "cheap": 21.04,
-    "fair": 23.72,
-    "expensive": 28.4
+    "cheap": 22.54,
+    "fair": 23.63,
+    "expensive": 24.83
   },
   "yield_stats": {
-    "high": 0.0594,
-    "avg": 0.0527,
-    "low": 0.044
+    "high": 0.0555,
+    "avg": 0.0529,
+    "low": 0.0503
   },
   "valuation_pe": {
-    "cheap": 26.47,
-    "fair": 30.85,
-    "expensive": 39.99
+    "cheap": 29.5,
+    "fair": 30.31,
+    "expensive": 31.91
   },
   "pe_stats": {
-    "high": 21.05,
-    "avg": 16.24,
-    "low": 13.93
+    "high": 16.8,
+    "avg": 15.95,
+    "low": 15.52
   },
   "eps_quarterly": [
     {

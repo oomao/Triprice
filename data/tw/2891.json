@@ -1,7 +1,7 @@
 {
   "code": "2891",
   "name": "中信金",
-  "updated": "2026-05-03 15:00:40+08:00",
+  "updated": "2026-05-03 15:09:28+08:00",
   "close_date": "2026-04-30",
   "current_price": 52.3,
   "change": -0.8,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 4.08,
   "valuation_yield": {
-    "cheap": 27.55,
-    "fair": 33.14,
-    "expensive": 40.85
+    "cheap": 32.05,
+    "fair": 33.2,
+    "expensive": 34.43
   },
   "yield_stats": {
-    "high": 0.0835,
-    "avg": 0.0694,
-    "low": 0.0563
+    "high": 0.0718,
+    "avg": 0.0693,
+    "low": 0.0668
   },
   "valuation_pe": {
-    "cheap": 38.76,
-    "fair": 52.14,
-    "expensive": 78.09
+    "cheap": 47.43,
+    "fair": 52.71,
+    "expensive": 61.96
   },
   "pe_stats": {
-    "high": 19.14,
-    "avg": 12.78,
-    "low": 9.5
+    "high": 15.19,
+    "avg": 12.92,
+    "low": 11.63
   },
   "eps_quarterly": [
     {

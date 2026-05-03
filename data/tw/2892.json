@@ -1,7 +1,7 @@
 {
   "code": "2892",
   "name": "第一金",
-  "updated": "2026-05-03 15:00:41+08:00",
+  "updated": "2026-05-03 15:09:29+08:00",
   "close_date": "2026-04-30",
   "current_price": 28.85,
   "change": 0.3,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 1.87,
   "valuation_yield": {
-    "cheap": 26.1,
-    "fair": 28.65,
-    "expensive": 32.69
+    "cheap": 27.48,
+    "fair": 28.91,
+    "expensive": 30.49
   },
   "yield_stats": {
-    "high": 0.0364,
-    "avg": 0.0332,
-    "low": 0.0291
+    "high": 0.0346,
+    "avg": 0.0329,
+    "low": 0.0312
   },
   "valuation_pe": {
-    "cheap": 25.21,
-    "fair": 29.84,
-    "expensive": 33.73
+    "cheap": 29.17,
+    "fair": 29.9,
+    "expensive": 30.51
   },
   "pe_stats": {
-    "high": 18.04,
-    "avg": 15.96,
-    "low": 13.48
+    "high": 16.32,
+    "avg": 15.99,
+    "low": 15.6
   },
   "eps_quarterly": [
     {

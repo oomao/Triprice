@@ -1,7 +1,7 @@
 {
   "code": "2317",
   "name": "鴻海",
-  "updated": "2026-05-03 15:00:43+08:00",
+  "updated": "2026-05-03 15:09:31+08:00",
   "close_date": "2026-04-30",
   "current_price": 219.5,
   "change": -5.5,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 13.6,
   "valuation_yield": {
-    "cheap": 98.6,
-    "fair": 136.12,
-    "expensive": 226.5
+    "cheap": 112.98,
+    "fair": 135.74,
+    "expensive": 169.96
   },
   "yield_stats": {
-    "high": 0.0588,
-    "avg": 0.0426,
-    "low": 0.0256
+    "high": 0.0513,
+    "avg": 0.0427,
+    "low": 0.0341
   },
   "valuation_pe": {
-    "cheap": 135.86,
-    "fair": 198.16,
-    "expensive": 282.34
+    "cheap": 156.39,
+    "fair": 192.2,
+    "expensive": 215.55
   },
   "pe_stats": {
-    "high": 20.76,
-    "avg": 14.57,
-    "low": 9.99
+    "high": 15.85,
+    "avg": 14.13,
+    "low": 11.5
   },
   "eps_quarterly": [
     {

@@ -1,7 +1,7 @@
 {
   "code": "00878",
   "name": "國泰永續高股息",
-  "updated": "2026-05-03 15:00:13+08:00",
+  "updated": "2026-05-03 15:09:00+08:00",
   "close_date": "2026-04-30",
   "current_price": 25.39,
   "change": 0.09,
@@ -10,14 +10,14 @@
   "dividend_year": 2025,
   "eps_ttm": null,
   "valuation_yield": {
-    "cheap": 17.8,
-    "fair": 21.13,
-    "expensive": 25.39
+    "cheap": 19.91,
+    "fair": 21.1,
+    "expensive": 22.34
   },
   "yield_stats": {
-    "high": 0.0994,
-    "avg": 0.0838,
-    "low": 0.0697
+    "high": 0.0889,
+    "avg": 0.0839,
+    "low": 0.0792
   },
   "valuation_pe": null,
   "pe_stats": null,

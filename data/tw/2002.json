@@ -1,7 +1,7 @@
 {
   "code": "2002",
   "name": "中鋼",
-  "updated": "2026-05-03 15:00:54+08:00",
+  "updated": "2026-05-03 15:09:43+08:00",
   "close_date": "2026-04-30",
   "current_price": 18.75,
   "change": -0.25,
@@ -10,14 +10,14 @@
   "dividend_year": 2024,
   "eps_ttm": -0.28,
   "valuation_yield": {
-    "cheap": 19.65,
-    "fair": 24.11,
-    "expensive": 28.33
+    "cheap": 23.27,
+    "fair": 24.43,
+    "expensive": 25.71
   },
   "yield_stats": {
-    "high": 0.0168,
-    "avg": 0.0137,
-    "low": 0.0116
+    "high": 0.0142,
+    "avg": 0.0135,
+    "low": 0.0128
   },
   "valuation_pe": null,
   "pe_stats": null,

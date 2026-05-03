@@ -1,7 +1,7 @@
 {
   "code": "2884",
   "name": "玉山金",
-  "updated": "2026-05-03 15:00:31+08:00",
+  "updated": "2026-05-03 15:09:19+08:00",
   "close_date": "2026-04-30",
   "current_price": 31.85,
   "change": -0.55,
@@ -10,24 +10,24 @@
   "dividend_year": 2024,
   "eps_ttm": 2.12,
   "valuation_yield": {
-    "cheap": 23.8,
-    "fair": 26.35,
-    "expensive": 30.45
+    "cheap": 25.25,
+    "fair": 26.23,
+    "expensive": 27.29
   },
   "yield_stats": {
-    "high": 0.0504,
-    "avg": 0.0455,
-    "low": 0.0394
+    "high": 0.0475,
+    "avg": 0.0457,
+    "low": 0.044
   },
   "valuation_pe": {
-    "cheap": 31.14,
-    "fair": 39.28,
-    "expensive": 48.27
+    "cheap": 36.8,
+    "fair": 40.12,
+    "expensive": 43.25
   },
   "pe_stats": {
-    "high": 22.77,
-    "avg": 18.53,
-    "low": 14.69
+    "high": 20.4,
+    "avg": 18.92,
+    "low": 17.36
   },
   "eps_quarterly": [
     {

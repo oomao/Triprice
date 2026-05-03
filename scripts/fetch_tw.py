@@ -144,39 +144,53 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
 
     latest_year, latest_dividend = pick_latest_dividend(dict(by_year), today.year)
 
-    # If current year's dividend is partial (less than half of previous), substitute previous year's
-    # for daily yield calculation. Avoids artificially low daily yields polluting the range.
-    adj_by_year = dict(by_year)
-    if today.year in adj_by_year and (today.year - 1) in adj_by_year:
-        cur = adj_by_year[today.year]
-        prev = adj_by_year[today.year - 1]
-        if prev > 0 and cur < 0.5 * prev:
-            adj_by_year[today.year] = prev
-
-    # 3. Compute daily yields for past 3 years (effective annual dividend / day's close)
+    # 3. Aggregate daily closes by year (used for yearly yield + dividend history)
     year_closes = defaultdict(list)
-    daily_yields = []
     for p in prices_3y:
         try:
             year = int(p['date'][:4])
             close = float(p['close'])
-            if close <= 0:
-                continue
-            year_closes[year].append(close)
-            div = adj_by_year.get(year)
-            if div and div > 0:
-                daily_yields.append(div / close)
+            if close > 0:
+                year_closes[year].append(close)
         except (KeyError, ValueError, TypeError):
             continue
 
-    # 4. PER history (3 years; empty for ETFs without earnings)
+    # 4. PER history (3 years; empty for ETFs without earnings) — aggregate by year
+    year_pes = defaultdict(list)
     try:
         per_data = finmind('TaiwanStockPER', data_id=code,
                            start_date=three_y, end_date=today_str)
-        pes_3y = [float(d['PER']) for d in per_data
-                  if d.get('PER') is not None and float(d['PER']) > 0]
+        for d in per_data:
+            try:
+                y = int(d['date'][:4])
+                pe = float(d.get('PER') or 0)
+                if pe > 0:
+                    year_pes[y].append(pe)
+            except (KeyError, ValueError, TypeError):
+                continue
     except Exception:
-        pes_3y = []
+        pass
+
+    # 5. Last 3 COMPLETE fiscal years (skip current year; incomplete data skews ranges).
+    # Yearly aggregation matches "近 3 年最高 / 平均 / 最低" convention used by 存股 community.
+    candidate_years = sorted(
+        (y for y in year_closes.keys() if y < today.year),
+        reverse=True,
+    )[:3]
+
+    yearly_yields = []  # one yield per complete fiscal year (max 3 entries)
+    yearly_pes = []     # one avg PE per complete fiscal year
+    for year in candidate_years:
+        closes = year_closes[year]
+        if not closes:
+            continue
+        avg_close = sum(closes) / len(closes)
+        div = by_year.get(year, 0)
+        if div > 0 and avg_close > 0:
+            yearly_yields.append(div / avg_close)
+        pes = year_pes.get(year, [])
+        if pes:
+            yearly_pes.append(sum(pes) / len(pes))
 
     # 5. Quarterly EPS (last 8 for YoY) — skipped for ETFs (will be empty list)
     eps_quarterly = []
@@ -212,9 +226,9 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
     except Exception as e:
         print(f"  [{code}] EPS fetch failed: {e}")
 
-    # 6. Compute valuations
-    valuation_yield, yield_stats = compute_yield_valuation(latest_dividend, daily_yields)
-    valuation_pe, pe_stats = compute_pe_valuation(eps_ttm, pes_3y)
+    # 6. Compute valuations from yearly aggregates
+    valuation_yield, yield_stats = compute_yield_valuation(latest_dividend, yearly_yields)
+    valuation_pe, pe_stats = compute_pe_valuation(eps_ttm, yearly_pes)
 
     # 7. Per-year dividend history with avg yield
     dividend_history = []

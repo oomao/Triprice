@@ -3,6 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  schedule:
+    # Run 15 min after each data-fetch cron so Pages picks up the latest data.
+    # GITHUB_TOKEN-driven push from a workflow does NOT trigger downstream workflows,
+    # so deploy must trigger on its own schedule rather than on the data commits.
+    - cron: '15 6 * * 1-5'   # ~15 min after TW close fetch
+    - cron: '15 22 * * 1-5'  # ~15 min after US ADR fetch
   workflow_dispatch:
 
 permissions:

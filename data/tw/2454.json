@@ -1,7 +1,7 @@
 {
   "code": "2454",
   "name": "聯發科",
-  "updated": "2026-05-03 15:00:18+08:00",
+  "updated": "2026-05-03 15:09:06+08:00",
   "close_date": "2026-04-30",
   "current_price": 2610.0,
   "change": 35.0,
@@ -10,24 +10,24 @@
   "dividend_year": 2025,
   "eps_ttm": 66.17,
   "valuation_yield": {
-    "cheap": 342.17,
-    "fair": 664.48,
-    "expensive": 1560.0
+    "cheap": 409.24,
+    "fair": 634.62,
+    "expensive": 1372.53
   },
   "yield_stats": {
-    "high": 0.0848,
-    "avg": 0.0436,
-    "low": 0.0186
+    "high": 0.0709,
+    "avg": 0.0457,
+    "low": 0.0211
   },
   "valuation_pe": {
-    "cheap": 578.33,
-    "fair": 1321.78,
-    "expensive": 2622.32
+    "cheap": 956.08,
+    "fair": 1243.26,
+    "expensive": 1407.89
   },
   "pe_stats": {
-    "high": 39.63,
-    "avg": 19.98,
-    "low": 8.74
+    "high": 21.28,
+    "avg": 18.79,
+    "low": 14.45
   },
   "eps_quarterly": [
     {

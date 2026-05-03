@@ -104,6 +104,12 @@ const peTier = computed(() => priceTier(data.value?.current_price, data.value?.v
             目前位置：{{ yieldTier.label }}
           </span>
         </div>
+        <div
+          v-if="data.yield_stats && data.yield_stats.avg < 0.02"
+          class="mb-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-xs text-slate-700 leading-relaxed"
+        >
+          ⚠️ 此股殖利率偏低（平均 {{ fmt(data.yield_stats.avg * 100, 2) }}%）—— 殖利率法對成長股會嚴重低估合理價，請以下方 PE 法為主要參考。
+        </div>
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
           <table class="w-full text-sm">
             <tbody>

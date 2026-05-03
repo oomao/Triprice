@@ -1,7 +1,7 @@
 {
   "code": "0056",
   "name": "元大高股息",
-  "updated": "2026-05-03 15:00:11+08:00",
+  "updated": "2026-05-03 15:08:59+08:00",
   "close_date": "2026-04-30",
   "current_price": 40.9,
   "change": -0.03,
@@ -10,14 +10,14 @@
   "dividend_year": 2025,
   "eps_ttm": null,
   "valuation_yield": {
-    "cheap": 28.69,
-    "fair": 41.51,
-    "expensive": 65.86
+    "cheap": 35.39,
+    "fair": 43.17,
+    "expensive": 59.38
   },
   "yield_stats": {
-    "high": 0.135,
-    "avg": 0.0933,
-    "low": 0.0588
+    "high": 0.1094,
+    "avg": 0.0897,
+    "low": 0.0652
   },
   "valuation_pe": null,
   "pe_stats": null,
