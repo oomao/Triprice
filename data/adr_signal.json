@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-04 01:43:33+08:00",
+  "updated": "2026-05-04 02:16:19+08:00",
   "avg_premium_pct": 7.32,
   "avg_adr_change_pct": 0.11,
   "signal_label": "強烈偏多",
@@ -10,7 +10,7 @@
     {
       "adr": "TSM",
       "tw_code": "2330",
-      "tw_name": "Investment_Trust",
+      "tw_name": "台積電",
       "tw_price": 2135.0,
       "tw_close_date": "2026-04-30",
       "tw_change": -45.0,
@@ -26,7 +26,7 @@
     {
       "adr": "UMC",
       "tw_code": "2303",
-      "tw_name": "Dealer_Hedging",
+      "tw_name": "聯電",
       "tw_price": 77.3,
       "tw_close_date": "2026-04-30",
       "tw_change": 2.8,
@@ -42,7 +42,7 @@
     {
       "adr": "ASX",
       "tw_code": "3711",
-      "tw_name": "Investment_Trust",
+      "tw_name": "日月光投控",
       "tw_price": 478.0,
       "tw_close_date": "2026-04-30",
       "tw_change": -10.5,
@@ -58,7 +58,7 @@
     {
       "adr": "CHT",
       "tw_code": "2412",
-      "tw_name": "Dealer_Hedging",
+      "tw_name": "中華電",
       "tw_price": 136.0,
       "tw_close_date": "2026-04-30",
       "tw_change": -0.5,

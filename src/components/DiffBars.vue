@@ -2,53 +2,54 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  // Required: today's % change for both legs
   twChangePct: { type: Number, default: null },
   adrChangePct: { type: Number, default: null },
   twLabel: { type: String, default: '台股 今日' },
   adrLabel: { type: String, default: 'ADR 今日' },
-  // Optional context line
   twDate: { type: String, default: '' },
   adrDate: { type: String, default: '' },
 })
 
+// Layout: 3 fixed columns — left label / center bar (bidirectional) / right value.
+// All numbers are in the SVG's viewBox space (px-equivalent).
 const W = 320
 const H = 110
-const PAD_L = 60      // room for left labels
-const PAD_R = 50      // room for right values
-const PAD_T = 18
-const PAD_B = 30
+const PAD_T = 22
+const PAD_B = 8
+const COL_LABEL = 78    // left column width (label + date)
+const COL_VALUE = 64    // right column width (always visible value)
 const BAR_H = 18
-const ROW_GAP = 8
-const MID_X = (PAD_L + (W - PAD_R)) / 2
+const ROW_GAP = 6
+const BAR_LEFT = COL_LABEL
+const BAR_RIGHT = W - COL_VALUE
+const MID_X = (BAR_LEFT + BAR_RIGHT) / 2
+const HALF = (BAR_RIGHT - BAR_LEFT) / 2
 
-// Auto-scale axis: max(|tw|, |adr|, 1) so a 0.3% move isn't invisible
+// Auto-scale: max(|tw|, |adr|, 1) with 15% headroom so a 0.3% move is still visible.
 const maxAbs = computed(() => {
   const tw = Math.abs(props.twChangePct ?? 0)
   const adr = Math.abs(props.adrChangePct ?? 0)
-  return Math.max(tw, adr, 1) * 1.15 // 15% headroom
+  return Math.max(tw, adr, 1) * 1.15
 })
-
-const halfWidth = (W - PAD_L - PAD_R) / 2
 
 function barFor(v, y) {
   if (v == null || isNaN(v)) return null
-  const len = halfWidth * (v / maxAbs.value)
+  const len = HALF * (v / maxAbs.value)
   return {
     x: len >= 0 ? MID_X : MID_X + len,
     width: Math.abs(len),
     y,
     color: v >= 0 ? '#dc2626' : '#10b981',
-    valX: len >= 0 ? MID_X + Math.abs(len) + 4 : MID_X + len - 4,
-    valAnchor: len >= 0 ? 'start' : 'end',
   }
 }
 
 const twBar = computed(() => barFor(props.twChangePct, PAD_T))
 const adrBar = computed(() => barFor(props.adrChangePct, PAD_T + BAR_H + ROW_GAP))
 
-// Diff: ADR change minus TW change. Positive => ADR did better in its session
-// than TW did in same-day session => leading bullish for TW next open.
+const adrRowY = computed(() => PAD_T + BAR_H + ROW_GAP)
+
+// Diff: ADR change minus TW change. Positive ⇒ ADR did better than TW today
+// ⇒ leading bullish for TW next open. Pp = "percentage point".
 const diff = computed(() => {
   if (props.twChangePct == null || props.adrChangePct == null) return null
   return props.adrChangePct - props.twChangePct
@@ -79,54 +80,64 @@ function fmtPct(v) {
   if (v == null || isNaN(v)) return '—'
   return `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`
 }
+
+function pctColor(v) {
+  if (v == null) return 'var(--ink-muted)'
+  return v >= 0 ? '#dc2626' : '#10b981'
+}
 </script>
 
 <template>
   <div>
     <svg :viewBox="`0 0 ${W} ${H}`" class="w-full" style="max-height: 130px">
-      <!-- 0% baseline -->
-      <line :x1="MID_X" :x2="MID_X" :y1="PAD_T - 4" :y2="PAD_T + BAR_H * 2 + ROW_GAP + 4"
+      <!-- 0% baseline + tick label -->
+      <line :x1="MID_X" :x2="MID_X"
+            :y1="PAD_T - 6" :y2="PAD_T + BAR_H * 2 + ROW_GAP + 4"
             stroke="var(--rule)" stroke-width="1.2" />
-      <text :x="MID_X" :y="PAD_T - 6" text-anchor="middle"
-            fill="var(--ink-muted)" font-size="9" font-family="ui-monospace, monospace">0%</text>
+      <text :x="MID_X" :y="PAD_T - 8" text-anchor="middle"
+            fill="var(--ink-muted)" font-size="9"
+            font-family="ui-monospace, monospace">0%</text>
 
-      <!-- TW row -->
-      <text :x="PAD_L - 6" :y="PAD_T + BAR_H / 2 + 4" text-anchor="end"
-            fill="var(--ink)" font-size="11" font-weight="600">{{ twLabel }}</text>
-      <rect v-if="twBar" :x="twBar.x" :y="twBar.y" :width="twBar.width" :height="BAR_H"
+      <!-- ── TW row ─────────────────────────────────────── -->
+      <text :x="BAR_LEFT - 8" :y="PAD_T + BAR_H / 2 + 1"
+            text-anchor="end" fill="var(--ink)"
+            font-size="11" font-weight="600">{{ twLabel }}</text>
+      <text v-if="twDate" :x="BAR_LEFT - 8" :y="PAD_T + BAR_H / 2 + 11"
+            text-anchor="end" fill="var(--ink-muted)"
+            font-size="8" font-family="ui-monospace, monospace">{{ twDate }}</text>
+      <rect v-if="twBar" :x="twBar.x" :y="twBar.y"
+            :width="Math.max(twBar.width, 1.5)" :height="BAR_H"
             :fill="twBar.color" rx="1" />
-      <text v-if="twBar" :x="twBar.valX" :y="twBar.y + BAR_H / 2 + 4" :text-anchor="twBar.valAnchor"
-            :fill="twBar.color" font-size="11" font-weight="700"
+      <text :x="BAR_RIGHT + 6" :y="PAD_T + BAR_H / 2 + 4"
+            text-anchor="start" :fill="pctColor(twChangePct)"
+            font-size="12" font-weight="700"
             font-family="ui-sans-serif, system-ui, sans-serif">
         {{ fmtPct(twChangePct) }}
       </text>
 
-      <!-- ADR row -->
-      <text :x="PAD_L - 6" :y="adrBar?.y + BAR_H / 2 + 4 || PAD_T + BAR_H + ROW_GAP + BAR_H / 2 + 4"
-            text-anchor="end" fill="var(--ink)" font-size="11" font-weight="600">{{ adrLabel }}</text>
-      <rect v-if="adrBar" :x="adrBar.x" :y="adrBar.y" :width="adrBar.width" :height="BAR_H"
+      <!-- ── ADR row ────────────────────────────────────── -->
+      <text :x="BAR_LEFT - 8" :y="adrRowY + BAR_H / 2 + 1"
+            text-anchor="end" fill="var(--ink)"
+            font-size="11" font-weight="600">{{ adrLabel }}</text>
+      <text v-if="adrDate" :x="BAR_LEFT - 8" :y="adrRowY + BAR_H / 2 + 11"
+            text-anchor="end" fill="var(--ink-muted)"
+            font-size="8" font-family="ui-monospace, monospace">{{ adrDate }}</text>
+      <rect v-if="adrBar" :x="adrBar.x" :y="adrBar.y"
+            :width="Math.max(adrBar.width, 1.5)" :height="BAR_H"
             :fill="adrBar.color" rx="1" />
-      <text v-if="adrBar" :x="adrBar.valX" :y="adrBar.y + BAR_H / 2 + 4" :text-anchor="adrBar.valAnchor"
-            :fill="adrBar.color" font-size="11" font-weight="700"
+      <text :x="BAR_RIGHT + 6" :y="adrRowY + BAR_H / 2 + 4"
+            text-anchor="start" :fill="pctColor(adrChangePct)"
+            font-size="12" font-weight="700"
             font-family="ui-sans-serif, system-ui, sans-serif">
         {{ fmtPct(adrChangePct) }}
       </text>
-
-      <!-- Date axis labels -->
-      <text v-if="twDate" :x="PAD_L - 6" :y="PAD_T + BAR_H + 4" text-anchor="end"
-            fill="var(--ink-muted)" font-size="8" font-family="ui-monospace, monospace">
-        {{ twDate }}
-      </text>
-      <text v-if="adrDate" :x="PAD_L - 6" :y="(adrBar?.y || (PAD_T + BAR_H + ROW_GAP)) + BAR_H + 4" text-anchor="end"
-            fill="var(--ink-muted)" font-size="8" font-family="ui-monospace, monospace">
-        {{ adrDate }}
-      </text>
     </svg>
 
-    <div v-if="diff != null && diffSignal" :class="['mt-1 px-2.5 py-1.5 border text-xs flex items-center justify-between', diffColorClass]">
+    <div v-if="diff != null && diffSignal"
+         :class="['mt-1 px-2.5 py-1.5 border text-xs flex items-center justify-between flex-wrap gap-2', diffColorClass]">
       <span>
         ADR − 台股 差距
-        <strong class="ml-1">{{ diff >= 0 ? '+' : '' }}{{ diff.toFixed(2) }} pp</strong>
+        <strong class="ml-1 font-mono">{{ diff >= 0 ? '+' : '' }}{{ diff.toFixed(2) }} pp</strong>
       </span>
       <span class="font-semibold">→ {{ diffSignal.label }}</span>
     </div>

@@ -328,7 +328,9 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
         for r in chip_data:
             try:
                 d = r.get('date')
-                name = r.get('name', '')
+                # Use a different local var so we don't shadow the outer
+                # `name` (which holds the company name and is later returned).
+                inst = r.get('name', '')
                 buy = float(r.get('buy') or 0)
                 sell = float(r.get('sell') or 0)
                 net = buy - sell
@@ -336,12 +338,12 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
                 continue
             if not d:
                 continue
-            if name.startswith('Foreign'):
+            if inst.startswith('Foreign'):
                 # Foreign_Investor / Foreign_Dealer_Self all roll up here
                 by_date[d]['foreign'] += net
-            elif name.startswith('Investment_Trust') or name.startswith('Trust'):
+            elif inst.startswith('Investment_Trust') or inst.startswith('Trust'):
                 by_date[d]['trust'] += net
-            elif name.startswith('Dealer'):
+            elif inst.startswith('Dealer'):
                 by_date[d]['dealer'] += net
         for d in sorted(by_date.keys())[-60:]:
             b = by_date[d]
