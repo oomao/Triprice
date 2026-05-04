@@ -24,6 +24,31 @@
           "adr_change_pct": -0.44
         }
       }
+    },
+    {
+      "date": "2026-05-05",
+      "updated": "2026-05-05 06:57:30+08:00",
+      "avg_premium_pct": 2.6,
+      "avg_adr_change_pct": 0.47,
+      "signal_code": "bull",
+      "per_adr": {
+        "TSM": {
+          "premium_pct": 11.78,
+          "adr_change_pct": 0.99
+        },
+        "UMC": {
+          "premium_pct": 1.22,
+          "adr_change_pct": -0.54
+        },
+        "ASX": {
+          "premium_pct": -2.67,
+          "adr_change_pct": 2.18
+        },
+        "CHT": {
+          "premium_pct": 0.08,
+          "adr_change_pct": -0.74
+        }
+      }
     }
   ]
 }
