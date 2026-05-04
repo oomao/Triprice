@@ -179,19 +179,26 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
             continue
 
     # 4. PER history (3 years; empty for ETFs without earnings) — aggregate by year
-    #    Also keep a date->PER lookup for the band-chart time series.
+    #    Also keep a date->PER lookup for the band-chart time series, and grab
+    #    the latest PBR / dividend_yield rows for the screener page.
     year_pes = defaultdict(list)
     per_by_date = {}
+    latest_pbr = None
     try:
         per_data = finmind('TaiwanStockPER', data_id=code,
                            start_date=three_y, end_date=today_str)
+        # Sort ascending by date so the trailing iteration finds the newest PBR.
+        per_data.sort(key=lambda r: r.get('date', ''))
         for d in per_data:
             try:
                 y = int(d['date'][:4])
                 pe = float(d.get('PER') or 0)
+                pb = float(d.get('PBR') or 0)
                 if pe > 0:
                     year_pes[y].append(pe)
                     per_by_date[d['date']] = pe
+                if pb > 0:
+                    latest_pbr = pb
             except (KeyError, ValueError, TypeError):
                 continue
     except Exception:
@@ -394,6 +401,7 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
         'price_history': history,
         'kline': kline,
         'chips': chips,
+        'pbr': round(latest_pbr, 2) if latest_pbr is not None else None,
     }
 
 

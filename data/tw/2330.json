@@ -1,7 +1,7 @@
 {
   "code": "2330",
   "name": "台積電",
-  "updated": "2026-05-04 02:15:14+08:00",
+  "updated": "2026-05-04 13:53:22+08:00",
   "close_date": "2026-04-30",
   "current_price": 2135.0,
   "change": -45.0,
@@ -3455,6 +3455,7 @@
       "t": -20472055
     }
   ],
+  "pbr": 10.22,
   "adr": {
     "symbol": "TSM",
     "close": 397.67,
@@ -3462,8 +3463,8 @@
     "change": 1.61,
     "change_pct": 0.41,
     "ratio": 5,
-    "fx_rate": 31.613,
-    "implied_tw_price": 2514.31,
-    "premium_pct": 17.77
+    "fx_rate": 31.585,
+    "implied_tw_price": 2512.08,
+    "premium_pct": 17.66
   }
 }

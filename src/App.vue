@@ -27,6 +27,7 @@ const usTime = computed(() => fmtTime(lastUpdated.value.us))
 const NAV = [
   { to: '/',         label: '清單' },
   { to: '/etf',      label: 'ETF' },
+  { to: '/screener', label: '選股' },
   { to: '/market',   label: '大盤' },
   { to: '/watchlist',label: '自選' },
   { to: '/adr',      label: 'ADR' },

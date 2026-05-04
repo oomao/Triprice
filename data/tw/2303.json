@@ -1,7 +1,7 @@
 {
   "code": "2303",
   "name": "聯電",
-  "updated": "2026-05-04 02:15:18+08:00",
+  "updated": "2026-05-04 13:53:27+08:00",
   "close_date": "2026-04-30",
   "current_price": 77.3,
   "change": 2.8,
@@ -3455,6 +3455,7 @@
       "t": 35167028
     }
   ],
+  "pbr": 2.39,
   "adr": {
     "symbol": "UMC",
     "close": 13.05,
@@ -3462,8 +3463,8 @@
     "change": -0.01,
     "change_pct": -0.08,
     "ratio": 5,
-    "fx_rate": 31.613,
-    "implied_tw_price": 82.51,
-    "premium_pct": 6.74
+    "fx_rate": 31.585,
+    "implied_tw_price": 82.44,
+    "premium_pct": 6.65
   }
 }

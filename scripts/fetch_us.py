@@ -64,12 +64,24 @@ def main():
     fx = fx_info['close']
     fx_date = fx_info['close_date']
     print(f"USD/TWD = {fx:.3f} ({fx_date})")
+
+    # --- VIX (CBOE Volatility Index) — used by the screener as a market-wide
+    #     panic gauge (e.g. VIX > 40 traditionally signals deep fear) ---
+    vix_info = get_close('^VIX')
+    if vix_info:
+        print(f"VIX = {vix_info['close']:.2f} ({vix_info['close_date']})")
+
+    payload = {
+        'usd_twd': round(fx, 4),
+        'date': fx_date,
+        'updated': datetime.now(TAIPEI).strftime('%Y-%m-%d %H:%M:%S+08:00'),
+    }
+    if vix_info:
+        payload['vix'] = round(vix_info['close'], 2)
+        payload['vix_date'] = vix_info['close_date']
+        payload['vix_change_pct'] = vix_info['change_pct']
     with open(FX_FILE, 'w', encoding='utf-8') as f:
-        json.dump({
-            'usd_twd': round(fx, 4),
-            'date': fx_date,
-            'updated': datetime.now(TAIPEI).strftime('%Y-%m-%d %H:%M:%S+08:00'),
-        }, f, ensure_ascii=False, indent=2)
+        json.dump(payload, f, ensure_ascii=False, indent=2)
 
     # --- ADR data ---
     success = 0

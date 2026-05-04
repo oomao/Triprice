@@ -1,7 +1,7 @@
 {
   "code": "3711",
   "name": "日月光投控",
-  "updated": "2026-05-04 02:15:22+08:00",
+  "updated": "2026-05-04 13:53:31+08:00",
   "close_date": "2026-04-30",
   "current_price": 478.0,
   "change": -10.5,
@@ -3455,6 +3455,7 @@
       "t": -2602471
     }
   ],
+  "pbr": 6.03,
   "adr": {
     "symbol": "ASX",
     "close": 31.59,
@@ -3462,8 +3463,8 @@
     "change": 0.18,
     "change_pct": 0.57,
     "ratio": 2,
-    "fx_rate": 31.613,
-    "implied_tw_price": 499.33,
-    "premium_pct": 4.46
+    "fx_rate": 31.585,
+    "implied_tw_price": 498.89,
+    "premium_pct": 4.37
   }
 }

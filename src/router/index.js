@@ -23,6 +23,11 @@ const routes = [
     component: () => import('../views/ETFListView.vue')
   },
   {
+    path: '/screener',
+    name: 'screener',
+    component: () => import('../views/ScreenerView.vue')
+  },
+  {
     path: '/market',
     name: 'market',
     component: () => import('../views/MarketView.vue')
