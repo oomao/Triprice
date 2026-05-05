@@ -468,9 +468,14 @@ def main():
     with open(last_updated_file, 'w', encoding='utf-8') as f:
         json.dump(existing, f, ensure_ascii=False, indent=2)
 
+    # Partial failures: warn but still allow commit/push of successful data.
+    # Total failure: exit 1 so workflow surfaces the issue and we don't push empty results.
     if failures:
-        print(f"Failed: {', '.join(failures)}")
-        sys.exit(1)
+        msg = f"Failed: {', '.join(failures)}"
+        print(msg)
+        print(f"::warning::TW fetch partial failure ({len(failures)}/{len(targets)}): {', '.join(failures)}")
+        if success == 0:
+            sys.exit(1)
 
 
 if __name__ == '__main__':
