@@ -23,6 +23,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Cap wait time when GitHub can't acquire a hosted runner — fail fast so the
+    # next scheduled run (or manual re-run) can take over instead of burning 6h default.
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
