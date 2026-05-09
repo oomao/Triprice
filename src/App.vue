@@ -26,11 +26,11 @@ const usTime = computed(() => fmtTime(lastUpdated.value.us))
 
 const NAV = [
   { to: '/',         label: '清單' },
+  { to: '/adr',      label: 'ADR' },
   { to: '/etf',      label: 'ETF' },
   { to: '/screener', label: '選股' },
   { to: '/market',   label: '大盤' },
   { to: '/watchlist',label: '自選' },
-  { to: '/adr',      label: 'ADR' },
   { to: '/settings', label: '設定' },
   { to: '/about',    label: '說明' },
 ]
@@ -45,12 +45,12 @@ const NAV = [
           <span class="text-lg font-extrabold tracking-tight">Triprice</span>
           <span class="hidden sm:inline text-[10px] uppercase tracking-[0.18em] text-slate-400 group-hover:text-amber-400 transition">TW · valuation tool</span>
         </RouterLink>
-        <nav class="ml-auto flex items-center text-[13px]">
+        <nav class="ml-auto flex items-center text-[13px] overflow-x-auto whitespace-nowrap -mr-4 pr-4 sm:mr-0 sm:pr-0 nav-scroll">
           <RouterLink
             v-for="n in NAV"
             :key="n.to"
             :to="n.to"
-            class="px-2.5 sm:px-3 py-2 transition relative"
+            class="px-2.5 sm:px-3 py-2 transition relative shrink-0"
             active-class="active-nav"
             :exact-active-class="n.to === '/' ? 'active-nav' : undefined"
           >
@@ -60,7 +60,7 @@ const NAV = [
       </div>
     </header>
 
-    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-5 sm:py-7">
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-5 sm:py-7 overflow-x-clip">
       <RouterView v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -97,4 +97,11 @@ const NAV = [
   height: 2px;
   background: #f59e0b;
 }
+
+/* Mobile nav: hide scrollbar so the horizontal-scroll fallback at narrow widths
+   doesn't leave a 7px scrollbar across every page. */
+.nav-scroll {
+  scrollbar-width: none;
+}
+.nav-scroll::-webkit-scrollbar { display: none; }
 </style>
