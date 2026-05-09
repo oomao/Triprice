@@ -98,7 +98,7 @@ ADR 溢價率   = (ADR 隱含台股價 − 台股收盤) / 台股收盤
 `/adr` 儀表板的核心：把 ADR 報酬扣掉匯率與大盤影響，再加上偏離常態的溢價，用回歸算明天 TW 開盤 / 盤中最高 / 盤中最低三條 + 80% 信心區間。
 
 **訊號乾淨化**：
-- **ADR alpha** = ADR USD 漲跌 − USD/TWD 漲跌 − rolling 90d β · SOX 漲跌（剝 FX 與 sector beta）
+- **個股 α**（JSON: `adr_alpha_pct`）= ADR USD 漲跌 − USD/TWD 漲跌 − rolling 90d β · SOX 漲跌（剝 FX 與 sector beta，留下純個股動能）
 - **SOX** 整體漲跌 %（保留 sector 訊號）
 - **溢價 z-score** = (今日溢價 − 60d rolling median) / MAD（去掉結構性偏移）
 

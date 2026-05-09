@@ -202,7 +202,7 @@ const showRidgeDetails = ref(false)
         </p>
         <p><strong>訊號乾淨化</strong>：</p>
         <ul class="text-xs list-disc pl-5 space-y-1 text-slate-600">
-          <li><strong>ADR alpha</strong> = ADR USD 漲跌 − USD/TWD 漲跌 − rolling 90d β · SOX 漲跌（剝掉 FX 與 sector beta，留下純個股 alpha）</li>
+          <li><strong>個股 α</strong> = ADR USD 漲跌 − USD/TWD 漲跌 − rolling 90d β · SOX 漲跌（剝掉 FX 與 sector beta，留下純個股動能；JSON 欄位名 <code>adr_alpha_pct</code>）</li>
           <li><strong>SOX</strong> 整體漲跌 %（保留 sector 訊號）</li>
           <li><strong>溢價 z-score</strong> = (今日溢價 − 60d rolling median) / MAD（去掉結構性偏移，例如 TSMC 長期 8%+ 溢價）</li>
         </ul>

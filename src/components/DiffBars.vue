@@ -8,6 +8,9 @@ const props = defineProps({
   adrLabel: { type: String, default: 'ADR 今日' },
   twDate: { type: String, default: '' },
   adrDate: { type: String, default: '' },
+  // Hide the naive "差距 → 隔日方向" hint when used next to the cleaned
+  // Ridge prediction (which is more rigorous and would conflict).
+  showDiffSignal: { type: Boolean, default: true },
 })
 
 // Layout: 3 fixed columns — left label / center bar (bidirectional) / right value.
@@ -133,13 +136,17 @@ function pctColor(v) {
       </text>
     </svg>
 
-    <div v-if="diff != null && diffSignal"
+    <div v-if="diff != null && diffSignal && showDiffSignal"
          :class="['mt-1 px-2.5 py-1.5 border text-xs flex items-center justify-between flex-wrap gap-2', diffColorClass]">
       <span>
         ADR − 台股 差距
         <strong class="ml-1 font-mono">{{ diff >= 0 ? '+' : '' }}{{ diff.toFixed(2) }} pp</strong>
       </span>
       <span class="font-semibold">→ {{ diffSignal.label }}</span>
+    </div>
+    <div v-else-if="diff != null"
+         class="mt-1 text-[11px] text-slate-500 text-right font-mono">
+      ADR − 台股 差距 <strong>{{ diff >= 0 ? '+' : '' }}{{ diff.toFixed(2) }} pp</strong>
     </div>
   </div>
 </template>

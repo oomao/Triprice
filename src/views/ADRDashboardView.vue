@@ -89,6 +89,14 @@ const staleByCode = computed(() => {
   return out
 })
 
+// Map tw_code → raw signal entry from adr_signal.json. Used to render the
+// raw "today's TW vs ADR move" diff bars + premium chip inside each prediction
+// card (so we don't show the same per-stock data in two separate sections).
+const rawByCode = computed(() => {
+  if (!signal.value?.adrs) return {}
+  return Object.fromEntries(signal.value.adrs.map((a) => [a.tw_code, a]))
+})
+
 function pctClassPrediction(v) {
   if (v == null) return 'text-slate-400'
   if (v >= 1.5) return 'text-red-600 font-semibold'
@@ -324,50 +332,7 @@ const soxRange = computed(() => {
         </div>
       </section>
 
-      <!-- Per-ADR cards (3 headline only) -->
-      <section class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-        <RouterLink
-          v-for="e in signal.adrs"
-          :key="e.adr"
-          :to="`/stock/${e.tw_code}`"
-          class="block bg-white border border-[#e7e7e1] p-4 hover:border-[#0a0e16] transition"
-          :class="staleByCode[e.tw_code] ? 'border-amber-300 bg-amber-50/30' : ''"
-        >
-          <div class="flex items-baseline justify-between mb-3">
-            <div>
-              <div class="font-bold text-base">{{ e.tw_name }}</div>
-              <div class="text-xs text-slate-500 mt-0.5 font-mono">{{ e.tw_code }} · ADR {{ e.adr }}</div>
-              <div v-if="staleByCode[e.tw_code]" class="text-[10px] text-amber-700 mt-0.5">
-                ⚠ ADR 報價停滯，溢價數字僅供參考
-              </div>
-            </div>
-            <div class="text-right">
-              <div class="text-xs text-slate-500">溢價</div>
-              <div :class="premiumClass(e.premium_pct)" class="text-lg">
-                {{ e.premium_pct >= 0 ? '+' : '' }}{{ fmt(e.premium_pct) }}%
-              </div>
-            </div>
-          </div>
-
-          <DiffBars
-            :tw-change-pct="e.tw_change_pct"
-            :adr-change-pct="e.adr_change_pct"
-            :tw-date="e.tw_close_date"
-            :adr-date="e.adr_close_date"
-          />
-
-          <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <div class="text-slate-400">台股收盤</div>
-              <div class="font-mono">{{ fmt(e.tw_price) }}</div>
-            </div>
-            <div>
-              <div class="text-slate-400">ADR 隱含台股價</div>
-              <div class="font-mono">{{ fmt(e.implied_tw_price) }}</div>
-            </div>
-          </div>
-        </RouterLink>
-      </section>
+      <!-- (3 個別 ADR 卡片已合併進下方預測卡，避免 raw 與 cleaned 兩套資訊) -->
 
       <!-- History sparklines -->
       <section v-if="history.length >= 2" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
@@ -439,7 +404,7 @@ const soxRange = computed(() => {
           <span class="text-xs text-slate-500">{{ prediction.method }} · 回看 {{ prediction.lookback_days }} 天 · {{ prediction.updated?.slice(0,10) }} 更新</span>
         </div>
         <p class="text-xs text-slate-500 mb-4 leading-relaxed">
-          訊號乾淨化：<strong>ADR alpha</strong>（剝 FX 與 SOX β）+ <strong>SOX</strong> 漲跌 + <strong>溢價 z-score</strong>（去掉 60 日結構性偏移）→ Ridge 回歸 → 80% Conformal 區間。
+          訊號乾淨化：<strong>個股 α</strong>（ADR USD 漲跌剝掉 FX 與 SOX β，留下純個股動能）+ <strong>SOX</strong> 漲跌 + <strong>溢價 z-score</strong>（去掉 60 日結構性偏移）→ Ridge 回歸 → 80% Conformal 區間。
           底部展開可看過去 30 個交易日 walk-forward 逐日驗證（每日重新訓練、預測、跟實際比對）。
         </p>
 
@@ -470,7 +435,26 @@ const soxRange = computed(() => {
             <span v-if="stock.signals_cleaned.hnhpf_stale" class="ml-2">⚠ HNHPF 報價停滯（成交量過低或與前日相同），鴻海預測僅供參考</span>
           </div>
 
-          <!-- Cleaned signals — ordered by typical Ridge weight: SOX > 溢價 z > ADR alpha > FX -->
+          <!-- Today's raw signals (DiffBars + premium chip) — merged from the
+               old standalone "3 個別 ADR 卡片" section to avoid duplicated info. -->
+          <div v-if="rawByCode[code]" class="px-4 pt-3 pb-2 border-b border-[#e7e7e1]">
+            <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">今日 raw 訊號</div>
+            <div class="flex items-baseline justify-end gap-2 text-xs mb-1">
+              <span class="text-slate-500">ADR 溢價</span>
+              <span :class="premiumClass(rawByCode[code].premium_pct)" class="font-mono font-semibold">
+                {{ rawByCode[code].premium_pct >= 0 ? '+' : '' }}{{ fmt(rawByCode[code].premium_pct) }}%
+              </span>
+            </div>
+            <DiffBars
+              :tw-change-pct="rawByCode[code].tw_change_pct"
+              :adr-change-pct="rawByCode[code].adr_change_pct"
+              :tw-date="rawByCode[code].tw_close_date"
+              :adr-date="rawByCode[code].adr_close_date"
+              :show-diff-signal="false"
+            />
+          </div>
+
+          <!-- Cleaned signals — ordered by typical Ridge weight: SOX > 溢價 z > 個股 α > FX -->
           <div class="px-4 pt-3 pb-2">
             <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">訊號分解 (cleaned)</div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
@@ -489,11 +473,11 @@ const soxRange = computed(() => {
                 <div class="text-[10px] text-slate-400">raw {{ pctSign(stock.signals_cleaned.premium_raw_pct) }}</div>
               </div>
               <div>
-                <div class="text-slate-400">ADR alpha</div>
+                <div class="text-slate-400">個股 α</div>
                 <div class="font-mono" :class="changeClass(stock.signals_cleaned.adr_alpha_pct)">
                   {{ pctSign(stock.signals_cleaned.adr_alpha_pct) }}
                 </div>
-                <div class="text-[10px] text-slate-400">扣 SOX β = {{ fmt(stock.signals_cleaned.sox_beta, 2) }}</div>
+                <div class="text-[10px] text-slate-400">ADR 剝 FX + SOX β · β = {{ fmt(stock.signals_cleaned.sox_beta, 2) }}</div>
               </div>
               <div>
                 <div class="text-slate-400">USD/TWD</div>
@@ -676,7 +660,7 @@ const soxRange = computed(() => {
           <div v-if="expandedWalkForward[code] && stock.model_quality?.open_gap"
                class="px-4 pb-3 text-[11px] text-slate-500 leading-relaxed">
             <div class="mt-3"><strong>Ridge 標準化權重 (open_gap)</strong>:
-              ADR alpha {{ stock.model_quality.open_gap.coef.adr_alpha }} ·
+              個股 α {{ stock.model_quality.open_gap.coef.adr_alpha }} ·
               SOX {{ stock.model_quality.open_gap.coef.sox_chg }} ·
               Premium z {{ stock.model_quality.open_gap.coef.premium_z }} ·
               intercept {{ stock.model_quality.open_gap.intercept }}
@@ -698,7 +682,7 @@ const soxRange = computed(() => {
       <div class="text-xs text-slate-500 leading-relaxed bg-slate-50 p-3 border border-slate-200">
         <p class="mb-1"><strong>計算邏輯</strong></p>
         <p>每檔 ADR 的隱含台股價 = ADR 收盤 × USD/TWD ÷ ratio；溢價 = (隱含價 − 台股收盤) ÷ 台股收盤。</p>
-        <p class="mt-1">頂部 ADR 平均訊號 / SOX 標籤是 raw 速覽。下方「明日預測」用 Ridge + Conformal 把 ADR alpha + SOX + 溢價 z 合成單一預測，每天 06:00 cron 重新訓練、重新預測。</p>
+        <p class="mt-1">頂部 ADR 平均訊號 / SOX 標籤是 raw 速覽。下方「明日預測」用 Ridge + Conformal 把個股 α（剝 FX 與 SOX β 的 ADR 殘差）+ SOX + 溢價 z 合成單一預測，每天 06:00 cron 重新訓練、重新預測。</p>
         <p class="mt-1 text-slate-400">
           USD/TWD = {{ fmt(signal.fx_rate, 3) }}（{{ signal.fx_date }}）· 訊號更新 {{ signal.updated?.replace(/:\d{2}\+\d{2}:\d{2}$/, '') }}
         </p>
