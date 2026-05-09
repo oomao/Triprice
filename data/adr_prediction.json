@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-09 20:09:12+08:00",
+  "updated": "2026-05-09 20:32:13+08:00",
   "method": "Ridge + Conformal 80% interval",
   "lookback_days": 730,
   "walk_forward_window_days": 30,
@@ -1077,10 +1077,10 @@
         },
         "max_gain": {
           "point_pct": 2.842,
-          "lo80_pct": 0.605,
+          "lo80_pct": 0.617,
           "hi80_pct": 5.08,
           "point_price": 257.11,
-          "lo80_price": 251.51,
+          "lo80_price": 251.54,
           "hi80_price": 262.7,
           "crosses_zero": false
         },
@@ -1094,7 +1094,7 @@
           "crosses_zero": true
         }
       },
-      "consistency_violated": false,
+      "consistency_violated": true,
       "model_quality": {
         "open_gap": {
           "n_train": 114,
@@ -2106,10 +2106,10 @@
         },
         "max_gain": {
           "point_pct": 4.122,
-          "lo80_pct": -0.063,
+          "lo80_pct": 0.513,
           "hi80_pct": 8.306,
           "point_price": 537.27,
-          "lo80_price": 515.67,
+          "lo80_price": 518.65,
           "hi80_price": 558.86,
           "crosses_zero": true
         },
@@ -2123,7 +2123,7 @@
           "crosses_zero": true
         }
       },
-      "consistency_violated": false,
+      "consistency_violated": true,
       "model_quality": {
         "open_gap": {
           "n_train": 112,

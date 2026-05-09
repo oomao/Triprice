@@ -128,7 +128,9 @@ def rolling_mad(arr, window):
     return out
 
 
-def rolling_beta(y, x, window):
+def rolling_beta(y, x, window, var_floor=1e-6):
+    """Rolling OLS beta of y on x. Skips windows with var(x) below floor to avoid
+    explosive estimates during near-flat market regimes."""
     out = np.full(len(y), np.nan)
     for i in range(window - 1, len(y)):
         yc = np.asarray(y[i - window + 1: i + 1], dtype=float)
@@ -138,7 +140,7 @@ def rolling_beta(y, x, window):
             continue
         yc, xc = yc[mask], xc[mask]
         var = np.var(xc)
-        if var > 0:
+        if var > var_floor:
             out[i] = np.cov(yc, xc, bias=True)[0, 1] / var
     return out
 
@@ -412,25 +414,41 @@ def summarize_walk_forward(records):
 # --- consistency clip ---------------------------------------------------
 
 def enforce_consistency(predictions):
-    """Ensure max_gain >= open_gap >= max_loss for both point and interval bounds.
-    Mutates in place. Returns True if any clip was applied."""
+    """Enforce high ≥ open ≥ low across point estimates AND both interval bounds.
+
+    By construction High[t+1] ≥ Open[t+1] ≥ Low[t+1] always holds, so the
+    quantile relationships at every percentile must too:
+        max_gain.lo80 ≥ open.lo80   (low end of high ≥ low end of open)
+        max_gain.hi80 ≥ open.hi80   (high end of high ≥ high end of open)
+        max_loss.lo80 ≤ open.lo80   (low end of low ≤ low end of open)
+        max_loss.hi80 ≤ open.hi80   (high end of low ≤ high end of open)
+    Independently fitted models occasionally violate these; clip symmetrically.
+    """
     clipped = False
-    if 'max_gain' in predictions and 'open_gap' in predictions:
-        if predictions['max_gain']['point_pct'] < predictions['open_gap']['point_pct']:
-            predictions['max_gain']['point_pct'] = predictions['open_gap']['point_pct']
+    g, o, l = predictions.get('max_gain'), predictions.get('open_gap'), predictions.get('max_loss')
+
+    # Point estimates
+    if g and o and g['point_pct'] < o['point_pct']:
+        g['point_pct'] = o['point_pct']
+        clipped = True
+    if o and l and l['point_pct'] > o['point_pct']:
+        l['point_pct'] = o['point_pct']
+        clipped = True
+
+    # Interval endpoints — both ends symmetrically
+    if g and o:
+        if g['lo80_pct'] < o['lo80_pct']:
+            g['lo80_pct'] = o['lo80_pct']
             clipped = True
-    if 'open_gap' in predictions and 'max_loss' in predictions:
-        if predictions['open_gap']['point_pct'] < predictions['max_loss']['point_pct']:
-            predictions['max_loss']['point_pct'] = predictions['open_gap']['point_pct']
+        if g['hi80_pct'] < o['hi80_pct']:
+            g['hi80_pct'] = o['hi80_pct']
             clipped = True
-    # Also enforce on interval ENDPOINTS (high.lo >= open.lo, low.hi <= open.hi)
-    if 'max_gain' in predictions and 'open_gap' in predictions:
-        if predictions['max_gain']['hi80_pct'] < predictions['open_gap']['hi80_pct']:
-            predictions['max_gain']['hi80_pct'] = predictions['open_gap']['hi80_pct']
+    if l and o:
+        if l['lo80_pct'] > o['lo80_pct']:
+            l['lo80_pct'] = o['lo80_pct']
             clipped = True
-    if 'open_gap' in predictions and 'max_loss' in predictions:
-        if predictions['max_loss']['lo80_pct'] > predictions['open_gap']['lo80_pct']:
-            predictions['max_loss']['lo80_pct'] = predictions['open_gap']['lo80_pct']
+        if l['hi80_pct'] > o['hi80_pct']:
+            l['hi80_pct'] = o['hi80_pct']
             clipped = True
     return clipped
 
@@ -453,59 +471,86 @@ def process_stock(tw_code, adr_sym, ratio, tw_meta, tw_kline,
         prev = rows[-1]
         adr_chg_usd = today_signal.get('adr_change_pct', 0)
         tw_change_pct = today_signal.get('tw_change_pct', 0)
-        # Find prev FX (last entry in fx_hist before today)
+
+        # Find prev FX strictly before sig_date — fail loudly if missing.
         fx_keys = sorted(fx_hist.keys())
-        prev_fx_d = latest_before(sig_date, fx_keys) or fx_keys[-1]
-        prev_fx = fx_hist[prev_fx_d]
-        fx_chg = (fx_today / prev_fx - 1) * 100 if prev_fx else 0.0
-        adr_local = adr_chg_usd - fx_chg
-        implied = today_signal['adr_close'] * fx_today / ratio
-        premium = (implied - today_signal['tw_price']) / today_signal['tw_price'] * 100
-
-        # Recompute premium_z from last 60 historical premiums
-        recent_prem = np.array([r['premium'] for r in rows[-PREMIUM_BASELINE_WINDOW:]],
-                               dtype=float)
-        if len(recent_prem) >= 30:
-            med = float(np.median(recent_prem))
-            mad = float(np.median(np.abs(recent_prem - med)))
-            premium_z = (premium - med) / mad if mad > 0 else 0.0
-        else:
-            premium_z = None
-
-        # SOX change today
+        prev_fx_d = latest_before(sig_date, fx_keys)
         sox_keys = sorted(sox_hist.keys())
-        prev_sox_d = latest_before(sig_date, sox_keys) or sox_keys[-1]
-        prev_sox = sox_hist[prev_sox_d]
-        sox_chg_today = (sox_today_close / prev_sox - 1) * 100 if prev_sox else 0.0
+        prev_sox_d = latest_before(sig_date, sox_keys)
+        if not prev_fx_d or not prev_sox_d:
+            print(f"  WARN: missing prev FX/SOX before {sig_date}, skipping today augmentation",
+                  file=sys.stderr)
+            # Fall through without appending today_row; predictions use last historical row.
+        else:
+            prev_fx = fx_hist[prev_fx_d]
+            prev_sox = sox_hist[prev_sox_d]
+            fx_chg = (fx_today / prev_fx - 1) * 100 if prev_fx else 0.0
+            sox_chg_today = (sox_today_close / prev_sox - 1) * 100 if prev_sox else 0.0
+            adr_local = adr_chg_usd - fx_chg
+            implied = today_signal['adr_close'] * fx_today / ratio
+            premium = (implied - today_signal['tw_price']) / today_signal['tw_price'] * 100
 
-        beta = prev['sox_beta'] if prev['sox_beta'] is not None else 1.0
-        adr_alpha = adr_local - beta * sox_chg_today
+            # premium_z: window of `PREMIUM_BASELINE_WINDOW` *including* today, to
+            # match the historical rolling definition (window of N ending at row i,
+            # which includes row i itself).
+            tail = [r['premium'] for r in rows[-(PREMIUM_BASELINE_WINDOW - 1):]]
+            recent_prem = np.array(tail + [premium], dtype=float)
+            if len(recent_prem) >= 30:
+                med = float(np.median(recent_prem))
+                mad = float(np.median(np.abs(recent_prem - med)))
+                premium_z = (premium - med) / mad if mad > 0 else 0.0
+            else:
+                premium_z = None
 
-        today_row = {
-            'date': sig_date,
-            't_next': None,
-            'tw_close': today_signal['tw_price'],
-            'tw_change_pct': tw_change_pct,
-            'adr_close': today_signal['adr_close'],
-            'adr_volume': today_signal.get('adr_volume', 1),
-            'adr_chg_usd': adr_chg_usd,
-            'fx_chg': fx_chg,
-            'fx_rate': fx_today,
-            'sox_chg': sox_chg_today,
-            'adr_local': adr_local,
-            'implied_tw_price': implied,
-            'premium': premium,
-            'premium_z': premium_z,
-            'sox_beta': beta,
-            'adr_alpha': adr_alpha,
-            'open_gap': None,
-            'max_gain': None,
-            'max_loss': None,
-            'calendar_gap': None,
-            'is_ex_div': sig_date in ex_div_dates,
-            't_next_is_ex_div': False,
-        }
-        rows.append(today_row)
+            # sox_beta: refit rolling 90d β over a window *ending today* (matches
+            # the historical definition). Falls back to prev row's β if data short.
+            tail_local = [r['adr_local'] for r in rows[-(SOX_BETA_WINDOW - 1):]]
+            tail_sox = [r['sox_chg'] for r in rows[-(SOX_BETA_WINDOW - 1):]]
+            beta_arr_local = np.array(tail_local + [adr_local], dtype=float)
+            beta_arr_sox = np.array(tail_sox + [sox_chg_today], dtype=float)
+            mask = ~(np.isnan(beta_arr_local) | np.isnan(beta_arr_sox))
+            if mask.sum() >= 10 and np.var(beta_arr_sox[mask]) > 1e-6:
+                beta = float(np.cov(beta_arr_local[mask], beta_arr_sox[mask], bias=True)[0, 1]
+                             / np.var(beta_arr_sox[mask]))
+            else:
+                beta = prev['sox_beta'] if prev['sox_beta'] is not None else 1.0
+
+            adr_alpha = adr_local - beta * sox_chg_today
+
+            # ADR volume for stale detection — pull from yfinance ADR history at
+            # sig_date (live signal JSON doesn't carry volume).
+            adr_today = adr_hist.get(sig_date, {})
+            adr_today_vol = adr_today.get('v', prev.get('adr_volume', 1))
+
+            # calendar_gap relative to previous TW kline date — flags long-weekend
+            calendar_gap = (datetime.strptime(sig_date, '%Y-%m-%d')
+                            - datetime.strptime(prev['date'], '%Y-%m-%d')).days
+
+            today_row = {
+                'date': sig_date,
+                't_next': None,
+                'tw_close': today_signal['tw_price'],
+                'tw_change_pct': tw_change_pct,
+                'adr_close': today_signal['adr_close'],
+                'adr_volume': adr_today_vol,
+                'adr_chg_usd': adr_chg_usd,
+                'fx_chg': fx_chg,
+                'fx_rate': fx_today,
+                'sox_chg': sox_chg_today,
+                'adr_local': adr_local,
+                'implied_tw_price': implied,
+                'premium': premium,
+                'premium_z': premium_z,
+                'sox_beta': beta,
+                'adr_alpha': adr_alpha,
+                'open_gap': None,
+                'max_gain': None,
+                'max_loss': None,
+                'calendar_gap': calendar_gap,
+                'is_ex_div': sig_date in ex_div_dates,
+                't_next_is_ex_div': False,
+            }
+            rows.append(today_row)
 
     # HNHPF stale detection (Hon Hai only)
     last_row = rows[-1]
