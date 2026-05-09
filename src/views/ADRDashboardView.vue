@@ -35,6 +35,13 @@ function toggleWalkForward(code) {
   expandedWalkForward.value[code] = !expandedWalkForward.value[code]
 }
 
+// Hash router uses /#/adr; an <a href="#detail-X"> would clobber the entire
+// hash and break the route. Use manual scroll instead.
+function scrollToDetail(code) {
+  const el = document.getElementById(`detail-${code}`)
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 function pctSign(v) {
   if (v == null || isNaN(v)) return '—'
   return (v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%'
@@ -229,10 +236,11 @@ const soxRange = computed(() => {
           </span>
         </div>
         <div class="divide-y divide-[#e7e7e1]">
-          <a v-for="(stock, code) in prediction.stocks"
+          <button v-for="(stock, code) in prediction.stocks"
              :key="code"
-             :href="`#detail-${code}`"
-             class="block px-4 py-2.5 hover:bg-amber-50 transition">
+             type="button"
+             @click="scrollToDetail(code)"
+             class="block w-full text-left px-4 py-2.5 hover:bg-amber-50 transition cursor-pointer">
             <div class="flex items-baseline justify-between gap-2 flex-wrap">
               <div class="min-w-0">
                 <span class="font-semibold text-sm">{{ stock.name }}</span>
@@ -252,7 +260,7 @@ const soxRange = computed(() => {
               {{ fmt(stock.predictions.open_gap?.lo80_price, 0) }} ~ {{ fmt(stock.predictions.open_gap?.hi80_price, 0) }}
               <span v-if="stock.predictions.open_gap?.crosses_zero" class="text-amber-600 ml-1">⚠ 跨零</span>
             </div>
-          </a>
+          </button>
         </div>
         <div class="px-4 py-1.5 text-[10px] text-slate-500 border-t border-[#e7e7e1]">
           詳細訊號分解、盤中高低預測、過去 30 天驗證 → 滑到下方各檔卡片
