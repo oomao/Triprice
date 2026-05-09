@@ -18,6 +18,7 @@ const route = useRoute()
 const watchlist = useWatchlistStore()
 const rawData = ref(null)
 const stocksMeta = ref(null)
+const adrPrediction = ref(null)   // headline-stock prediction from data/adr_prediction.json
 const loading = ref(true)
 const loadingMessage = ref('載入中…')
 const error = ref(null)
@@ -157,16 +158,24 @@ async function load() {
   loadingMessage.value = '載入中…'
   error.value = null
   rawData.value = null
+  adrPrediction.value = null
   summaryState.value = null
   summaryError.value = ''
   loadSettings(code.value)
   try {
     const base = import.meta.env.BASE_URL
-    const [stocksRes, dataRes] = await Promise.all([
+    const [stocksRes, dataRes, predRes] = await Promise.all([
       fetch(`${base}data/stocks.json`),
       fetch(`${base}data/tw/${code.value}.json`),
+      fetch(`${base}data/adr_prediction.json`).catch(() => null),
     ])
     stocksMeta.value = await stocksRes.json()
+    if (predRes && predRes.ok) {
+      try {
+        const pred = await predRes.json()
+        adrPrediction.value = pred?.stocks?.[code.value] || null
+      } catch {}
+    }
     if (dataRes.ok) {
       rawData.value = await dataRes.json()
     } else {
@@ -613,6 +622,58 @@ const epsLabel = computed(() =>
             1 ADR = {{ data.adr.ratio }} 股 · 匯率 USD/TWD = {{ fmt(data.adr.fx_rate, 3) }}
           </p>
         </div>
+      </section>
+
+      <!-- 明日開盤預測（only for headline 3 stocks，from /adr Ridge model） -->
+      <section v-if="adrPrediction?.predictions?.open_gap" class="mb-6">
+        <h2 class="text-lg font-semibold mb-2">明日開盤預測</h2>
+        <RouterLink to="/adr" class="block bg-white border-2 border-slate-900/80 hover:border-slate-900 transition">
+          <div class="px-4 py-2 bg-slate-900 text-slate-100 text-xs uppercase tracking-wider flex items-baseline justify-between flex-wrap gap-2">
+            <span>Ridge + Conformal 80% 區間</span>
+            <span class="opacity-70 font-mono normal-case tracking-normal text-[10px]">
+              用 {{ adrPrediction.tw_close_date }} 收盤推論 · 點開查詳細
+            </span>
+          </div>
+          <div class="px-4 py-3 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+            <div>
+              <div class="text-slate-500 text-xs uppercase tracking-wider">開盤點估</div>
+              <div class="font-mono font-bold text-xl mt-0.5"
+                   :class="adrPrediction.predictions.open_gap.point_pct >= 0 ? 'text-red-600' : 'text-emerald-600'">
+                {{ adrPrediction.predictions.open_gap.point_pct >= 0 ? '+' : '' }}{{ fmt(adrPrediction.predictions.open_gap.point_pct, 2) }}%
+              </div>
+              <div class="text-xs text-slate-500 font-mono mt-0.5">
+                ~ {{ fmt(adrPrediction.predictions.open_gap.point_price, 0) }}
+              </div>
+            </div>
+            <div>
+              <div class="text-slate-500 text-xs uppercase tracking-wider">80% 區間</div>
+              <div class="font-mono text-base mt-0.5">
+                <span class="text-emerald-600">{{ adrPrediction.predictions.open_gap.lo80_pct >= 0 ? '+' : '' }}{{ fmt(adrPrediction.predictions.open_gap.lo80_pct, 2) }}%</span>
+                <span class="text-slate-400 mx-1">~</span>
+                <span class="text-red-500">{{ adrPrediction.predictions.open_gap.hi80_pct >= 0 ? '+' : '' }}{{ fmt(adrPrediction.predictions.open_gap.hi80_pct, 2) }}%</span>
+              </div>
+              <div class="text-xs text-slate-500 font-mono mt-0.5">
+                {{ fmt(adrPrediction.predictions.open_gap.lo80_price, 0) }} ~ {{ fmt(adrPrediction.predictions.open_gap.hi80_price, 0) }}
+                <span v-if="adrPrediction.predictions.open_gap.crosses_zero" class="text-amber-600 ml-1">⚠ 跨零</span>
+              </div>
+            </div>
+            <div v-if="adrPrediction.walk_forward_30d?.open_gap?.summary">
+              <div class="text-slate-500 text-xs uppercase tracking-wider">過去 30 日</div>
+              <div class="font-mono text-base mt-0.5">
+                MAE <strong>{{ adrPrediction.walk_forward_30d.open_gap.summary.mae_pct }}%</strong>
+              </div>
+              <div class="text-xs text-slate-500 font-mono mt-0.5">
+                命中 <span class="font-semibold" :class="adrPrediction.walk_forward_30d.open_gap.summary.hit_rate_pct >= 70 ? 'text-emerald-600' : 'text-slate-600'">{{ adrPrediction.walk_forward_30d.open_gap.summary.hit_rate_pct }}%</span>
+                · cov {{ adrPrediction.walk_forward_30d.open_gap.summary.coverage_pct }}%
+              </div>
+            </div>
+          </div>
+          <div v-if="adrPrediction.signals_cleaned.is_event_day || adrPrediction.signals_cleaned.hnhpf_stale"
+               class="px-4 py-2 bg-amber-50 border-t border-amber-200 text-xs text-amber-800">
+            <span v-if="adrPrediction.signals_cleaned.is_event_day">⚠ 事件日 — 預測可信度低</span>
+            <span v-if="adrPrediction.signals_cleaned.hnhpf_stale" class="ml-2">⚠ HNHPF 報價停滯，預測僅供參考</span>
+          </div>
+        </RouterLink>
       </section>
 
       <!-- 歷年股利 -->

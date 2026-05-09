@@ -40,6 +40,48 @@ function pctSign(v) {
   return (v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%'
 }
 
+// Parse "2026-05-09 20:32:13+08:00" → ms-since-epoch (best effort).
+function parseTpe(s) {
+  if (!s) return null
+  // Replace space with T to get a parseable ISO-ish format
+  const iso = s.replace(' ', 'T')
+  const t = Date.parse(iso)
+  return isNaN(t) ? null : t
+}
+
+// Freshness badge for the prediction file: green ≤6h, amber 6–30h, red >30h.
+const freshness = computed(() => {
+  const ts = parseTpe(prediction.value?.updated)
+  if (!ts) return null
+  const ageHours = (Date.now() - ts) / 3.6e6
+  let label, cls
+  if (ageHours <= 1) {
+    label = `${Math.max(0, Math.round(ageHours * 60))} 分鐘前更新`
+    cls = 'bg-emerald-50 border-emerald-300 text-emerald-700'
+  } else if (ageHours <= 6) {
+    label = `${ageHours.toFixed(1)} 小時前更新`
+    cls = 'bg-emerald-50 border-emerald-300 text-emerald-700'
+  } else if (ageHours <= 30) {
+    label = `${ageHours.toFixed(1)} 小時前更新`
+    cls = 'bg-amber-50 border-amber-300 text-amber-700'
+  } else {
+    label = `${(ageHours / 24).toFixed(1)} 天前 · cron 可能失敗`
+    cls = 'bg-rose-50 border-rose-300 text-rose-700'
+  }
+  return { label, cls, ageHours }
+})
+
+// Map of stock code → hnhpf_stale flag from prediction JSON (so we can propagate
+// the warning onto the top per-ADR cards which only have signal data).
+const staleByCode = computed(() => {
+  const out = {}
+  if (!prediction.value?.stocks) return out
+  for (const code in prediction.value.stocks) {
+    out[code] = !!prediction.value.stocks[code].signals_cleaned?.hnhpf_stale
+  }
+  return out
+})
+
 function pctClassPrediction(v) {
   if (v == null) return 'text-slate-400'
   if (v >= 1.5) return 'text-red-600 font-semibold'
@@ -140,17 +182,34 @@ function sparkZeroOf(vals) {
 const premiumVals = computed(() => history.value.map((h) => h.avg_premium_pct))
 const sparkPath   = computed(() => sparkPathOf(premiumVals.value))
 const sparkZero   = computed(() => sparkZeroOf(premiumVals.value))
+const premiumRange = computed(() => {
+  const v = premiumVals.value
+  if (!v.length) return null
+  return { min: Math.min(...v), max: Math.max(...v) }
+})
 
 const soxVals = computed(() =>
   history.value.map((h) => h.sox_change_pct).filter((v) => v != null && !isNaN(v))
 )
 const soxSparkPath = computed(() => sparkPathOf(soxVals.value))
 const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
+const soxRange = computed(() => {
+  const v = soxVals.value
+  if (!v.length) return null
+  return { min: Math.min(...v), max: Math.max(...v) }
+})
 </script>
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold tracking-tight mb-1">夜盤領先訊號</h1>
+    <div class="flex items-baseline justify-between gap-2 flex-wrap mb-1">
+      <h1 class="text-2xl font-bold tracking-tight">夜盤領先訊號</h1>
+      <span v-if="freshness"
+            class="text-[11px] font-mono px-2 py-0.5 border"
+            :class="freshness.cls">
+        {{ freshness.label }}
+      </span>
+    </div>
     <p class="text-sm text-slate-500 mb-5 leading-relaxed">
       美股 ADR 與費城半導體指數收盤晚於台股約 14~15 小時，可作為台股<strong>隔日開盤</strong>方向的領先參考。
       聚焦：<strong>台積電 (TSM)</strong>、<strong>鴻海 (HNHPF)</strong>、<strong>日月光 (ASX)</strong> + <strong>SOX</strong>。
@@ -260,11 +319,15 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
           :key="e.adr"
           :to="`/stock/${e.tw_code}`"
           class="block bg-white border border-[#e7e7e1] p-4 hover:border-[#0a0e16] transition"
+          :class="staleByCode[e.tw_code] ? 'border-amber-300 bg-amber-50/30' : ''"
         >
           <div class="flex items-baseline justify-between mb-3">
             <div>
               <div class="font-bold text-base">{{ e.tw_name }}</div>
               <div class="text-xs text-slate-500 mt-0.5 font-mono">{{ e.tw_code }} · ADR {{ e.adr }}</div>
+              <div v-if="staleByCode[e.tw_code]" class="text-[10px] text-amber-700 mt-0.5">
+                ⚠ ADR 報價停滯，溢價數字僅供參考
+              </div>
             </div>
             <div class="text-right">
               <div class="text-xs text-slate-500">溢價</div>
@@ -317,6 +380,10 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
             <span>0%</span>
             <span>{{ history[history.length - 1]?.date }}</span>
           </div>
+          <div v-if="premiumRange" class="text-[10px] text-slate-400 font-mono mt-0.5 text-right">
+            min {{ premiumRange.min >= 0 ? '+' : '' }}{{ fmt(premiumRange.min) }}% ·
+            max {{ premiumRange.max >= 0 ? '+' : '' }}{{ fmt(premiumRange.max) }}%
+          </div>
         </div>
 
         <div v-if="soxVals.length >= 2" class="bg-white border border-[#e7e7e1] p-4">
@@ -339,6 +406,10 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
             <span>起點</span>
             <span>0%</span>
             <span>最新</span>
+          </div>
+          <div v-if="soxRange" class="text-[10px] text-slate-400 font-mono mt-0.5 text-right">
+            min {{ soxRange.min >= 0 ? '+' : '' }}{{ fmt(soxRange.min) }}% ·
+            max {{ soxRange.max >= 0 ? '+' : '' }}{{ fmt(soxRange.max) }}%
           </div>
         </div>
         <div v-else class="bg-slate-50 border border-slate-200 p-4 text-xs text-slate-500">
