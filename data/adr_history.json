@@ -127,28 +127,26 @@
     },
     {
       "date": "2026-05-09",
-      "updated": "2026-05-09 06:55:06+08:00",
-      "avg_premium_pct": 5.64,
-      "avg_adr_change_pct": 1.21,
+      "updated": "2026-05-09 18:25:36+08:00",
+      "avg_premium_pct": 5.9,
+      "avg_adr_change_pct": 0.94,
       "signal_code": "strong_bull",
       "per_adr": {
         "TSM": {
           "premium_pct": 12.54,
           "adr_change_pct": -0.6
         },
-        "UMC": {
-          "premium_pct": 5.73,
-          "adr_change_pct": 1.72
+        "HNHPF": {
+          "premium_pct": 1.35,
+          "adr_change_pct": 0.75
         },
         "ASX": {
           "premium_pct": 3.82,
           "adr_change_pct": 2.67
-        },
-        "CHT": {
-          "premium_pct": 0.46,
-          "adr_change_pct": 1.04
         }
-      }
+      },
+      "sox_close": 11775.5,
+      "sox_change_pct": 5.51
     }
   ]
 }

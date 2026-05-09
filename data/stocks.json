@@ -47,7 +47,7 @@
     "2890": { "name": "永豐金", "valuation_method": "yield" },
     "2891": { "name": "中信金", "valuation_method": "yield" },
     "2892": { "name": "第一金", "valuation_method": "yield" },
-    "2317": { "name": "鴻海", "valuation_method": "yield" },
+    "2317": { "name": "鴻海", "valuation_method": "yield", "adr": "HNHPF" },
     "2382": { "name": "廣達", "valuation_method": "yield" },
     "2412": { "name": "中華電", "valuation_method": "yield", "adr": "CHT" },
     "2409": { "name": "友達", "valuation_method": "yield" },
@@ -56,9 +56,10 @@
     "2002": { "name": "中鋼", "valuation_method": "yield" }
   },
   "adr_mapping": {
-    "TSM": { "tw_code": "2330", "ratio": 5 },
-    "UMC": { "tw_code": "2303", "ratio": 5 },
-    "ASX": { "tw_code": "3711", "ratio": 2 },
-    "CHT": { "tw_code": "2412", "ratio": 10 }
+    "TSM":   { "tw_code": "2330", "ratio": 5,  "dashboard": true },
+    "HNHPF": { "tw_code": "2317", "ratio": 2,  "dashboard": true },
+    "ASX":   { "tw_code": "3711", "ratio": 2,  "dashboard": true },
+    "UMC":   { "tw_code": "2303", "ratio": 5 },
+    "CHT":   { "tw_code": "2412", "ratio": 10 }
   }
 }

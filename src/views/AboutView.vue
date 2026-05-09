@@ -113,35 +113,37 @@
     <!-- 6. ADR 訊號 -->
     <section class="bg-white border border-[#e7e7e1] p-5">
       <div class="text-xs uppercase tracking-[0.16em] text-slate-500 mb-1">領先訊號</div>
-      <h2 class="text-lg font-semibold tracking-tight mb-3">ADR 溢價</h2>
+      <h2 class="text-lg font-semibold tracking-tight mb-3">夜盤訊號（ADR + SOX）</h2>
       <div class="bg-slate-50 border border-slate-200 p-3 mb-3 font-mono text-xs space-y-1">
         <div>ADR 隱含台股價 = ADR 收盤 × USD/TWD ÷ 每 ADR 對應股數</div>
         <div>溢價率 = (ADR 隱含台股價 − 台股收盤) ÷ 台股收盤</div>
       </div>
       <p class="text-sm leading-relaxed mb-3">
-        關鍵是<strong>時差</strong>：ADR 在美國時間 16:00 收盤 = 台北隔日凌晨 4 點，比台股收盤晚 14~15 小時。
-        所以 ADR 收盤已經反映了「台股收盤 → ADR 收盤」這段期間的全球新聞、美股波動，台股<strong>明天開盤</strong>會補上這段差距。
-        因此 ADR 溢價率可以做為台股<strong>隔日開盤</strong>方向的領先參考。
+        關鍵是<strong>時差</strong>：ADR 與費半指數在美國時間 16:00 收盤 = 台北隔日凌晨 4 點，比台股收盤晚 14~15 小時。
+        所以這些報價已經反映了「台股收盤 → 美股收盤」這段期間的全球新聞、美股波動，台股<strong>明天開盤</strong>會補上這段差距。
+      </p>
+      <p class="text-xs leading-relaxed mb-2">
+        <strong>/adr 儀表板</strong>聚焦於 3 檔重點 ADR + 費城半導體指數：
       </p>
       <table class="w-full text-xs mb-3 border border-[#e7e7e1]">
         <thead>
           <tr class="bg-slate-50 text-slate-600">
-            <th class="px-2 py-1.5 text-left">ADR</th>
-            <th class="px-2 py-1.5 text-left">台股</th>
-            <th class="px-2 py-1.5 text-right">1 ADR : 台股股數</th>
+            <th class="px-2 py-1.5 text-left">代號</th>
+            <th class="px-2 py-1.5 text-left">對應台股 / 標的</th>
+            <th class="px-2 py-1.5 text-right">換算比例</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">TSM</td><td class="px-2 py-1.5">2330 台積電</td><td class="px-2 py-1.5 text-right font-mono">1 : 5</td></tr>
-          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">UMC</td><td class="px-2 py-1.5">2303 聯電</td><td class="px-2 py-1.5 text-right font-mono">1 : 5</td></tr>
-          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">ASX</td><td class="px-2 py-1.5">3711 日月光投控</td><td class="px-2 py-1.5 text-right font-mono">1 : 2</td></tr>
-          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">CHT</td><td class="px-2 py-1.5">2412 中華電</td><td class="px-2 py-1.5 text-right font-mono">1 : 10</td></tr>
+          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">TSM</td><td class="px-2 py-1.5">2330 台積電</td><td class="px-2 py-1.5 text-right font-mono">1 ADR : 5 股</td></tr>
+          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">HNHPF</td><td class="px-2 py-1.5">2317 鴻海（OTC 非贊助 ADR）</td><td class="px-2 py-1.5 text-right font-mono">1 ADR : 2 股</td></tr>
+          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">ASX</td><td class="px-2 py-1.5">3711 日月光投控</td><td class="px-2 py-1.5 text-right font-mono">1 ADR : 2 股</td></tr>
+          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">^SOX</td><td class="px-2 py-1.5">費城半導體指數（全市場 sector）</td><td class="px-2 py-1.5 text-right font-mono">直接看漲跌幅</td></tr>
         </tbody>
       </table>
       <p class="text-xs leading-relaxed mb-2">
-        <strong>/adr 儀表板</strong>把 4 檔 ADR 的溢價等權平均，分為 5 段：
+        <strong>ADR 平均訊號</strong>：3 檔 ADR 溢價等權平均，分成 5 檔：
       </p>
-      <table class="w-full text-xs border border-[#e7e7e1]">
+      <table class="w-full text-xs mb-3 border border-[#e7e7e1]">
         <thead>
           <tr class="bg-slate-50 text-slate-600">
             <th class="px-2 py-1.5 text-left">平均溢價</th>
@@ -156,8 +158,57 @@
           <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">≤ −5%</td><td class="px-2 py-1.5 text-emerald-700 font-semibold">強烈偏空</td></tr>
         </tbody>
       </table>
+      <p class="text-xs leading-relaxed mb-2">
+        <strong>SOX 訊號</strong>：直接看當日漲跌幅，分成 5 檔：
+      </p>
+      <table class="w-full text-xs border border-[#e7e7e1]">
+        <thead>
+          <tr class="bg-slate-50 text-slate-600">
+            <th class="px-2 py-1.5 text-left">SOX 當日漲跌</th>
+            <th class="px-2 py-1.5 text-left">訊號</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">≥ +2%</td><td class="px-2 py-1.5 text-red-600 font-semibold">強勢</td></tr>
+          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">+0.5% ~ +2%</td><td class="px-2 py-1.5 text-red-500">偏多</td></tr>
+          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">−0.5% ~ +0.5%</td><td class="px-2 py-1.5">中性</td></tr>
+          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">−2% ~ −0.5%</td><td class="px-2 py-1.5 text-emerald-500">偏弱</td></tr>
+          <tr class="border-t border-[#e7e7e1]"><td class="px-2 py-1.5 font-mono">≤ −2%</td><td class="px-2 py-1.5 text-emerald-700 font-semibold">弱勢</td></tr>
+        </tbody>
+      </table>
       <p class="text-[11px] text-slate-500 mt-3 leading-relaxed">
-        歷史溢價走勢以 sparkline 呈現（每日累積到 <code>adr_history.json</code>，最多保留 365 天）。
+        UMC（2303 聯電）、CHT（2412 中華電）的 ADR 仍會抓取並顯示在個股頁，但不納入 /adr 儀表板的 headline 平均。
+        歷史走勢以 sparkline 呈現（每日累積到 <code>adr_history.json</code>，最多保留 365 天）。
+      </p>
+
+      <hr class="my-4 border-[#e7e7e1]">
+      <h3 class="text-base font-semibold tracking-tight mb-2">明日開盤 / 高 / 低 預測（Ridge + Conformal）</h3>
+      <p class="text-sm leading-relaxed mb-2">
+        <code>scripts/predict_open_high_low.py</code> 用 Ridge 回歸 + 80% Conformal 區間，把每日訊號合成<strong>單一預測 + 校準區間</strong>，預測隔日 TW 開盤 / 盤中最高 / 盤中最低三條，寫入 <code>data/adr_prediction.json</code>。
+      </p>
+      <p class="text-sm leading-relaxed mb-2"><strong>訊號乾淨化</strong>：</p>
+      <ul class="text-xs leading-relaxed list-disc pl-5 space-y-1 text-slate-600 mb-2">
+        <li><strong>ADR alpha</strong> = ADR USD 漲跌 − USD/TWD 漲跌 − rolling 90d β · SOX 漲跌（剝掉 FX 與 sector beta，留下純個股 alpha）</li>
+        <li><strong>SOX</strong> 整體漲跌 %（保留 sector 訊號）</li>
+        <li><strong>溢價 z-score</strong> = (今日溢價 − 60d rolling median) / MAD（去掉結構性偏移，例如 TSMC 長期 8%+ 溢價）</li>
+      </ul>
+      <p class="text-sm leading-relaxed mb-2"><strong>事件日剔除</strong>（從訓練集中扣除）：</p>
+      <ul class="text-xs leading-relaxed list-disc pl-5 space-y-1 text-slate-600 mb-2">
+        <li>除息日 T 與 T+1（FinMind <code>TaiwanStockDividend</code>）</li>
+        <li>TW 漲跌停（|change| &gt; 9.5%）</li>
+        <li>長假後第一日（calendar gap &gt; 3）</li>
+        <li>ADR 成交量 = 0（HNHPF 鴻海 OTC 常見）</li>
+      </ul>
+      <p class="text-sm leading-relaxed mb-2"><strong>建模 + 驗證</strong>：</p>
+      <ul class="text-xs leading-relaxed list-disc pl-5 space-y-1 text-slate-600 mb-2">
+        <li>RidgeCV 三訊號合成 → 單一點估，per-stock per-target 校準權重</li>
+        <li>80% Conformal 區間（finite-sample valid coverage 保證）</li>
+        <li>Walk-forward：過去 30 個交易日，每日重新訓練、預測、跟實際比對</li>
+        <li>一致性 enforce：高 ≥ 開 ≥ 低（少數情況自動 clip）</li>
+      </ul>
+      <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">
+        頁面上每張卡會顯示「過去 30 日 walk-forward 統計」(MAE / RMSE / coverage / 命中率)，展開可看逐日預測 vs 實際對照表。
+        <strong>盤中最高 / 最低 RMSE 通常較大</strong>（極值有 long tail），當作「合理範圍上下限」而非精確 target。
       </p>
     </section>
 
