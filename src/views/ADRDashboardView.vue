@@ -40,6 +40,48 @@ function pctSign(v) {
   return (v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%'
 }
 
+// Parse "2026-05-09 20:32:13+08:00" → ms-since-epoch (best effort).
+function parseTpe(s) {
+  if (!s) return null
+  // Replace space with T to get a parseable ISO-ish format
+  const iso = s.replace(' ', 'T')
+  const t = Date.parse(iso)
+  return isNaN(t) ? null : t
+}
+
+// Freshness badge for the prediction file: green ≤6h, amber 6–30h, red >30h.
+const freshness = computed(() => {
+  const ts = parseTpe(prediction.value?.updated)
+  if (!ts) return null
+  const ageHours = (Date.now() - ts) / 3.6e6
+  let label, cls
+  if (ageHours <= 1) {
+    label = `${Math.max(0, Math.round(ageHours * 60))} 分鐘前更新`
+    cls = 'bg-emerald-50 border-emerald-300 text-emerald-700'
+  } else if (ageHours <= 6) {
+    label = `${ageHours.toFixed(1)} 小時前更新`
+    cls = 'bg-emerald-50 border-emerald-300 text-emerald-700'
+  } else if (ageHours <= 30) {
+    label = `${ageHours.toFixed(1)} 小時前更新`
+    cls = 'bg-amber-50 border-amber-300 text-amber-700'
+  } else {
+    label = `${(ageHours / 24).toFixed(1)} 天前 · cron 可能失敗`
+    cls = 'bg-rose-50 border-rose-300 text-rose-700'
+  }
+  return { label, cls, ageHours }
+})
+
+// Map of stock code → hnhpf_stale flag from prediction JSON (so we can propagate
+// the warning onto the top per-ADR cards which only have signal data).
+const staleByCode = computed(() => {
+  const out = {}
+  if (!prediction.value?.stocks) return out
+  for (const code in prediction.value.stocks) {
+    out[code] = !!prediction.value.stocks[code].signals_cleaned?.hnhpf_stale
+  }
+  return out
+})
+
 function pctClassPrediction(v) {
   if (v == null) return 'text-slate-400'
   if (v >= 1.5) return 'text-red-600 font-semibold'
@@ -140,17 +182,34 @@ function sparkZeroOf(vals) {
 const premiumVals = computed(() => history.value.map((h) => h.avg_premium_pct))
 const sparkPath   = computed(() => sparkPathOf(premiumVals.value))
 const sparkZero   = computed(() => sparkZeroOf(premiumVals.value))
+const premiumRange = computed(() => {
+  const v = premiumVals.value
+  if (!v.length) return null
+  return { min: Math.min(...v), max: Math.max(...v) }
+})
 
 const soxVals = computed(() =>
   history.value.map((h) => h.sox_change_pct).filter((v) => v != null && !isNaN(v))
 )
 const soxSparkPath = computed(() => sparkPathOf(soxVals.value))
 const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
+const soxRange = computed(() => {
+  const v = soxVals.value
+  if (!v.length) return null
+  return { min: Math.min(...v), max: Math.max(...v) }
+})
 </script>
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold tracking-tight mb-1">夜盤領先訊號</h1>
+    <div class="flex items-baseline justify-between gap-2 flex-wrap mb-1">
+      <h1 class="text-2xl font-bold tracking-tight">夜盤領先訊號</h1>
+      <span v-if="freshness"
+            class="text-[11px] font-mono px-2 py-0.5 border"
+            :class="freshness.cls">
+        {{ freshness.label }}
+      </span>
+    </div>
     <p class="text-sm text-slate-500 mb-5 leading-relaxed">
       美股 ADR 與費城半導體指數收盤晚於台股約 14~15 小時，可作為台股<strong>隔日開盤</strong>方向的領先參考。
       聚焦：<strong>台積電 (TSM)</strong>、<strong>鴻海 (HNHPF)</strong>、<strong>日月光 (ASX)</strong> + <strong>SOX</strong>。
@@ -161,11 +220,50 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
       尚無 ADR 訊號資料 — 等下次美股收盤後（台北時間隔日清晨）由 GitHub Actions 自動產生。
     </div>
     <div v-else>
-      <!-- Two-pane top: ADR aggregate + SOX -->
+      <!-- 預測快覽 — answer first, before the raw signal banners -->
+      <section v-if="prediction" class="mb-5 border-2 border-slate-900 bg-slate-50/60">
+        <div class="px-4 py-2 bg-slate-900 text-slate-100 text-xs uppercase tracking-wider flex items-baseline justify-between flex-wrap gap-2">
+          <span class="font-semibold">明日 TW 開盤預測 (Ridge + Conformal 80%)</span>
+          <span class="opacity-70 font-mono normal-case tracking-normal">
+            用 {{ Object.values(prediction.stocks)[0]?.tw_close_date }} 收盤推論隔日 TW 開盤
+          </span>
+        </div>
+        <div class="divide-y divide-[#e7e7e1]">
+          <a v-for="(stock, code) in prediction.stocks"
+             :key="code"
+             :href="`#detail-${code}`"
+             class="block px-4 py-2.5 hover:bg-amber-50 transition">
+            <div class="flex items-baseline justify-between gap-2 flex-wrap">
+              <div class="min-w-0">
+                <span class="font-semibold text-sm">{{ stock.name }}</span>
+                <span class="text-xs text-slate-500 ml-1.5 font-mono">{{ code }}</span>
+              </div>
+              <div class="font-mono text-sm">
+                <span class="font-bold text-base"
+                      :class="pctClassPrediction(stock.predictions.open_gap?.point_pct)">
+                  {{ pctSign(stock.predictions.open_gap?.point_pct) }}
+                </span>
+                <span class="text-xs text-slate-500 ml-1 whitespace-nowrap">
+                  [{{ pctSign(stock.predictions.open_gap?.lo80_pct) }}, {{ pctSign(stock.predictions.open_gap?.hi80_pct) }}]
+                </span>
+              </div>
+            </div>
+            <div class="text-[11px] text-slate-500 font-mono mt-0.5 text-right">
+              {{ fmt(stock.predictions.open_gap?.lo80_price, 0) }} ~ {{ fmt(stock.predictions.open_gap?.hi80_price, 0) }}
+              <span v-if="stock.predictions.open_gap?.crosses_zero" class="text-amber-600 ml-1">⚠ 跨零</span>
+            </div>
+          </a>
+        </div>
+        <div class="px-4 py-1.5 text-[10px] text-slate-500 border-t border-[#e7e7e1]">
+          詳細訊號分解、盤中高低預測、過去 30 天驗證 → 滑到下方各檔卡片
+        </div>
+      </section>
+
+      <!-- Two-pane top: ADR aggregate + SOX (raw 速覽) -->
       <section class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
         <!-- ADR aggregate -->
         <div
-          class="border-2 px-5 py-4 flex items-center justify-between gap-4"
+          class="border-2 px-4 sm:px-5 py-4 flex items-center justify-between gap-3 min-w-0"
           :class="signalColor"
         >
           <div>
@@ -175,7 +273,7 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
               {{ headline.direction }}
             </div>
           </div>
-          <div class="text-right shrink-0">
+          <div class="text-right min-w-0">
             <div class="text-xs opacity-70">3 檔平均溢價</div>
             <div class="text-lg font-bold">
               {{ signal.avg_premium_pct >= 0 ? '+' : '' }}{{ fmt(signal.avg_premium_pct) }}%
@@ -189,7 +287,7 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
         <!-- SOX (Philadelphia Semi Index) -->
         <div
           v-if="signal.sox"
-          class="border-2 px-5 py-4 flex items-center justify-between gap-4"
+          class="border-2 px-4 sm:px-5 py-4 flex items-center justify-between gap-3 min-w-0"
           :class="soxLabel?.cls || 'bg-slate-100 text-slate-500'"
         >
           <div>
@@ -199,7 +297,7 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
               {{ fmt(signal.sox.close, 2) }} <span class="text-xs opacity-70">({{ signal.sox.close_date }})</span>
             </div>
           </div>
-          <div class="text-right shrink-0">
+          <div class="text-right min-w-0">
             <div class="text-xs opacity-70">當日漲跌</div>
             <div :class="changeClass(signal.sox.change_pct)" class="text-2xl font-bold">
               {{ signal.sox.change_pct >= 0 ? '+' : '' }}{{ fmt(signal.sox.change_pct) }}%
@@ -221,11 +319,15 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
           :key="e.adr"
           :to="`/stock/${e.tw_code}`"
           class="block bg-white border border-[#e7e7e1] p-4 hover:border-[#0a0e16] transition"
+          :class="staleByCode[e.tw_code] ? 'border-amber-300 bg-amber-50/30' : ''"
         >
           <div class="flex items-baseline justify-between mb-3">
             <div>
               <div class="font-bold text-base">{{ e.tw_name }}</div>
               <div class="text-xs text-slate-500 mt-0.5 font-mono">{{ e.tw_code }} · ADR {{ e.adr }}</div>
+              <div v-if="staleByCode[e.tw_code]" class="text-[10px] text-amber-700 mt-0.5">
+                ⚠ ADR 報價停滯，溢價數字僅供參考
+              </div>
             </div>
             <div class="text-right">
               <div class="text-xs text-slate-500">溢價</div>
@@ -278,6 +380,10 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
             <span>0%</span>
             <span>{{ history[history.length - 1]?.date }}</span>
           </div>
+          <div v-if="premiumRange" class="text-[10px] text-slate-400 font-mono mt-0.5 text-right">
+            min {{ premiumRange.min >= 0 ? '+' : '' }}{{ fmt(premiumRange.min) }}% ·
+            max {{ premiumRange.max >= 0 ? '+' : '' }}{{ fmt(premiumRange.max) }}%
+          </div>
         </div>
 
         <div v-if="soxVals.length >= 2" class="bg-white border border-[#e7e7e1] p-4">
@@ -300,6 +406,10 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
             <span>起點</span>
             <span>0%</span>
             <span>最新</span>
+          </div>
+          <div v-if="soxRange" class="text-[10px] text-slate-400 font-mono mt-0.5 text-right">
+            min {{ soxRange.min >= 0 ? '+' : '' }}{{ fmt(soxRange.min) }}% ·
+            max {{ soxRange.max >= 0 ? '+' : '' }}{{ fmt(soxRange.max) }}%
           </div>
         </div>
         <div v-else class="bg-slate-50 border border-slate-200 p-4 text-xs text-slate-500">
@@ -324,18 +434,19 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
         <div
           v-for="(stock, code) in prediction.stocks"
           :key="code"
-          class="bg-white border border-[#e7e7e1] mb-4"
+          :id="`detail-${code}`"
+          class="bg-white border border-[#e7e7e1] mb-4 scroll-mt-16"
         >
           <!-- Header -->
-          <div class="px-4 py-3 border-b border-[#e7e7e1] bg-slate-50 flex items-baseline justify-between flex-wrap gap-2">
-            <div>
+          <div class="px-4 py-3 border-b border-[#e7e7e1] bg-slate-50 flex items-baseline justify-between flex-wrap gap-x-3 gap-y-1">
+            <div class="min-w-0">
               <span class="font-bold text-base">{{ stock.name }}</span>
               <span class="text-xs text-slate-500 ml-2 font-mono">{{ code }} · ADR {{ stock.adr }}</span>
             </div>
-            <div class="text-xs text-slate-500 font-mono">
+            <div class="text-xs text-slate-500 font-mono w-full sm:w-auto sm:text-right">
               TW 收盤 <strong class="text-slate-800">{{ fmt(stock.tw_close) }}</strong>
-              · ADR ${{ fmt(stock.adr_close) }}
-              → 隱含 {{ fmt(stock.implied_tw_price) }}
+              <span class="text-slate-300">·</span> ADR ${{ fmt(stock.adr_close) }}
+              <span class="text-slate-300">→</span> 隱含 {{ fmt(stock.implied_tw_price) }}
             </div>
           </div>
 
@@ -347,17 +458,10 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
             <span v-if="stock.signals_cleaned.hnhpf_stale" class="ml-2">⚠ HNHPF 報價停滯（成交量過低或與前日相同），鴻海預測僅供參考</span>
           </div>
 
-          <!-- Cleaned signals -->
+          <!-- Cleaned signals — ordered by typical Ridge weight: SOX > 溢價 z > ADR alpha > FX -->
           <div class="px-4 pt-3 pb-2">
             <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">訊號分解 (cleaned)</div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <div>
-                <div class="text-slate-400">ADR alpha</div>
-                <div class="font-mono" :class="changeClass(stock.signals_cleaned.adr_alpha_pct)">
-                  {{ pctSign(stock.signals_cleaned.adr_alpha_pct) }}
-                </div>
-                <div class="text-[10px] text-slate-400">扣 SOX β = {{ fmt(stock.signals_cleaned.sox_beta, 2) }}</div>
-              </div>
               <div>
                 <div class="text-slate-400">SOX</div>
                 <div class="font-mono" :class="changeClass(stock.signals_cleaned.sox_chg_pct)">
@@ -373,6 +477,13 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
                 <div class="text-[10px] text-slate-400">raw {{ pctSign(stock.signals_cleaned.premium_raw_pct) }}</div>
               </div>
               <div>
+                <div class="text-slate-400">ADR alpha</div>
+                <div class="font-mono" :class="changeClass(stock.signals_cleaned.adr_alpha_pct)">
+                  {{ pctSign(stock.signals_cleaned.adr_alpha_pct) }}
+                </div>
+                <div class="text-[10px] text-slate-400">扣 SOX β = {{ fmt(stock.signals_cleaned.sox_beta, 2) }}</div>
+              </div>
+              <div>
                 <div class="text-slate-400">USD/TWD</div>
                 <div class="font-mono" :class="changeClass(stock.signals_cleaned.fx_chg_pct)">
                   {{ pctSign(stock.signals_cleaned.fx_chg_pct) }}
@@ -385,7 +496,8 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
           <!-- Predictions table -->
           <div class="px-4 pt-3 pb-4">
             <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">明日預測 (Ridge + Conformal 80%)</div>
-            <table class="w-full text-sm border border-[#e7e7e1]">
+            <div class="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <table class="w-full min-w-[420px] text-sm border border-[#e7e7e1]">
               <thead>
                 <tr class="bg-slate-50 text-slate-600 text-xs">
                   <th class="px-3 py-1.5 text-left">目標</th>
@@ -395,6 +507,21 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
                 </tr>
               </thead>
               <tbody>
+                <tr v-if="stock.predictions.open_gap" class="border-t border-[#e7e7e1] bg-amber-50/40">
+                  <td class="px-3 py-2"><strong>開盤</strong></td>
+                  <td class="px-3 py-2 text-right font-mono font-bold text-base"
+                      :class="pctClassPrediction(stock.predictions.open_gap.point_pct)">
+                    {{ pctSign(stock.predictions.open_gap.point_pct) }}
+                  </td>
+                  <td class="px-3 py-2 text-right font-mono text-xs text-slate-500">
+                    [{{ pctSign(stock.predictions.open_gap.lo80_pct) }},
+                    {{ pctSign(stock.predictions.open_gap.hi80_pct) }}]
+                    <span v-if="stock.predictions.open_gap.crosses_zero" class="ml-1 text-amber-600 whitespace-nowrap">⚠ 跨零</span>
+                  </td>
+                  <td class="px-3 py-2 text-right font-mono">
+                    {{ fmt(stock.predictions.open_gap.lo80_price, 0) }} ~ <strong>{{ fmt(stock.predictions.open_gap.hi80_price, 0) }}</strong>
+                  </td>
+                </tr>
                 <tr v-if="stock.predictions.max_gain" class="border-t border-[#e7e7e1]">
                   <td class="px-3 py-2">盤中最高</td>
                   <td class="px-3 py-2 text-right font-mono font-semibold"
@@ -407,21 +534,6 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
                   </td>
                   <td class="px-3 py-2 text-right font-mono">
                     {{ fmt(stock.predictions.max_gain.lo80_price, 0) }} ~ <strong>{{ fmt(stock.predictions.max_gain.hi80_price, 0) }}</strong>
-                  </td>
-                </tr>
-                <tr v-if="stock.predictions.open_gap" class="border-t border-[#e7e7e1] bg-amber-50/40">
-                  <td class="px-3 py-2"><strong>開盤</strong></td>
-                  <td class="px-3 py-2 text-right font-mono font-bold text-base"
-                      :class="pctClassPrediction(stock.predictions.open_gap.point_pct)">
-                    {{ pctSign(stock.predictions.open_gap.point_pct) }}
-                  </td>
-                  <td class="px-3 py-2 text-right font-mono text-xs text-slate-500">
-                    [{{ pctSign(stock.predictions.open_gap.lo80_pct) }},
-                    {{ pctSign(stock.predictions.open_gap.hi80_pct) }}]
-                    <span v-if="stock.predictions.open_gap.crosses_zero" class="ml-1 text-amber-600">⚠跨零</span>
-                  </td>
-                  <td class="px-3 py-2 text-right font-mono">
-                    {{ fmt(stock.predictions.open_gap.lo80_price, 0) }} ~ <strong>{{ fmt(stock.predictions.open_gap.hi80_price, 0) }}</strong>
                   </td>
                 </tr>
                 <tr v-if="stock.predictions.max_loss" class="border-t border-[#e7e7e1]">
@@ -440,21 +552,23 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
                 </tr>
               </tbody>
             </table>
+            </div><!-- /overflow-x-auto -->
             <div v-if="stock.consistency_violated" class="mt-1 text-[11px] text-amber-700">
-              ⚠ 三個獨立模型結果有少許不一致（高 < 開 或 開 < 低），已自動 clip
+              預測高/低/開三條由獨立模型產出，曾有極小重疊已自動修正
             </div>
           </div>
 
           <!-- Walk-forward 30-day summary -->
           <div class="px-4 pt-2 pb-3 border-t border-[#e7e7e1]" v-if="stock.walk_forward_30d?.open_gap?.summary">
             <div class="flex items-baseline justify-between flex-wrap gap-2 mb-1">
-              <div class="text-xs uppercase tracking-wider text-slate-500">過去 30 日 walk-forward 驗證</div>
+              <div class="text-xs uppercase tracking-wider text-slate-500">過去 30 天每日預測 vs 實際</div>
               <button @click="toggleWalkForward(code)"
                       class="text-xs text-slate-500 hover:text-slate-900 underline">
                 {{ expandedWalkForward[code] ? '收起逐日明細 ▴' : '展開逐日明細 ▾' }}
               </button>
             </div>
-            <table class="w-full text-xs border border-[#e7e7e1]">
+            <div class="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <table class="w-full min-w-[520px] text-xs border border-[#e7e7e1]">
               <thead>
                 <tr class="bg-slate-50 text-slate-600">
                   <th class="px-2 py-1 text-left">目標</th>
@@ -494,13 +608,17 @@ const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
                 </tr>
               </tbody>
             </table>
+            </div><!-- /overflow-x-auto -->
+            <div class="text-[10px] text-slate-400 mt-1 leading-relaxed">
+              命中率基準：擲銅板 50%。Coverage 目標 80%（finite-sample 保證）。
+            </div>
 
             <!-- Per-day expansion (open_gap only) -->
             <div v-if="expandedWalkForward[code] && stock.walk_forward_30d.open_gap?.daily?.length"
                  class="mt-3">
               <div class="text-[11px] text-slate-500 mb-1">開盤預測 vs 實際（逐日）</div>
-              <div class="overflow-x-auto">
-                <table class="w-full text-xs border border-[#e7e7e1] font-mono">
+              <div class="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+                <table class="w-full min-w-[480px] text-xs border border-[#e7e7e1] font-mono">
                   <thead>
                     <tr class="bg-slate-50 text-slate-600">
                       <th class="px-2 py-1 text-left">日期</th>

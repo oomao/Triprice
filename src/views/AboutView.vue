@@ -1,4 +1,7 @@
 <script setup>
+import { ref } from 'vue'
+
+const showRidgeDetails = ref(false)
 </script>
 
 <template>
@@ -182,34 +185,45 @@
       </p>
 
       <hr class="my-4 border-[#e7e7e1]">
-      <h3 class="text-base font-semibold tracking-tight mb-2">明日開盤 / 高 / 低 預測（Ridge + Conformal）</h3>
+      <h3 class="text-base font-semibold tracking-tight mb-2">明日開盤 / 高 / 低 預測</h3>
       <p class="text-sm leading-relaxed mb-2">
-        <code>scripts/predict_open_high_low.py</code> 用 Ridge 回歸 + 80% Conformal 區間，把每日訊號合成<strong>單一預測 + 校準區間</strong>，預測隔日 TW 開盤 / 盤中最高 / 盤中最低三條，寫入 <code>data/adr_prediction.json</code>。
+        把 ADR 報酬扣掉匯率和大盤影響，再加上偏離常態的溢價，用回歸算明天 TW 開盤的<strong>合理區間</strong>。
+        每天 cron 用 ~2 年歷史重新訓練，過去 30 天每日預測 vs 實際對照即時可見。
       </p>
-      <p class="text-sm leading-relaxed mb-2"><strong>訊號乾淨化</strong>：</p>
-      <ul class="text-xs leading-relaxed list-disc pl-5 space-y-1 text-slate-600 mb-2">
-        <li><strong>ADR alpha</strong> = ADR USD 漲跌 − USD/TWD 漲跌 − rolling 90d β · SOX 漲跌（剝掉 FX 與 sector beta，留下純個股 alpha）</li>
-        <li><strong>SOX</strong> 整體漲跌 %（保留 sector 訊號）</li>
-        <li><strong>溢價 z-score</strong> = (今日溢價 − 60d rolling median) / MAD（去掉結構性偏移，例如 TSMC 長期 8%+ 溢價）</li>
-      </ul>
-      <p class="text-sm leading-relaxed mb-2"><strong>事件日剔除</strong>（從訓練集中扣除）：</p>
-      <ul class="text-xs leading-relaxed list-disc pl-5 space-y-1 text-slate-600 mb-2">
-        <li>除息日 T 與 T+1（FinMind <code>TaiwanStockDividend</code>）</li>
-        <li>TW 漲跌停（|change| &gt; 9.5%）</li>
-        <li>長假後第一日（calendar gap &gt; 3）</li>
-        <li>ADR 成交量 = 0（HNHPF 鴻海 OTC 常見）</li>
-      </ul>
-      <p class="text-sm leading-relaxed mb-2"><strong>建模 + 驗證</strong>：</p>
-      <ul class="text-xs leading-relaxed list-disc pl-5 space-y-1 text-slate-600 mb-2">
-        <li>RidgeCV 三訊號合成 → 單一點估，per-stock per-target 校準權重</li>
-        <li>80% Conformal 區間（finite-sample valid coverage 保證）</li>
-        <li>Walk-forward：過去 30 個交易日，每日重新訓練、預測、跟實際比對</li>
-        <li>一致性 enforce：高 ≥ 開 ≥ 低（少數情況自動 clip）</li>
-      </ul>
-      <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">
-        頁面上每張卡會顯示「過去 30 日 walk-forward 統計」(MAE / RMSE / coverage / 命中率)，展開可看逐日預測 vs 實際對照表。
-        <strong>盤中最高 / 最低 RMSE 通常較大</strong>（極值有 long tail），當作「合理範圍上下限」而非精確 target。
-      </p>
+      <button
+        @click="showRidgeDetails = !showRidgeDetails"
+        class="text-xs text-slate-500 hover:text-slate-900 underline mb-2"
+      >
+        {{ showRidgeDetails ? '收起技術細節 ▴' : '展開技術細節 ▾' }}
+      </button>
+      <div v-if="showRidgeDetails" class="text-sm leading-relaxed space-y-2 mt-2 pt-2 border-t border-[#e7e7e1]">
+        <p>
+          <code>scripts/predict_open_high_low.py</code> 用 Ridge 回歸 + 80% Conformal 區間，把每日訊號合成<strong>單一預測 + 校準區間</strong>，預測隔日 TW 開盤 / 盤中最高 / 盤中最低三條，寫入 <code>data/adr_prediction.json</code>。
+        </p>
+        <p><strong>訊號乾淨化</strong>：</p>
+        <ul class="text-xs list-disc pl-5 space-y-1 text-slate-600">
+          <li><strong>ADR alpha</strong> = ADR USD 漲跌 − USD/TWD 漲跌 − rolling 90d β · SOX 漲跌（剝掉 FX 與 sector beta，留下純個股 alpha）</li>
+          <li><strong>SOX</strong> 整體漲跌 %（保留 sector 訊號）</li>
+          <li><strong>溢價 z-score</strong> = (今日溢價 − 60d rolling median) / MAD（去掉結構性偏移，例如 TSMC 長期 8%+ 溢價）</li>
+        </ul>
+        <p><strong>事件日剔除</strong>（從訓練集中扣除）：</p>
+        <ul class="text-xs list-disc pl-5 space-y-1 text-slate-600">
+          <li>除息日 T 與 T+1（FinMind <code>TaiwanStockDividend</code>）</li>
+          <li>TW 漲跌停（|change| &gt; 9.5%）</li>
+          <li>長假後第一日（calendar gap &gt; 3）</li>
+          <li>ADR 成交量 = 0（HNHPF 鴻海 OTC 常見）</li>
+        </ul>
+        <p><strong>建模 + 驗證</strong>：</p>
+        <ul class="text-xs list-disc pl-5 space-y-1 text-slate-600">
+          <li>RidgeCV 三訊號合成 → 單一點估，per-stock per-target 校準權重</li>
+          <li>80% Conformal 區間（finite-sample valid coverage 保證）</li>
+          <li>Walk-forward：過去 30 個交易日，每日重新訓練、預測、跟實際比對</li>
+          <li>一致性 enforce：高 ≥ 開 ≥ 低（少數情況自動 clip）</li>
+        </ul>
+        <p class="text-[11px] text-slate-500">
+          盤中最高 / 最低 RMSE 通常較大（極值有 long tail），當作「合理範圍上下限」而非精確 target。
+        </p>
+      </div>
     </section>
 
     <!-- 7. ETF 評分 -->
