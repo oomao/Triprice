@@ -97,6 +97,53 @@ const rawByCode = computed(() => {
   return Object.fromEntries(signal.value.adrs.map((a) => [a.tw_code, a]))
 })
 
+// Build "why this number" rows for the open_gap prediction card.
+// Each row = one feature's pull (in pp = percentage point) on the final
+// prediction, plus the today's input value that produced it.
+function contributionRows(stock) {
+  const c = stock.predictions?.open_gap?.contributions
+  if (!c) return []
+  const sc = stock.signals_cleaned || {}
+  const fmtPct = (v) => v == null ? '—' : (v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%'
+  const tag = (v) => {
+    const a = Math.abs(v)
+    if (a >= 1.5) return v > 0 ? '強拉漲' : '強拉跌'
+    if (a >= 0.5) return v > 0 ? '拉漲' : '拉跌'
+    if (a >= 0.1) return v > 0 ? '微正' : '微負'
+    return '近零'
+  }
+  return [
+    {
+      key: 'sox',
+      label: 'SOX',
+      input: fmtPct(sc.sox_chg_pct),
+      value: c.sox_chg,
+      tag: tag(c.sox_chg),
+    },
+    {
+      key: 'premium_z',
+      label: '溢價 z',
+      input: (sc.premium_z >= 0 ? '+' : '') + Number(sc.premium_z ?? 0).toFixed(2) + 'σ',
+      value: c.premium_z,
+      tag: tag(c.premium_z),
+    },
+    {
+      key: 'adr_alpha',
+      label: '個股 α',
+      input: fmtPct(sc.adr_alpha_pct),
+      value: c.adr_alpha,
+      tag: tag(c.adr_alpha),
+    },
+    {
+      key: 'intercept',
+      label: '基準偏移 (intercept)',
+      input: '常數',
+      value: c.intercept,
+      tag: tag(c.intercept),
+    },
+  ]
+}
+
 function pctClassPrediction(v) {
   if (v == null) return 'text-slate-400'
   if (v >= 1.5) return 'text-red-600 font-semibold'
@@ -286,11 +333,14 @@ const soxRange = computed(() => {
           class="border-2 px-4 sm:px-5 py-4 flex items-center justify-between gap-3 min-w-0"
           :class="signalColor"
         >
-          <div>
+          <div class="min-w-0">
             <div class="text-xs uppercase tracking-wider opacity-70">ADR 平均訊號</div>
             <div class="text-2xl font-bold mt-0.5">{{ signal.signal_label }}</div>
             <div v-if="headline" class="text-sm mt-1 opacity-80">
               {{ headline.direction }}
+            </div>
+            <div class="text-[10px] opacity-60 mt-0.5">
+              閾值：≥+5% 強烈偏多 · ±1% 中性 · ≤−5% 強烈偏空
             </div>
           </div>
           <div class="text-right min-w-0">
@@ -310,11 +360,14 @@ const soxRange = computed(() => {
           class="border-2 px-4 sm:px-5 py-4 flex items-center justify-between gap-3 min-w-0"
           :class="soxLabel?.cls || 'bg-slate-100 text-slate-500'"
         >
-          <div>
+          <div class="min-w-0">
             <div class="text-xs uppercase tracking-wider opacity-70">費城半導體指數 (SOX)</div>
             <div class="text-2xl font-bold mt-0.5">{{ soxLabel?.text || '—' }}</div>
             <div class="text-sm mt-1 opacity-80 font-mono">
               {{ fmt(signal.sox.close, 2) }} <span class="text-xs opacity-70">({{ signal.sox.close_date }})</span>
+            </div>
+            <div class="text-[10px] opacity-60 mt-0.5">
+              閾值：≥+2% 強勢 · ±0.5% 中性 · ≤−2% 弱勢
             </div>
           </div>
           <div class="text-right min-w-0">
@@ -458,33 +511,33 @@ const soxRange = computed(() => {
           <div class="px-4 pt-3 pb-2">
             <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">訊號分解 (cleaned)</div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <div>
-                <div class="text-slate-400">SOX</div>
+              <div title="費城半導體指數當日漲跌 % — 整個 sector 的方向。Ridge 權重最大，常常主導預測。">
+                <div class="text-slate-400">SOX <span class="text-slate-300 cursor-help">ⓘ</span></div>
                 <div class="font-mono" :class="changeClass(stock.signals_cleaned.sox_chg_pct)">
                   {{ pctSign(stock.signals_cleaned.sox_chg_pct) }}
                 </div>
-                <div class="text-[10px] text-slate-400">&nbsp;</div>
+                <div class="text-[10px] text-slate-400">sector 整體漲跌</div>
               </div>
-              <div>
-                <div class="text-slate-400">溢價 z-score</div>
+              <div title="今日溢價 vs 過去 60 日中位數的標準分數。+1σ 表示比平常貴一個標準差，−1σ 表示便宜。去掉結構性溢價偏移。">
+                <div class="text-slate-400">溢價 z-score <span class="text-slate-300 cursor-help">ⓘ</span></div>
                 <div class="font-mono" :class="stock.signals_cleaned.premium_z >= 0 ? 'text-red-500' : 'text-emerald-600'">
                   {{ stock.signals_cleaned.premium_z >= 0 ? '+' : '' }}{{ fmt(stock.signals_cleaned.premium_z, 2) }}σ
                 </div>
                 <div class="text-[10px] text-slate-400">raw {{ pctSign(stock.signals_cleaned.premium_raw_pct) }}</div>
               </div>
-              <div>
-                <div class="text-slate-400">個股 α</div>
+              <div title="ADR USD 漲跌 − FX 漲跌 − β·SOX 漲跌。剝掉匯率與大盤後的純個股動能。負值表示個股表現弱於同業。">
+                <div class="text-slate-400">個股 α <span class="text-slate-300 cursor-help">ⓘ</span></div>
                 <div class="font-mono" :class="changeClass(stock.signals_cleaned.adr_alpha_pct)">
                   {{ pctSign(stock.signals_cleaned.adr_alpha_pct) }}
                 </div>
                 <div class="text-[10px] text-slate-400">ADR 剝 FX + SOX β · β = {{ fmt(stock.signals_cleaned.sox_beta, 2) }}</div>
               </div>
-              <div>
-                <div class="text-slate-400">USD/TWD</div>
+              <div title="USD/TWD 當日匯率變化 %。模型已從 ADR 漲跌中扣除這部分（避免雙重計算）。">
+                <div class="text-slate-400">USD/TWD <span class="text-slate-300 cursor-help">ⓘ</span></div>
                 <div class="font-mono" :class="changeClass(stock.signals_cleaned.fx_chg_pct)">
                   {{ pctSign(stock.signals_cleaned.fx_chg_pct) }}
                 </div>
-                <div class="text-[10px] text-slate-400">&nbsp;</div>
+                <div class="text-[10px] text-slate-400">匯率變化</div>
               </div>
             </div>
           </div>
@@ -552,6 +605,42 @@ const soxRange = computed(() => {
             <div v-if="stock.consistency_violated" class="mt-1 text-[11px] text-amber-700">
               預測高/低/開三條由獨立模型產出，曾有極小重疊已自動修正
             </div>
+
+            <!-- Why this number? — decompose open prediction into per-feature pulls.
+                 Helps users understand why prediction can disagree with naive
+                 "ADR up → TW up" intuition (e.g. SOX lifting overrides weak ADR). -->
+            <div v-if="stock.predictions.open_gap?.contributions"
+                 class="mt-3 bg-slate-50 border border-[#e7e7e1] px-3 py-2 text-xs">
+              <div class="text-slate-500 uppercase tracking-wider mb-1.5">
+                為什麼開盤是 {{ pctSign(stock.predictions.open_gap.point_pct) }}
+              </div>
+              <div class="space-y-1 font-mono">
+                <div v-for="row in contributionRows(stock)"
+                     :key="row.key"
+                     class="flex items-center justify-between gap-2">
+                  <span class="text-slate-700 flex-1 min-w-0 truncate">
+                    {{ row.label }}
+                    <span class="text-slate-400 text-[10px]">({{ row.input }})</span>
+                  </span>
+                  <span class="font-semibold tabular-nums"
+                        :class="row.value > 0 ? 'text-red-500' : (row.value < 0 ? 'text-emerald-600' : 'text-slate-500')">
+                    {{ row.value >= 0 ? '+' : '' }}{{ row.value.toFixed(2) }} pp
+                  </span>
+                  <span class="text-slate-400 text-[10px] w-12 text-right">{{ row.tag }}</span>
+                </div>
+                <div class="border-t border-[#e7e7e1] pt-1 flex items-center justify-between gap-2 font-bold">
+                  <span class="text-slate-700">合計（預測點估）</span>
+                  <span class="tabular-nums"
+                        :class="pctClassPrediction(stock.predictions.open_gap.point_pct)">
+                    {{ pctSign(stock.predictions.open_gap.point_pct) }}
+                  </span>
+                  <span class="w-12"></span>
+                </div>
+              </div>
+              <p class="text-[10px] text-slate-500 mt-1.5 leading-relaxed">
+                每一行 = 該訊號的「標準化值 × Ridge 權重」，是該訊號對最終預測的實際拉力（pp = percentage point）。哪一行絕對值大，就是今天主導預測方向的訊號。
+              </p>
+            </div>
           </div>
 
           <!-- Walk-forward 30-day summary -->
@@ -568,13 +657,13 @@ const soxRange = computed(() => {
               <thead>
                 <tr class="bg-slate-50 text-slate-600">
                   <th class="px-2 py-1 text-left">目標</th>
-                  <th class="px-2 py-1 text-right">N</th>
-                  <th class="px-2 py-1 text-right">MAE</th>
-                  <th class="px-2 py-1 text-right">RMSE</th>
-                  <th class="px-2 py-1 text-right">偏差</th>
-                  <th class="px-2 py-1 text-right">區間寬</th>
-                  <th class="px-2 py-1 text-right">coverage</th>
-                  <th class="px-2 py-1 text-right">命中率</th>
+                  <th class="px-2 py-1 text-right" title="樣本數（過去 N 個交易日）">N</th>
+                  <th class="px-2 py-1 text-right" title="平均絕對誤差 |預測 - 實際| 越小越準">MAE</th>
+                  <th class="px-2 py-1 text-right" title="均方根誤差 sqrt(mean(誤差²)) 對大誤差敏感">RMSE</th>
+                  <th class="px-2 py-1 text-right" title="平均誤差（預測 - 實際）。負值表示模型系統性低估，正值表示高估">偏差</th>
+                  <th class="px-2 py-1 text-right" title="80% conformal 區間的平均寬度（pp）越窄越精確">區間寬</th>
+                  <th class="px-2 py-1 text-right" title="80% 區間實際包住真值的比率，目標 80%">coverage</th>
+                  <th class="px-2 py-1 text-right" title="預測方向（漲/跌）跟實際相符的比率，隨機是 50%，>70% 算可用">命中率</th>
                 </tr>
               </thead>
               <tbody>

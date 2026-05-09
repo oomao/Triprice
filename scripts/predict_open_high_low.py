@@ -590,6 +590,26 @@ def process_stock(tw_code, adr_sym, ratio, tw_meta, tw_kline,
             p['hi80_pct']  = round(p['hi80_pct'], 3)
             predictions[tgt] = p
 
+    # Decompose each prediction into per-feature contributions in pp.
+    # Standardized features × Ridge coef = each feature's pull on point estimate.
+    # Sum of contributions + intercept ≈ point_pct (small float drift OK).
+    feat_keys = ['adr_alpha', 'sox_chg', 'premium_z']
+    today_X = np.array([features_of(last_row)])
+    for tgt, f in fitted.items():
+        if tgt not in predictions:
+            continue
+        Xs = f['scaler'].transform(today_X)[0]
+        coefs = f['model'].coef_
+        intercept = float(f['model'].intercept_)
+        contributions = {
+            'adr_alpha': float(Xs[0] * coefs[0]),
+            'sox_chg':   float(Xs[1] * coefs[1]),
+            'premium_z': float(Xs[2] * coefs[2]),
+            'intercept': intercept,
+        }
+        # Round + attach
+        predictions[tgt]['contributions'] = {k: round(v, 3) for k, v in contributions.items()}
+
     consistency_violated = enforce_consistency(predictions)
     # Re-derive prices after any clip
     for tgt, p in predictions.items():

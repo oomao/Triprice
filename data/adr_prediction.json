@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-09 20:32:13+08:00",
+  "updated": "2026-05-09 23:42:40+08:00",
   "method": "Ridge + Conformal 80% interval",
   "lookback_days": 730,
   "walk_forward_window_days": 30,
@@ -44,7 +44,13 @@
           "point_price": 2304.88,
           "lo80_price": 2266.46,
           "hi80_price": 2343.31,
-          "crosses_zero": true
+          "crosses_zero": true,
+          "contributions": {
+            "adr_alpha": -1.175,
+            "sox_chg": 1.947,
+            "premium_z": -0.372,
+            "intercept": 0.25
+          }
         },
         "max_gain": {
           "point_pct": 1.436,
@@ -53,7 +59,13 @@
           "point_price": 2322.88,
           "lo80_price": 2278.37,
           "hi80_price": 2367.42,
-          "crosses_zero": true
+          "crosses_zero": true,
+          "contributions": {
+            "adr_alpha": -1.228,
+            "sox_chg": 1.79,
+            "premium_z": -0.324,
+            "intercept": 1.198
+          }
         },
         "max_loss": {
           "point_pct": -0.194,
@@ -62,7 +74,13 @@
           "point_price": 2285.56,
           "lo80_price": 2238.89,
           "hi80_price": 2332.2,
-          "crosses_zero": true
+          "crosses_zero": true,
+          "contributions": {
+            "adr_alpha": -0.938,
+            "sox_chg": 1.574,
+            "premium_z": -0.367,
+            "intercept": -0.463
+          }
         }
       },
       "consistency_violated": false,
@@ -1073,7 +1091,13 @@
           "point_price": 255.19,
           "lo80_price": 251.54,
           "hi80_price": 258.85,
-          "crosses_zero": false
+          "crosses_zero": false,
+          "contributions": {
+            "adr_alpha": -0.127,
+            "sox_chg": 1.592,
+            "premium_z": 0.285,
+            "intercept": 0.327
+          }
         },
         "max_gain": {
           "point_pct": 2.842,
@@ -1082,7 +1106,13 @@
           "point_price": 257.11,
           "lo80_price": 251.54,
           "hi80_price": 262.7,
-          "crosses_zero": false
+          "crosses_zero": false,
+          "contributions": {
+            "adr_alpha": -0.135,
+            "sox_chg": 1.25,
+            "premium_z": 0.307,
+            "intercept": 1.42
+          }
         },
         "max_loss": {
           "point_pct": 0.34,
@@ -1091,7 +1121,13 @@
           "point_price": 250.85,
           "lo80_price": 245.55,
           "hi80_price": 256.15,
-          "crosses_zero": true
+          "crosses_zero": true,
+          "contributions": {
+            "adr_alpha": -0.08,
+            "sox_chg": 1.185,
+            "premium_z": 0.288,
+            "intercept": -1.054
+          }
         }
       },
       "consistency_violated": true,
@@ -2102,7 +2138,13 @@
           "point_price": 529.26,
           "lo80_price": 518.65,
           "hi80_price": 539.86,
-          "crosses_zero": false
+          "crosses_zero": false,
+          "contributions": {
+            "adr_alpha": -0.419,
+            "sox_chg": 1.812,
+            "premium_z": 0.535,
+            "intercept": 0.64
+          }
         },
         "max_gain": {
           "point_pct": 4.122,
@@ -2111,7 +2153,13 @@
           "point_price": 537.27,
           "lo80_price": 518.65,
           "hi80_price": 558.86,
-          "crosses_zero": true
+          "crosses_zero": true,
+          "contributions": {
+            "adr_alpha": -0.649,
+            "sox_chg": 1.766,
+            "premium_z": 0.613,
+            "intercept": 2.392
+          }
         },
         "max_loss": {
           "point_pct": 0.895,
@@ -2120,7 +2168,13 @@
           "point_price": 520.62,
           "lo80_price": 506.45,
           "hi80_price": 534.78,
-          "crosses_zero": true
+          "crosses_zero": true,
+          "contributions": {
+            "adr_alpha": -0.374,
+            "sox_chg": 1.666,
+            "premium_z": 0.611,
+            "intercept": -1.008
+          }
         }
       },
       "consistency_violated": true,

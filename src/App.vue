@@ -7,15 +7,31 @@ import { RouterLink, RouterView, useRoute } from 'vue-router'
 // jumps to the new version without manually clearing cache.
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 
+// Track the SW registration so we can ping it on visibility change too.
+const swRegistration = ref(null)
+
 const { needRefresh, updateServiceWorker } = useRegisterSW({
   immediate: true,
-  // Optional: log to console on register success/error for debugging stale PWAs
   onRegisteredSW(_url, registration) {
-    // Re-check for an update every hour while the app is open.
-    if (registration) {
-      setInterval(() => registration.update(), 60 * 60 * 1000)
-    }
+    if (!registration) return
+    swRegistration.value = registration
+    // Background hourly check while app is open.
+    setInterval(() => registration.update(), 60 * 60 * 1000)
   },
+})
+
+// PWA-specific: when the app comes back to foreground (user swipes back
+// in / unlocks phone / refocuses tab), immediately re-check for updates.
+// This is the most reliable trigger on iOS/Android where users rarely
+// "close" the PWA — they background and resume, which would otherwise
+// miss the hourly poll window for hours.
+onMounted(() => {
+  const handler = () => {
+    if (!document.hidden && swRegistration.value) {
+      swRegistration.value.update()
+    }
+  }
+  document.addEventListener('visibilitychange', handler)
 })
 
 function applyUpdate() {
