@@ -5,27 +5,49 @@ import DiffBars from '../components/DiffBars.vue'
 
 const signal = ref(null)
 const history = ref([])
+const prediction = ref(null)
 const loading = ref(true)
 const error = ref(null)
+const expandedWalkForward = ref({}) // { tw_code: bool }
 
 onMounted(async () => {
   const base = import.meta.env.BASE_URL
   try {
-    const [sigRes, histRes] = await Promise.all([
+    const [sigRes, histRes, predRes] = await Promise.all([
       fetch(`${base}data/adr_signal.json`),
       fetch(`${base}data/adr_history.json`),
+      fetch(`${base}data/adr_prediction.json`),
     ])
     if (sigRes.ok) signal.value = await sigRes.json()
     if (histRes.ok) {
       const j = await histRes.json()
       history.value = (j.records || []).slice(-30)
     }
+    if (predRes.ok) prediction.value = await predRes.json()
   } catch (e) {
     error.value = e.message
   } finally {
     loading.value = false
   }
 })
+
+function toggleWalkForward(code) {
+  expandedWalkForward.value[code] = !expandedWalkForward.value[code]
+}
+
+function pctSign(v) {
+  if (v == null || isNaN(v)) return '—'
+  return (v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%'
+}
+
+function pctClassPrediction(v) {
+  if (v == null) return 'text-slate-400'
+  if (v >= 1.5) return 'text-red-600 font-semibold'
+  if (v >= 0.3) return 'text-red-500'
+  if (v > -0.3) return 'text-slate-600'
+  if (v > -1.5) return 'text-emerald-500'
+  return 'text-emerald-700 font-semibold'
+}
 
 function fmt(n, d = 2) {
   if (n == null || isNaN(n)) return '—'
@@ -41,6 +63,15 @@ function premiumClass(v) {
   if (v >= 1) return 'text-red-500'
   if (v > -1) return 'text-slate-600'
   if (v > -5) return 'text-emerald-500'
+  return 'text-emerald-700 font-bold'
+}
+
+function changeClass(v) {
+  if (v == null) return 'text-slate-400'
+  if (v >= 2) return 'text-red-600 font-bold'
+  if (v >= 0.5) return 'text-red-500'
+  if (v > -0.5) return 'text-slate-600'
+  if (v > -2) return 'text-emerald-500'
   return 'text-emerald-700 font-bold'
 }
 
@@ -67,14 +98,24 @@ const headline = computed(() => {
   return { direction, value: v }
 })
 
+// SOX label derived purely from daily change %.
+const soxLabel = computed(() => {
+  const c = signal.value?.sox?.change_pct
+  if (c == null) return null
+  if (c >= 2)    return { text: '強勢',   cls: 'bg-red-50 border-red-300 text-red-700' }
+  if (c >= 0.5)  return { text: '偏多',   cls: 'bg-red-50 border-red-200 text-red-600' }
+  if (c > -0.5)  return { text: '中性',   cls: 'bg-slate-50 border-slate-300 text-slate-700' }
+  if (c > -2)    return { text: '偏弱',   cls: 'bg-emerald-50 border-emerald-200 text-emerald-600' }
+  return                  { text: '弱勢',   cls: 'bg-emerald-50 border-emerald-300 text-emerald-700' }
+})
+
 // Tiny sparkline for premium history.
 const SPARK_W = 320
 const SPARK_H = 60
 const SPARK_PAD = 4
 
-const sparkPath = computed(() => {
-  if (!history.value.length) return ''
-  const vals = history.value.map((h) => h.avg_premium_pct)
+function sparkPathOf(vals) {
+  if (!vals.length) return ''
   const min = Math.min(...vals, 0)
   const max = Math.max(...vals, 0)
   const range = max - min || 1
@@ -86,23 +127,33 @@ const sparkPath = computed(() => {
       return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
     })
     .join(' ')
-})
+}
 
-const sparkZero = computed(() => {
-  if (!history.value.length) return null
-  const vals = history.value.map((h) => h.avg_premium_pct)
+function sparkZeroOf(vals) {
+  if (!vals.length) return null
   const min = Math.min(...vals, 0)
   const max = Math.max(...vals, 0)
   const range = max - min || 1
   return SPARK_PAD + (SPARK_H - SPARK_PAD * 2) * (1 - (0 - min) / range)
-})
+}
+
+const premiumVals = computed(() => history.value.map((h) => h.avg_premium_pct))
+const sparkPath   = computed(() => sparkPathOf(premiumVals.value))
+const sparkZero   = computed(() => sparkZeroOf(premiumVals.value))
+
+const soxVals = computed(() =>
+  history.value.map((h) => h.sox_change_pct).filter((v) => v != null && !isNaN(v))
+)
+const soxSparkPath = computed(() => sparkPathOf(soxVals.value))
+const soxSparkZero = computed(() => sparkZeroOf(soxVals.value))
 </script>
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold tracking-tight mb-1">ADR 訊號儀表板</h1>
+    <h1 class="text-2xl font-bold tracking-tight mb-1">夜盤領先訊號</h1>
     <p class="text-sm text-slate-500 mb-5 leading-relaxed">
-      美股 ADR 收盤晚於台股約 14~15 小時，溢價可作為台股<strong>隔日開盤</strong>方向的領先訊號。
+      美股 ADR 與費城半導體指數收盤晚於台股約 14~15 小時，可作為台股<strong>隔日開盤</strong>方向的領先參考。
+      聚焦：<strong>台積電 (TSM)</strong>、<strong>鴻海 (HNHPF)</strong>、<strong>日月光 (ASX)</strong> + <strong>SOX</strong>。
     </p>
 
     <div v-if="loading" class="text-slate-500 py-8 text-center">載入中…</div>
@@ -110,29 +161,61 @@ const sparkZero = computed(() => {
       尚無 ADR 訊號資料 — 等下次美股收盤後（台北時間隔日清晨）由 GitHub Actions 自動產生。
     </div>
     <div v-else>
-      <!-- Aggregate signal banner -->
-      <section
-        class="border-2 px-5 py-4 mb-5 flex items-center justify-between gap-4"
-        :class="signalColor"
-      >
-        <div>
-          <div class="text-xs uppercase tracking-wider opacity-70">整體訊號</div>
-          <div class="text-2xl font-bold mt-0.5">{{ signal.signal_label }}</div>
-          <div v-if="headline" class="text-sm mt-1 opacity-80">
-            {{ headline.direction }}（4 檔 ADR 平均溢價
-            <strong>{{ signal.avg_premium_pct >= 0 ? '+' : '' }}{{ fmt(signal.avg_premium_pct) }}%</strong>）
+      <!-- Two-pane top: ADR aggregate + SOX -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+        <!-- ADR aggregate -->
+        <div
+          class="border-2 px-5 py-4 flex items-center justify-between gap-4"
+          :class="signalColor"
+        >
+          <div>
+            <div class="text-xs uppercase tracking-wider opacity-70">ADR 平均訊號</div>
+            <div class="text-2xl font-bold mt-0.5">{{ signal.signal_label }}</div>
+            <div v-if="headline" class="text-sm mt-1 opacity-80">
+              {{ headline.direction }}
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <div class="text-xs opacity-70">3 檔平均溢價</div>
+            <div class="text-lg font-bold">
+              {{ signal.avg_premium_pct >= 0 ? '+' : '' }}{{ fmt(signal.avg_premium_pct) }}%
+            </div>
+            <div class="text-[11px] opacity-70 mt-0.5">
+              ADR 平均漲跌 {{ signal.avg_adr_change_pct >= 0 ? '+' : '' }}{{ fmt(signal.avg_adr_change_pct) }}%
+            </div>
           </div>
         </div>
-        <div class="text-right shrink-0">
-          <div class="text-xs opacity-70">ADR 平均漲跌</div>
-          <div class="text-lg font-bold">
-            {{ signal.avg_adr_change_pct >= 0 ? '+' : '' }}{{ fmt(signal.avg_adr_change_pct) }}%
+
+        <!-- SOX (Philadelphia Semi Index) -->
+        <div
+          v-if="signal.sox"
+          class="border-2 px-5 py-4 flex items-center justify-between gap-4"
+          :class="soxLabel?.cls || 'bg-slate-100 text-slate-500'"
+        >
+          <div>
+            <div class="text-xs uppercase tracking-wider opacity-70">費城半導體指數 (SOX)</div>
+            <div class="text-2xl font-bold mt-0.5">{{ soxLabel?.text || '—' }}</div>
+            <div class="text-sm mt-1 opacity-80 font-mono">
+              {{ fmt(signal.sox.close, 2) }} <span class="text-xs opacity-70">({{ signal.sox.close_date }})</span>
+            </div>
           </div>
+          <div class="text-right shrink-0">
+            <div class="text-xs opacity-70">當日漲跌</div>
+            <div :class="changeClass(signal.sox.change_pct)" class="text-2xl font-bold">
+              {{ signal.sox.change_pct >= 0 ? '+' : '' }}{{ fmt(signal.sox.change_pct) }}%
+            </div>
+            <div class="text-[11px] opacity-70 mt-0.5 font-mono">
+              {{ signal.sox.change >= 0 ? '+' : '' }}{{ fmt(signal.sox.change) }}
+            </div>
+          </div>
+        </div>
+        <div v-else class="bg-slate-50 border border-slate-200 px-5 py-4 text-sm text-slate-500">
+          SOX 資料尚未抓取，請等下次 fetch_us.py 執行。
         </div>
       </section>
 
-      <!-- Per-ADR cards -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+      <!-- Per-ADR cards (3 headline only) -->
+      <section class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <RouterLink
           v-for="e in signal.adrs"
           :key="e.adr"
@@ -172,38 +255,320 @@ const sparkZero = computed(() => {
         </RouterLink>
       </section>
 
-      <!-- History sparkline -->
-      <section v-if="history.length >= 2" class="bg-white border border-[#e7e7e1] p-4 mb-6">
-        <div class="flex items-baseline justify-between mb-2">
-          <h2 class="text-base font-semibold">近 {{ history.length }} 個交易日平均溢價</h2>
-          <span class="text-xs text-slate-500">
-            最新 {{ history[history.length - 1]?.avg_premium_pct >= 0 ? '+' : '' }}{{ fmt(history[history.length - 1]?.avg_premium_pct) }}%
-          </span>
+      <!-- History sparklines -->
+      <section v-if="history.length >= 2" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+        <div class="bg-white border border-[#e7e7e1] p-4">
+          <div class="flex items-baseline justify-between mb-2">
+            <h2 class="text-sm font-semibold">近 {{ history.length }} 日 ADR 平均溢價</h2>
+            <span class="text-xs text-slate-500">
+              最新 {{ history[history.length - 1]?.avg_premium_pct >= 0 ? '+' : '' }}{{ fmt(history[history.length - 1]?.avg_premium_pct) }}%
+            </span>
+          </div>
+          <svg :viewBox="`0 0 ${SPARK_W} ${SPARK_H}`" preserveAspectRatio="none" class="w-full h-16">
+            <line
+              v-if="sparkZero != null"
+              :x1="SPARK_PAD" :x2="SPARK_W - SPARK_PAD"
+              :y1="sparkZero" :y2="sparkZero"
+              stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="3 3"
+            />
+            <path :d="sparkPath" stroke="#b4530b" stroke-width="1.6" fill="none" stroke-linejoin="round" stroke-linecap="round" />
+          </svg>
+          <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+            <span>{{ history[0]?.date }}</span>
+            <span>0%</span>
+            <span>{{ history[history.length - 1]?.date }}</span>
+          </div>
         </div>
-        <svg :viewBox="`0 0 ${SPARK_W} ${SPARK_H}`" preserveAspectRatio="none" class="w-full h-16">
-          <line
-            v-if="sparkZero != null"
-            :x1="SPARK_PAD" :x2="SPARK_W - SPARK_PAD"
-            :y1="sparkZero" :y2="sparkZero"
-            stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="3 3"
-          />
-          <path :d="sparkPath" stroke="#b4530b" stroke-width="1.6" fill="none" stroke-linejoin="round" stroke-linecap="round" />
-        </svg>
-        <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
-          <span>{{ history[0]?.date }}</span>
-          <span>0%</span>
-          <span>{{ history[history.length - 1]?.date }}</span>
+
+        <div v-if="soxVals.length >= 2" class="bg-white border border-[#e7e7e1] p-4">
+          <div class="flex items-baseline justify-between mb-2">
+            <h2 class="text-sm font-semibold">近 {{ soxVals.length }} 日 SOX 漲跌</h2>
+            <span class="text-xs text-slate-500">
+              最新 {{ history[history.length - 1]?.sox_change_pct >= 0 ? '+' : '' }}{{ fmt(history[history.length - 1]?.sox_change_pct) }}%
+            </span>
+          </div>
+          <svg :viewBox="`0 0 ${SPARK_W} ${SPARK_H}`" preserveAspectRatio="none" class="w-full h-16">
+            <line
+              v-if="soxSparkZero != null"
+              :x1="SPARK_PAD" :x2="SPARK_W - SPARK_PAD"
+              :y1="soxSparkZero" :y2="soxSparkZero"
+              stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="3 3"
+            />
+            <path :d="soxSparkPath" stroke="#1e6f9f" stroke-width="1.6" fill="none" stroke-linejoin="round" stroke-linecap="round" />
+          </svg>
+          <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+            <span>起點</span>
+            <span>0%</span>
+            <span>最新</span>
+          </div>
+        </div>
+        <div v-else class="bg-slate-50 border border-slate-200 p-4 text-xs text-slate-500">
+          SOX 歷史資料需累積至少 2 個交易日。
         </div>
       </section>
       <section v-else class="bg-slate-50 border border-slate-200 p-3 mb-6 text-xs text-slate-500">
-        歷史溢價趨勢需累積至少 2 個交易日（每日由 cron 自動寫入 <code>adr_history.json</code>）。
+        歷史走勢需累積至少 2 個交易日（每日由 cron 自動寫入 <code>adr_history.json</code>）。
+      </section>
+
+      <!-- Phase 1: Ridge + Conformal model — predict next-day open / high / low -->
+      <section v-if="prediction" class="mb-6">
+        <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+          <h2 class="text-lg font-bold tracking-tight">明日開盤 / 高 / 低 預測</h2>
+          <span class="text-xs text-slate-500">{{ prediction.method }} · 回看 {{ prediction.lookback_days }} 天 · {{ prediction.updated?.slice(0,10) }} 更新</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+          訊號乾淨化：<strong>ADR alpha</strong>（剝 FX 與 SOX β）+ <strong>SOX</strong> 漲跌 + <strong>溢價 z-score</strong>（去掉 60 日結構性偏移）→ Ridge 回歸 → 80% Conformal 區間。
+          底部展開可看過去 30 個交易日 walk-forward 逐日驗證（每日重新訓練、預測、跟實際比對）。
+        </p>
+
+        <div
+          v-for="(stock, code) in prediction.stocks"
+          :key="code"
+          class="bg-white border border-[#e7e7e1] mb-4"
+        >
+          <!-- Header -->
+          <div class="px-4 py-3 border-b border-[#e7e7e1] bg-slate-50 flex items-baseline justify-between flex-wrap gap-2">
+            <div>
+              <span class="font-bold text-base">{{ stock.name }}</span>
+              <span class="text-xs text-slate-500 ml-2 font-mono">{{ code }} · ADR {{ stock.adr }}</span>
+            </div>
+            <div class="text-xs text-slate-500 font-mono">
+              TW 收盤 <strong class="text-slate-800">{{ fmt(stock.tw_close) }}</strong>
+              · ADR ${{ fmt(stock.adr_close) }}
+              → 隱含 {{ fmt(stock.implied_tw_price) }}
+            </div>
+          </div>
+
+          <!-- Warnings -->
+          <div v-if="stock.signals_cleaned.is_event_day || stock.signals_cleaned.hnhpf_stale || stock.signals_cleaned.is_ex_div"
+               class="px-4 py-2 bg-amber-50 border-b border-amber-200 text-xs text-amber-800 leading-relaxed">
+            <span v-if="stock.signals_cleaned.is_event_day">⚠ 事件日 — 預測可信度低</span>
+            <span v-if="stock.signals_cleaned.is_ex_div" class="ml-2">⚠ 今日除息</span>
+            <span v-if="stock.signals_cleaned.hnhpf_stale" class="ml-2">⚠ HNHPF 報價停滯（成交量過低或與前日相同），鴻海預測僅供參考</span>
+          </div>
+
+          <!-- Cleaned signals -->
+          <div class="px-4 pt-3 pb-2">
+            <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">訊號分解 (cleaned)</div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div>
+                <div class="text-slate-400">ADR alpha</div>
+                <div class="font-mono" :class="changeClass(stock.signals_cleaned.adr_alpha_pct)">
+                  {{ pctSign(stock.signals_cleaned.adr_alpha_pct) }}
+                </div>
+                <div class="text-[10px] text-slate-400">扣 SOX β = {{ fmt(stock.signals_cleaned.sox_beta, 2) }}</div>
+              </div>
+              <div>
+                <div class="text-slate-400">SOX</div>
+                <div class="font-mono" :class="changeClass(stock.signals_cleaned.sox_chg_pct)">
+                  {{ pctSign(stock.signals_cleaned.sox_chg_pct) }}
+                </div>
+                <div class="text-[10px] text-slate-400">&nbsp;</div>
+              </div>
+              <div>
+                <div class="text-slate-400">溢價 z-score</div>
+                <div class="font-mono" :class="stock.signals_cleaned.premium_z >= 0 ? 'text-red-500' : 'text-emerald-600'">
+                  {{ stock.signals_cleaned.premium_z >= 0 ? '+' : '' }}{{ fmt(stock.signals_cleaned.premium_z, 2) }}σ
+                </div>
+                <div class="text-[10px] text-slate-400">raw {{ pctSign(stock.signals_cleaned.premium_raw_pct) }}</div>
+              </div>
+              <div>
+                <div class="text-slate-400">USD/TWD</div>
+                <div class="font-mono" :class="changeClass(stock.signals_cleaned.fx_chg_pct)">
+                  {{ pctSign(stock.signals_cleaned.fx_chg_pct) }}
+                </div>
+                <div class="text-[10px] text-slate-400">&nbsp;</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Predictions table -->
+          <div class="px-4 pt-3 pb-4">
+            <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">明日預測 (Ridge + Conformal 80%)</div>
+            <table class="w-full text-sm border border-[#e7e7e1]">
+              <thead>
+                <tr class="bg-slate-50 text-slate-600 text-xs">
+                  <th class="px-3 py-1.5 text-left">目標</th>
+                  <th class="px-3 py-1.5 text-right">點估</th>
+                  <th class="px-3 py-1.5 text-right">80% 區間 (%)</th>
+                  <th class="px-3 py-1.5 text-right">區間價格</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="stock.predictions.max_gain" class="border-t border-[#e7e7e1]">
+                  <td class="px-3 py-2">盤中最高</td>
+                  <td class="px-3 py-2 text-right font-mono font-semibold"
+                      :class="pctClassPrediction(stock.predictions.max_gain.point_pct)">
+                    {{ pctSign(stock.predictions.max_gain.point_pct) }}
+                  </td>
+                  <td class="px-3 py-2 text-right font-mono text-xs text-slate-500">
+                    [{{ pctSign(stock.predictions.max_gain.lo80_pct) }},
+                    {{ pctSign(stock.predictions.max_gain.hi80_pct) }}]
+                  </td>
+                  <td class="px-3 py-2 text-right font-mono">
+                    {{ fmt(stock.predictions.max_gain.lo80_price, 0) }} ~ <strong>{{ fmt(stock.predictions.max_gain.hi80_price, 0) }}</strong>
+                  </td>
+                </tr>
+                <tr v-if="stock.predictions.open_gap" class="border-t border-[#e7e7e1] bg-amber-50/40">
+                  <td class="px-3 py-2"><strong>開盤</strong></td>
+                  <td class="px-3 py-2 text-right font-mono font-bold text-base"
+                      :class="pctClassPrediction(stock.predictions.open_gap.point_pct)">
+                    {{ pctSign(stock.predictions.open_gap.point_pct) }}
+                  </td>
+                  <td class="px-3 py-2 text-right font-mono text-xs text-slate-500">
+                    [{{ pctSign(stock.predictions.open_gap.lo80_pct) }},
+                    {{ pctSign(stock.predictions.open_gap.hi80_pct) }}]
+                    <span v-if="stock.predictions.open_gap.crosses_zero" class="ml-1 text-amber-600">⚠跨零</span>
+                  </td>
+                  <td class="px-3 py-2 text-right font-mono">
+                    {{ fmt(stock.predictions.open_gap.lo80_price, 0) }} ~ <strong>{{ fmt(stock.predictions.open_gap.hi80_price, 0) }}</strong>
+                  </td>
+                </tr>
+                <tr v-if="stock.predictions.max_loss" class="border-t border-[#e7e7e1]">
+                  <td class="px-3 py-2">盤中最低</td>
+                  <td class="px-3 py-2 text-right font-mono font-semibold"
+                      :class="pctClassPrediction(stock.predictions.max_loss.point_pct)">
+                    {{ pctSign(stock.predictions.max_loss.point_pct) }}
+                  </td>
+                  <td class="px-3 py-2 text-right font-mono text-xs text-slate-500">
+                    [{{ pctSign(stock.predictions.max_loss.lo80_pct) }},
+                    {{ pctSign(stock.predictions.max_loss.hi80_pct) }}]
+                  </td>
+                  <td class="px-3 py-2 text-right font-mono">
+                    <strong>{{ fmt(stock.predictions.max_loss.lo80_price, 0) }}</strong> ~ {{ fmt(stock.predictions.max_loss.hi80_price, 0) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div v-if="stock.consistency_violated" class="mt-1 text-[11px] text-amber-700">
+              ⚠ 三個獨立模型結果有少許不一致（高 < 開 或 開 < 低），已自動 clip
+            </div>
+          </div>
+
+          <!-- Walk-forward 30-day summary -->
+          <div class="px-4 pt-2 pb-3 border-t border-[#e7e7e1]" v-if="stock.walk_forward_30d?.open_gap?.summary">
+            <div class="flex items-baseline justify-between flex-wrap gap-2 mb-1">
+              <div class="text-xs uppercase tracking-wider text-slate-500">過去 30 日 walk-forward 驗證</div>
+              <button @click="toggleWalkForward(code)"
+                      class="text-xs text-slate-500 hover:text-slate-900 underline">
+                {{ expandedWalkForward[code] ? '收起逐日明細 ▴' : '展開逐日明細 ▾' }}
+              </button>
+            </div>
+            <table class="w-full text-xs border border-[#e7e7e1]">
+              <thead>
+                <tr class="bg-slate-50 text-slate-600">
+                  <th class="px-2 py-1 text-left">目標</th>
+                  <th class="px-2 py-1 text-right">N</th>
+                  <th class="px-2 py-1 text-right">MAE</th>
+                  <th class="px-2 py-1 text-right">RMSE</th>
+                  <th class="px-2 py-1 text-right">偏差</th>
+                  <th class="px-2 py-1 text-right">區間寬</th>
+                  <th class="px-2 py-1 text-right">coverage</th>
+                  <th class="px-2 py-1 text-right">命中率</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="tgt in ['open_gap', 'max_gain', 'max_loss']"
+                    :key="tgt"
+                    v-show="stock.walk_forward_30d[tgt]?.summary"
+                    class="border-t border-[#e7e7e1]">
+                  <td class="px-2 py-1">
+                    {{ tgt === 'open_gap' ? '開盤' : (tgt === 'max_gain' ? '盤中最高' : '盤中最低') }}
+                  </td>
+                  <td class="px-2 py-1 text-right font-mono">{{ stock.walk_forward_30d[tgt].summary.n }}</td>
+                  <td class="px-2 py-1 text-right font-mono">{{ stock.walk_forward_30d[tgt].summary.mae_pct }}%</td>
+                  <td class="px-2 py-1 text-right font-mono">{{ stock.walk_forward_30d[tgt].summary.rmse_pct }}%</td>
+                  <td class="px-2 py-1 text-right font-mono"
+                      :class="stock.walk_forward_30d[tgt].summary.bias_pct > 0 ? 'text-red-500' : 'text-emerald-600'">
+                    {{ pctSign(stock.walk_forward_30d[tgt].summary.bias_pct) }}
+                  </td>
+                  <td class="px-2 py-1 text-right font-mono">{{ stock.walk_forward_30d[tgt].summary.avg_interval_width_pct }}%</td>
+                  <td class="px-2 py-1 text-right font-mono"
+                      :class="stock.walk_forward_30d[tgt].summary.coverage_pct >= 75 ? 'text-emerald-600' : 'text-amber-600'">
+                    {{ stock.walk_forward_30d[tgt].summary.coverage_pct }}%
+                  </td>
+                  <td class="px-2 py-1 text-right font-mono"
+                      :class="stock.walk_forward_30d[tgt].summary.hit_rate_pct >= 70 ? 'text-emerald-600 font-semibold' : 'text-slate-600'">
+                    {{ stock.walk_forward_30d[tgt].summary.hit_rate_pct }}%
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Per-day expansion (open_gap only) -->
+            <div v-if="expandedWalkForward[code] && stock.walk_forward_30d.open_gap?.daily?.length"
+                 class="mt-3">
+              <div class="text-[11px] text-slate-500 mb-1">開盤預測 vs 實際（逐日）</div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-xs border border-[#e7e7e1] font-mono">
+                  <thead>
+                    <tr class="bg-slate-50 text-slate-600">
+                      <th class="px-2 py-1 text-left">日期</th>
+                      <th class="px-2 py-1 text-right">預測</th>
+                      <th class="px-2 py-1 text-right">實際</th>
+                      <th class="px-2 py-1 text-right">誤差</th>
+                      <th class="px-2 py-1 text-right">80% 區間</th>
+                      <th class="px-2 py-1 text-center">方向</th>
+                      <th class="px-2 py-1 text-center">in?</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="d in stock.walk_forward_30d.open_gap.daily"
+                        :key="d.date"
+                        class="border-t border-[#e7e7e1]">
+                      <td class="px-2 py-0.5">{{ d.date }}</td>
+                      <td class="px-2 py-0.5 text-right" :class="d.predicted_pct >= 0 ? 'text-red-500' : 'text-emerald-600'">
+                        {{ pctSign(d.predicted_pct) }}
+                      </td>
+                      <td class="px-2 py-0.5 text-right" :class="d.actual_pct >= 0 ? 'text-red-500' : 'text-emerald-600'">
+                        {{ pctSign(d.actual_pct) }}
+                      </td>
+                      <td class="px-2 py-0.5 text-right text-slate-500">
+                        {{ pctSign(d.error_pct) }}
+                      </td>
+                      <td class="px-2 py-0.5 text-right text-slate-500">
+                        [{{ pctSign(d.lo80_pct) }}, {{ pctSign(d.hi80_pct) }}]
+                      </td>
+                      <td class="px-2 py-0.5 text-center" :class="d.hit_direction ? 'text-emerald-600' : 'text-rose-500'">
+                        {{ d.hit_direction ? '✓' : '✗' }}
+                      </td>
+                      <td class="px-2 py-0.5 text-center" :class="d.in_interval ? 'text-emerald-600' : 'text-rose-500'">
+                        {{ d.in_interval ? '✓' : '✗' }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coefficients (collapsed under expansion only) -->
+          <div v-if="expandedWalkForward[code] && stock.model_quality?.open_gap"
+               class="px-4 pb-3 text-[11px] text-slate-500 leading-relaxed">
+            <div class="mt-3"><strong>Ridge 標準化權重 (open_gap)</strong>:
+              ADR alpha {{ stock.model_quality.open_gap.coef.adr_alpha }} ·
+              SOX {{ stock.model_quality.open_gap.coef.sox_chg }} ·
+              Premium z {{ stock.model_quality.open_gap.coef.premium_z }} ·
+              intercept {{ stock.model_quality.open_gap.intercept }}
+              · 訓練集 N = {{ stock.model_quality.open_gap.n_train }}
+            </div>
+          </div>
+        </div>
+
+        <p class="text-[11px] text-slate-500 leading-relaxed bg-slate-50 p-3 border border-slate-200">
+          <strong>讀法</strong>：
+          區間是 80% conformal — 過去 30 天實測，coverage 應接近 80%。
+          <strong>命中率</strong>：預測方向（漲/跌）跟實際相符的比率（隨機是 50%）。
+          盤中最高 / 最低 RMSE 通常較大（極值有 long tail），當作「<strong>合理範圍</strong>」而非精確 target。
+          事件日（除息、漲跌停、長假後、HNHPF 停滯）會自動標警告，預測可信度降低。
+        </p>
       </section>
 
       <!-- Methodology footer -->
       <div class="text-xs text-slate-500 leading-relaxed bg-slate-50 p-3 border border-slate-200">
         <p class="mb-1"><strong>計算邏輯</strong></p>
         <p>每檔 ADR 的隱含台股價 = ADR 收盤 × USD/TWD ÷ ratio；溢價 = (隱含價 − 台股收盤) ÷ 台股收盤。</p>
-        <p class="mt-1">整體訊號 = 4 檔 ADR 溢價的等權平均，分成 5 檔（強烈偏空 / 偏空 / 中性 / 偏多 / 強烈偏多）。</p>
+        <p class="mt-1">頂部 ADR 平均訊號 / SOX 標籤是 raw 速覽。下方「明日預測」用 Ridge + Conformal 把 ADR alpha + SOX + 溢價 z 合成單一預測，每天 06:00 cron 重新訓練、重新預測。</p>
         <p class="mt-1 text-slate-400">
           USD/TWD = {{ fmt(signal.fx_rate, 3) }}（{{ signal.fx_date }}）· 訊號更新 {{ signal.updated?.replace(/:\d{2}\+\d{2}:\d{2}$/, '') }}
         </p>

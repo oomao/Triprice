@@ -29,8 +29,10 @@
 | 三價估值 | 便宜 / 合理 / 昂貴三檔目標價，殖利率法 + PE 法雙計算 |
 | **估值帶狀圖** | **個股頁顯示 3 年股價走勢 + 三檔估值參考線，一眼看出目前位置（0% = 便宜、100% = 昂貴）** |
 | 標籤分級 | 目前股價自動標示「便宜 / 合理偏便宜 / 合理偏貴 / 昂貴」 |
-| ADR 比較 | TSM、UMC、ASX、CHT 四檔 ADR 的隱含台股價 + 溢價率 |
-| **ADR 訊號儀表板** | **`/adr` 頁：4 檔 ADR 平均溢價匯總成 5 段訊號（強烈偏空 → 強烈偏多），作為台股隔日開盤方向參考。每日累積至 `adr_history.json`** |
+| ADR 比較 | TSM、HNHPF、UMC、ASX、CHT 五檔 ADR 的隱含台股價 + 溢價率 |
+| **夜盤領先訊號** | **`/adr` 頁：聚焦 3 檔重點 ADR（TSM / HNHPF / ASX）平均溢價 + 費城半導體指數（^SOX），作為台股隔日開盤方向參考。每日累積至 `adr_history.json`** |
+| **歷史比對 backtest** | **`/adr` 頁底部：把過去 ~2 年每日訊號分桶，統計隔日台股的開盤跳空 / 盤中最高 / 最低 / 收盤淨變化分布。今日訊號落點自動標亮 → 一眼看出「ADR 漲 X% 時，台股隔日歷史上通常 / 最多 / 最少怎麼走」** |
+| **明日開盤 / 高 / 低預測** | **`/adr` 頁：Ridge + 80% Conformal 區間預測明日 TW 開盤、盤中最高、盤中最低三條，附過去 30 日 walk-forward 驗證（每天重訓 + 比對實際）。訊號乾淨化（FX 分離、SOX residual、溢價 z-score）+ 事件日剔除（除息、漲跌停、長假、HNHPF stale）** |
 | **ETF 全覽 + 評分** | **`/etf` 頁：列出全部主流台股 ETF（過濾掉債券/槓桿）。4 維相對評分（殖利率、1Y 報酬、規模、穩定度）。可依分類過濾、欄位排序** |
 | **大盤儀表板** | **`/market` 頁：加權指數 + 櫃買指數現況（含 1Y 走勢）+ 三大法人近 30 日買賣超。** |
 | **K 線 + 均線** | **個股頁：日 K 線（紅漲綠跌）+ MA5/MA20/MA60 + 成交量副圖。可切換 1M / 3M / 6M / 1Y 區間** |
@@ -89,7 +91,9 @@ ADR 溢價率   = (ADR 隱含台股價 − 台股收盤) / 台股收盤
 
 由於 ADR 收盤晚於台股約 14~15 小時（美東 16:00 = 台北隔日 04:00），這個溢價率反映「ADR 比較新的收盤」vs「台股比較舊的收盤」的差距，**可作為台股隔日開盤方向的參考訊號**。
 
-`/adr` 儀表板把四檔 ADR 等權平均成單一指標：
+`/adr` 儀表板聚焦 3 檔重點 ADR + 費城半導體指數（^SOX）：
+
+**ADR 平均訊號**（3 檔 TSM / HNHPF / ASX 等權平均溢價）：
 
 | 平均溢價 | 訊號 |
 |---|---|
@@ -99,14 +103,25 @@ ADR 溢價率   = (ADR 隱含台股價 − 台股收盤) / 台股收盤
 | -5% ~ -1% | 偏空 |
 | ≤ -5%   | 強烈偏空 |
 
-每日抓完美股後寫入 `data/adr_signal.json`（當日快照）+ `data/adr_history.json`（滾動 365 天歷史），前端用 sparkline 顯示近 30 日趨勢。
+**SOX 訊號**（直接看費半當日漲跌幅）：
 
-| ADR | 台股 | 1 ADR : 台股股數 |
-|-----|------|------|
-| TSM | 2330 台積電 | 1 : 5 |
-| UMC | 2303 聯電 | 1 : 5 |
-| ASX | 3711 日月光投控 | 1 : 2 |
-| CHT | 2412 中華電 | 1 : 10 |
+| SOX 當日漲跌 | 訊號 |
+|---|---|
+| ≥ +2% | 強勢 |
+| +0.5% ~ +2% | 偏多 |
+| ±0.5% | 中性 |
+| -2% ~ -0.5% | 偏弱 |
+| ≤ -2% | 弱勢 |
+
+每日抓完美股後寫入 `data/adr_signal.json`（當日快照）+ `data/adr_history.json`（滾動 365 天歷史，含 SOX），前端用 sparkline 顯示近 30 日趨勢。
+
+| ADR | 台股 | 1 ADR : 台股股數 | 進入 /adr headline |
+|-----|------|------|---|
+| TSM | 2330 台積電 | 1 : 5 | ✓ |
+| HNHPF | 2317 鴻海（OTC 非贊助 ADR） | 1 : 2 | ✓ |
+| ASX | 3711 日月光投控 | 1 : 2 | ✓ |
+| UMC | 2303 聯電 | 1 : 5 | （僅顯示在個股頁） |
+| CHT | 2412 中華電 | 1 : 10 | （僅顯示在個股頁） |
 
 ---
 
@@ -160,8 +175,14 @@ python scripts/fetch_tw.py
 # 只抓特定股票
 python scripts/fetch_tw.py 2330 0050
 
-# 抓美股 ADR + 匯率（需先跑過 fetch_tw.py）
+# 抓美股 ADR + 匯率 + SOX（需先跑過 fetch_tw.py）
 python scripts/fetch_us.py
+
+# 重算歷史 backtest（訊號 → 隔日 TW 走勢）— 慢，跑完 fetch_us.py 後跑一次即可
+python scripts/backtest_adr.py
+
+# 重算明日預測 + 30 日 walk-forward 驗證（Ridge + Conformal）
+python scripts/predict_open_high_low.py
 
 # 抓 ETF 全覽（含評分）
 python scripts/fetch_etf.py            # 全部主流 ETF（過濾債券/槓桿）
@@ -221,8 +242,10 @@ ANTHROPIC_API_KEY=sk-ant-... python scripts/generate_summary.py 2330 0050 --forc
 │   ├── stocks.json              # 預載清單 + ADR 對應
 │   ├── fx.json                  # USD/TWD 匯率
 │   ├── last_updated.json        # 全站資料更新時間（顯示在 footer）
-│   ├── adr_signal.json          # ADR 訊號當日快照（彙總 4 檔 + 平均溢價）
-│   ├── adr_history.json         # ADR 訊號滾動歷史（365 天）
+│   ├── adr_signal.json          # 夜盤訊號當日快照（3 檔 ADR 平均溢價 + SOX）
+│   ├── adr_history.json         # 夜盤訊號滾動歷史（365 天，含 SOX）
+│   ├── adr_backtest.json        # 歷史分桶統計（訊號 → 隔日 TW 開高低收分布）
+│   ├── adr_prediction.json      # Ridge + Conformal 預測（明日 TW 開/高/低 + 30 日 walk-forward 驗證）
 │   ├── etf_list.json            # 全 ETF 清單 + 4 維相對評分
 │   ├── market.json              # TAIEX/OTC + 三大法人 30 日買賣超
 │   └── tw/{code}.json           # 每檔股票估值資料 + price_history（3Y 帶狀圖原料）

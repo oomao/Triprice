@@ -71,6 +71,12 @@ def main():
     if vix_info:
         print(f"VIX = {vix_info['close']:.2f} ({vix_info['close_date']})")
 
+    # --- SOX (Philadelphia Semiconductor Index) — sector-level overnight signal,
+    #     since the user's headline ADRs (TSM, HNHPF, ASX) are all semi/EMS related.
+    sox_info = get_close('^SOX')
+    if sox_info:
+        print(f"SOX = {sox_info['close']:.2f} ({sox_info['change']:+.2f}, {sox_info['change_pct']:+.2f}%)")
+
     payload = {
         'usd_twd': round(fx, 4),
         'date': fx_date,
@@ -85,12 +91,13 @@ def main():
 
     # --- ADR data ---
     success = 0
-    signal_entries = []  # collected for the aggregate dashboard
+    signal_entries = []  # collected for the aggregate dashboard (headline ADRs only)
     for adr, info in meta['adr_mapping'].items():
         tw_code = info['tw_code']
         ratio = info['ratio']
+        is_headline = bool(info.get('dashboard'))
         tw_file = TW_DIR / f'{tw_code}.json'
-        print(f"[{adr}] -> {tw_code}")
+        print(f"[{adr}] -> {tw_code}{' (headline)' if is_headline else ''}")
 
         if not tw_file.exists():
             print(f"  TW data missing ({tw_file.name}), skip")
@@ -130,22 +137,23 @@ def main():
             json.dump(tw_data, f, ensure_ascii=False, indent=2)
         print(f"  ADR ${adr_close:.2f} ({adr_info['change']:+.2f}, {adr_info['change_pct']:+.2f}%) -> implied {implied:.2f} (TW {tw_price:.2f}, premium {premium:+.2f}%)")
 
-        signal_entries.append({
-            'adr': adr,
-            'tw_code': tw_code,
-            'tw_name': tw_data.get('name', tw_code),
-            'tw_price': tw_price,
-            'tw_close_date': tw_data.get('close_date'),
-            'tw_change': tw_change,
-            'tw_change_pct': tw_change_pct,
-            'adr_close': round(adr_close, 2),
-            'adr_close_date': adr_info['close_date'],
-            'adr_change': adr_info['change'],
-            'adr_change_pct': adr_info['change_pct'],
-            'implied_tw_price': round(implied, 2),
-            'premium_pct': round(premium, 2),
-            'ratio': ratio,
-        })
+        if is_headline:
+            signal_entries.append({
+                'adr': adr,
+                'tw_code': tw_code,
+                'tw_name': tw_data.get('name', tw_code),
+                'tw_price': tw_price,
+                'tw_close_date': tw_data.get('close_date'),
+                'tw_change': tw_change,
+                'tw_change_pct': tw_change_pct,
+                'adr_close': round(adr_close, 2),
+                'adr_close_date': adr_info['close_date'],
+                'adr_change': adr_info['change'],
+                'adr_change_pct': adr_info['change_pct'],
+                'implied_tw_price': round(implied, 2),
+                'premium_pct': round(premium, 2),
+                'ratio': ratio,
+            })
         success += 1
 
     print(f"\nDone: {success}/{len(meta['adr_mapping'])} ADRs processed")
@@ -179,6 +187,13 @@ def main():
             'fx_date': fx_date,
             'adrs': signal_entries,
         }
+        if sox_info:
+            signal_payload['sox'] = {
+                'close': round(sox_info['close'], 2),
+                'close_date': sox_info['close_date'],
+                'change': sox_info['change'],
+                'change_pct': sox_info['change_pct'],
+            }
         signal_file = ROOT / 'data' / 'adr_signal.json'
         with open(signal_file, 'w', encoding='utf-8') as f:
             json.dump(signal_payload, f, ensure_ascii=False, indent=2)
@@ -205,6 +220,9 @@ def main():
                 for e in signal_entries
             },
         }
+        if sox_info:
+            record['sox_close'] = round(sox_info['close'], 2)
+            record['sox_change_pct'] = sox_info['change_pct']
         # Replace same-date record if present (avoid duplicates from multiple runs).
         history = [h for h in history if h.get('date') != record['date']]
         history.append(record)
