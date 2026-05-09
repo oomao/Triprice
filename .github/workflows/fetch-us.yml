@@ -20,6 +20,8 @@ jobs:
           python-version: '3.12'
       - run: pip install -r scripts/requirements.txt
       - name: Fetch US ADR + FX + SOX
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: python scripts/fetch_us.py
       - name: Predict next-day open / high / low (Ridge + Conformal)
         env:

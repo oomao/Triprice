@@ -26,24 +26,24 @@
 
 | 功能 | 說明 |
 |------|------|
-| 三價估值 | 便宜 / 合理 / 昂貴三檔目標價，殖利率法 + PE 法雙計算 |
+| 三價估值 | 便宜 / 合理 / 昂貴三檔目標價，殖利率法 + PE 法雙計算（5/95 百分位） |
 | **估值帶狀圖** | **個股頁顯示 3 年股價走勢 + 三檔估值參考線，一眼看出目前位置（0% = 便宜、100% = 昂貴）** |
 | 標籤分級 | 目前股價自動標示「便宜 / 合理偏便宜 / 合理偏貴 / 昂貴」 |
 | ADR 比較 | TSM、HNHPF、UMC、ASX、CHT 五檔 ADR 的隱含台股價 + 溢價率 |
-| **夜盤領先訊號** | **`/adr` 頁：聚焦 3 檔重點 ADR（TSM / HNHPF / ASX）平均溢價 + 費城半導體指數（^SOX），作為台股隔日開盤方向參考。每日累積至 `adr_history.json`** |
-| **歷史比對 backtest** | **`/adr` 頁底部：把過去 ~2 年每日訊號分桶，統計隔日台股的開盤跳空 / 盤中最高 / 最低 / 收盤淨變化分布。今日訊號落點自動標亮 → 一眼看出「ADR 漲 X% 時，台股隔日歷史上通常 / 最多 / 最少怎麼走」** |
-| **明日開盤 / 高 / 低預測** | **`/adr` 頁：Ridge + 80% Conformal 區間預測明日 TW 開盤、盤中最高、盤中最低三條，附過去 30 日 walk-forward 驗證（每天重訓 + 比對實際）。訊號乾淨化（FX 分離、SOX residual、溢價 z-score）+ 事件日剔除（除息、漲跌停、長假、HNHPF stale）** |
+| **明日 TW 開盤 / 高 / 低預測** | **`/adr` 頁：Ridge + 80% Conformal 區間預測明日 TW 開盤、盤中最高、盤中最低三條，附過去 30 日 walk-forward 驗證（每天重訓 + 比對實際）。訊號乾淨化（FX 分離、SOX β residual、溢價 z-score）+ 事件日剔除（除息、漲跌停、長假後、HNHPF stale）。頁首「預測快覽」一秒看到答案，頁面右上有新鮮度 badge。** |
+| **個股頁預測整合** | **2330 / 2317 / 3711 個股頁顯示一張「明日開盤預測」strip（同 Ridge 模型）— 把短期訊號跟長期估值放在同一頁。** |
+| **夜盤訊號速覽** | **`/adr` 頁：3 檔重點 ADR 平均溢價 + 費城半導體指數（^SOX）的 5 段標籤（強烈偏多 → 強烈偏空 / 強勢 → 弱勢）+ 30 日 sparkline（含 min/max 標記）。** |
 | **ETF 全覽 + 評分** | **`/etf` 頁：列出全部主流台股 ETF（過濾掉債券/槓桿）。4 維相對評分（殖利率、1Y 報酬、規模、穩定度）。可依分類過濾、欄位排序** |
 | **大盤儀表板** | **`/market` 頁：加權指數 + 櫃買指數現況（含 1Y 走勢）+ 三大法人近 30 日買賣超。** |
 | **K 線 + 均線** | **個股頁：日 K 線（紅漲綠跌）+ MA5/MA20/MA60 + 成交量副圖。可切換 1M / 3M / 6M / 1Y 區間** |
 | **三大法人籌碼** | **個股頁：近 30 日外資 / 投信 / 自營商買賣超堆疊柱狀圖 + 5 日累計卡片** |
 | **自選組合估值** | **自選頁：彙總所有自選股的「位置百分位」，平均便宜度 + 最便宜/最貴標示 + 每檔位置條** |
-| **個股摘要** | **個股頁：可選功能。設定 `ANTHROPIC_API_KEY` 後 cron 會用 Claude API 為每檔生成 2~3 句客觀摘要（fingerprint 比對避免重複生成）** |
+| **個股摘要 (LLM)** | **個股頁：可選功能。設定 → 填 Claude / OpenAI API key 後，按「生成摘要」用瀏覽器端 LLM 為該檔生成 2~3 句客觀摘要（localStorage cache，fingerprint 比對避免重複付費）** |
 | **介面** | 純黑底頂欄 + 焦糖色高亮 + 表格使用 tabular-nums，數字對齊像專業看盤工具，不是樣板儀表板。Skeleton shimmer 載入動畫 |
 | 財報明細 | 近 4 季 EPS、YoY 成長率、近 5 年股利歷史 |
 | 自選股 | 自訂任意股票代號，存於 localStorage |
 | PWA | 可安裝到主畫面、離線可用、自動更新 |
-| RWD | 手機 / 平板 / 桌機自適應 |
+| RWD | 手機 / 平板 / 桌機自適應（寬表自動橫滾、nav 在窄螢幕橫滑） |
 | 自動更新 | 每天台股 + 美股收盤後抓取最新資料 |
 
 ---
@@ -55,34 +55,28 @@
 適合穩定配息的股票（金融股、ETF、傳產龍頭）。
 
 ```
-便宜價 = 最近一年現金股利 / 近 3 年最高殖利率
-合理價 = 最近一年現金股利 / 近 3 年平均殖利率
-昂貴價 = 最近一年現金股利 / 近 3 年最低殖利率
+便宜價 = 最近一年現金股利 ÷ 近 3 年第 95 百分位殖利率
+合理價 = 最近一年現金股利 ÷ 近 3 年中位數殖利率
+昂貴價 = 最近一年現金股利 ÷ 近 3 年第 5 百分位殖利率
 ```
 
-殖利率取**近 3 年每日**「年股利 / 收盤價」的最高 / 平均 / 最低。
-
-> 範例：0050 配息 3.06，近 3 年殖利率區間 1.5% ~ 4.0%（平均 2.7%）  
-> → 便宜價 76 元、合理價 113 元、昂貴價 204 元
+殖利率取**近 3 年每日**「年股利 / 收盤價」的第 5 / 50 / 95 百分位（過濾極端尾部 5%，比直接拿最高/最低值更穩定）。
 
 ### 本益比 (PE) 法（附）
 
 適合所有股票，**特別是成長股（殖利率法會嚴重低估）**。
 
 ```
-便宜價 = 近 4 季 EPS × 近 3 年最低 PE
-合理價 = 近 4 季 EPS × 近 3 年平均 PE
-昂貴價 = 近 4 季 EPS × 近 3 年最高 PE
+便宜價 = 近 4 季 EPS 合計 × 近 3 年第 5 百分位 PE
+合理價 = 近 4 季 EPS 合計 × 近 3 年中位數 PE
+昂貴價 = 近 4 季 EPS 合計 × 近 3 年第 95 百分位 PE
 ```
 
-PE 同樣取**近 3 年每日**的最高 / 平均 / 最低。
-
-> 範例：台積電 EPS TTM = 66.26，近 3 年 PE 區間 16.7 ~ 34.2（平均 24.9）  
-> → 便宜價 1105、合理價 1650、昂貴價 2265
+PE 區間同樣取自每日歷史 PE 的 5 / 50 / 95 百分位。
 
 ⚠️ 殖利率法對成長股（殖利率長期低於 2%）會嚴重低估其合理價。個股頁會自動偵測並提示「請以 PE 法為主」。
 
-### ADR 比較
+### ADR 隱含價 + 夜盤訊號
 
 ```
 ADR 隱含台股價 = ADR 收盤 × USD/TWD ÷ 每 ADR 對應股數
@@ -91,37 +85,38 @@ ADR 溢價率   = (ADR 隱含台股價 − 台股收盤) / 台股收盤
 
 由於 ADR 收盤晚於台股約 14~15 小時（美東 16:00 = 台北隔日 04:00），這個溢價率反映「ADR 比較新的收盤」vs「台股比較舊的收盤」的差距，**可作為台股隔日開盤方向的參考訊號**。
 
-`/adr` 儀表板聚焦 3 檔重點 ADR + 費城半導體指數（^SOX）：
-
-**ADR 平均訊號**（3 檔 TSM / HNHPF / ASX 等權平均溢價）：
-
-| 平均溢價 | 訊號 |
-|---|---|
-| ≥ +5%   | 強烈偏多 |
-| +1% ~ +5% | 偏多 |
-| -1% ~ +1% | 中性 |
-| -5% ~ -1% | 偏空 |
-| ≤ -5%   | 強烈偏空 |
-
-**SOX 訊號**（直接看費半當日漲跌幅）：
-
-| SOX 當日漲跌 | 訊號 |
-|---|---|
-| ≥ +2% | 強勢 |
-| +0.5% ~ +2% | 偏多 |
-| ±0.5% | 中性 |
-| -2% ~ -0.5% | 偏弱 |
-| ≤ -2% | 弱勢 |
-
-每日抓完美股後寫入 `data/adr_signal.json`（當日快照）+ `data/adr_history.json`（滾動 365 天歷史，含 SOX），前端用 sparkline 顯示近 30 日趨勢。
-
-| ADR | 台股 | 1 ADR : 台股股數 | 進入 /adr headline |
+| ADR | 台股 | 1 ADR : 台股股數 | 進入 /adr 預測 |
 |-----|------|------|---|
 | TSM | 2330 台積電 | 1 : 5 | ✓ |
 | HNHPF | 2317 鴻海（OTC 非贊助 ADR） | 1 : 2 | ✓ |
 | ASX | 3711 日月光投控 | 1 : 2 | ✓ |
 | UMC | 2303 聯電 | 1 : 5 | （僅顯示在個股頁） |
 | CHT | 2412 中華電 | 1 : 10 | （僅顯示在個股頁） |
+
+### 明日 TW 開盤 / 高 / 低預測（Ridge + Conformal）
+
+`/adr` 儀表板的核心：把 ADR 報酬扣掉匯率與大盤影響，再加上偏離常態的溢價，用回歸算明天 TW 開盤 / 盤中最高 / 盤中最低三條 + 80% 信心區間。
+
+**訊號乾淨化**：
+- **ADR alpha** = ADR USD 漲跌 − USD/TWD 漲跌 − rolling 90d β · SOX 漲跌（剝 FX 與 sector beta）
+- **SOX** 整體漲跌 %（保留 sector 訊號）
+- **溢價 z-score** = (今日溢價 − 60d rolling median) / MAD（去掉結構性偏移）
+
+**事件日剔除**（從訓練集中扣除）：
+- 除息日 T 與 T+1（FinMind `TaiwanStockDividend`）
+- TW 漲跌停（|change| > 9.5%）
+- 長假後第一日（calendar gap > 3）
+- ADR 成交量 = 0（HNHPF 鴻海 OTC 常見）
+
+**建模 + 驗證**：
+- RidgeCV 三訊號合成 → 每股票每目標獨立校準權重
+- 80% Conformal 區間（finite-sample valid coverage 保證）
+- Walk-forward：過去 30 個交易日，每日重訓、預測、跟實際比對
+- 一致性 enforce：高 ≥ 開 ≥ 低（少數情況自動 clip）
+
+**頁面元素**：頁首「預測快覽」三檔開盤 +80% 區間 → 點擊跳到下方完整卡 → 內含訊號分解、預測表、過去 30 天 walk-forward 統計（可展開逐日對照）。
+H1 旁有新鮮度 badge（綠 ≤ 6h / 黃 6–30h / 紅 > 30h cron 失敗警示）。
+2330 / 2317 / 3711 個股頁也會顯示同模型的開盤預測 strip。
 
 ---
 
@@ -175,13 +170,10 @@ python scripts/fetch_tw.py
 # 只抓特定股票
 python scripts/fetch_tw.py 2330 0050
 
-# 抓美股 ADR + 匯率 + SOX（需先跑過 fetch_tw.py）
+# 抓美股 ADR + 匯率 + SOX（需先跑過 fetch_tw.py；事件日剔除需 FINMIND_TOKEN）
 python scripts/fetch_us.py
 
-# 重算歷史 backtest（訊號 → 隔日 TW 走勢）— 慢，跑完 fetch_us.py 後跑一次即可
-python scripts/backtest_adr.py
-
-# 重算明日預測 + 30 日 walk-forward 驗證（Ridge + Conformal）
+# 重算明日預測 + 30 日 walk-forward 驗證（Ridge + Conformal；需先跑過 fetch_us.py）
 python scripts/predict_open_high_low.py
 
 # 抓 ETF 全覽（含評分）
@@ -190,13 +182,11 @@ python scripts/fetch_etf.py --limit 40 # 只抓前 40 檔（本地測試用）
 
 # 抓大盤（TAIEX + OTC + 三大法人）
 python scripts/fetch_market.py
-
-# 產生個股摘要（需 ANTHROPIC_API_KEY）
-ANTHROPIC_API_KEY=sk-ant-... python scripts/generate_summary.py
-ANTHROPIC_API_KEY=sk-ant-... python scripts/generate_summary.py 2330 0050 --force
 ```
 
-抓完的 JSON 會寫到 `data/tw/{code}.json`、`data/fx.json` 與 `data/last_updated.json`。
+抓完的 JSON 會寫到 `data/tw/{code}.json`、`data/fx.json`、`data/adr_signal.json`、`data/adr_prediction.json`、`data/last_updated.json`。
+
+> 個股摘要功能改成瀏覽器端：在 `/設定` 填入 Claude / OpenAI API key，個股頁按「生成摘要」。不再有 Python script。
 
 ---
 
@@ -239,24 +229,26 @@ ANTHROPIC_API_KEY=sk-ant-... python scripts/generate_summary.py 2330 0050 --forc
 ├── public/
 │   └── icon.svg                 # App / PWA / favicon 圖示
 ├── data/                        # 由 Python script 寫入；前端 fetch 為靜態 JSON
-│   ├── stocks.json              # 預載清單 + ADR 對應
-│   ├── fx.json                  # USD/TWD 匯率
+│   ├── stocks.json              # 預載清單 + ADR 對應（含 dashboard:true headline 標記）
+│   ├── fx.json                  # USD/TWD 匯率 + VIX
 │   ├── last_updated.json        # 全站資料更新時間（顯示在 footer）
-│   ├── adr_signal.json          # 夜盤訊號當日快照（3 檔 ADR 平均溢價 + SOX）
+│   ├── adr_signal.json          # 夜盤訊號當日快照（3 檔 ADR 溢價 + SOX）
 │   ├── adr_history.json         # 夜盤訊號滾動歷史（365 天，含 SOX）
-│   ├── adr_backtest.json        # 歷史分桶統計（訊號 → 隔日 TW 開高低收分布）
 │   ├── adr_prediction.json      # Ridge + Conformal 預測（明日 TW 開/高/低 + 30 日 walk-forward 驗證）
 │   ├── etf_list.json            # 全 ETF 清單 + 4 維相對評分
 │   ├── market.json              # TAIEX/OTC + 三大法人 30 日買賣超
-│   └── tw/{code}.json           # 每檔股票估值資料 + price_history（3Y 帶狀圖原料）
+│   └── tw/{code}.json           # 每檔股票估值資料 + price_history + kline + chips
 ├── scripts/
 │   ├── fetch_tw.py              # 抓台股 + 計算估值
-│   ├── fetch_us.py              # 抓 ADR + 匯率
+│   ├── fetch_us.py              # 抓 ADR + 匯率 + SOX
+│   ├── fetch_etf.py             # 抓 ETF 全覽 + 4 維評分
+│   ├── fetch_market.py          # 抓 TAIEX/OTC + 三大法人
+│   ├── predict_open_high_low.py # Ridge + Conformal 隔日預測 + walk-forward
 │   └── requirements.txt
 ├── .github/workflows/
 │   ├── deploy.yml               # 部署 Pages（push + cron）
 │   ├── fetch-tw.yml             # 台股抓取 cron
-│   └── fetch-us.yml             # 美股抓取 cron
+│   └── fetch-us.yml             # 美股抓取 + Ridge 預測 cron
 ├── vite.config.js               # Vite + PWA 設定
 ├── index.html
 └── package.json
@@ -291,8 +283,8 @@ GitHub Actions 自動跑（時間皆為台北時間 UTC+8）：
 
 | Workflow | 觸發時機 | 動作 |
 |----------|----------|------|
-| `fetch-tw.yml` | 工作日 14:00 | 抓台股收盤 + 算估值 + commit |
-| `fetch-us.yml` | 工作日 05:00 | 抓 ADR + 匯率 + commit |
+| `fetch-tw.yml` | 工作日 14:00 | 抓台股收盤 + 算估值 + ETF + 大盤 + commit |
+| `fetch-us.yml` | 工作日 05:00 | 抓 ADR + 匯率 + SOX → 跑 Ridge 預測 → commit |
 | `deploy.yml` | push 時 + 工作日 14:15 / 05:15 | 建置 + 部署到 Pages |
 
 > Note：GITHUB_TOKEN 觸發的 push 不會啟動其他 workflow，所以 deploy 用獨立 cron 在 fetch 後 15 分鐘跑。

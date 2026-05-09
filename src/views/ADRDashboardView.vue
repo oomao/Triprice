@@ -268,6 +268,10 @@ const soxRange = computed(() => {
       </section>
 
       <!-- Two-pane top: ADR aggregate + SOX (raw 速覽) -->
+      <p v-if="prediction" class="text-[11px] text-slate-500 mb-1.5 leading-relaxed">
+        ↓ 下方為 raw 速覽（未扣 SOX/FX 與結構性偏移）。預測請以上方
+        <strong>Ridge + Conformal</strong> 為準。
+      </p>
       <section class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
         <!-- ADR aggregate -->
         <div
