@@ -1,6 +1,30 @@
 <script setup>
 import { ref, onMounted, computed, provide } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
+// vite-plugin-pwa virtual module: tracks SW update lifecycle.
+// `needRefresh` flips to true when a new SW has been downloaded and is
+// waiting; calling updateSW(true) triggers skipWaiting + reload so the user
+// jumps to the new version without manually clearing cache.
+import { useRegisterSW } from 'virtual:pwa-register/vue'
+
+const { needRefresh, updateServiceWorker } = useRegisterSW({
+  immediate: true,
+  // Optional: log to console on register success/error for debugging stale PWAs
+  onRegisteredSW(_url, registration) {
+    // Re-check for an update every hour while the app is open.
+    if (registration) {
+      setInterval(() => registration.update(), 60 * 60 * 1000)
+    }
+  },
+})
+
+function applyUpdate() {
+  updateServiceWorker(true) // reloads the page with the new SW active
+}
+
+function dismissUpdate() {
+  needRefresh.value = false
+}
 
 const route = useRoute()
 const lastUpdated = ref({})
@@ -67,6 +91,32 @@ const NAV = [
         </transition>
       </RouterView>
     </main>
+
+    <!-- Update banner: shows when a newer SW is downloaded and waiting.
+         Sticky bottom, dismissable. Solves the "PWA cache shows old build" pain. -->
+    <transition name="fade">
+      <div
+        v-if="needRefresh"
+        class="fixed inset-x-0 bottom-0 z-30 px-4 pb-3 pt-3 sm:pb-4"
+        role="status"
+        aria-live="polite"
+      >
+        <div class="max-w-md mx-auto bg-slate-900 text-slate-100 border border-amber-400 shadow-lg flex items-center gap-3 px-4 py-3 text-sm">
+          <span class="text-amber-400">●</span>
+          <span class="flex-1">新版本已就緒</span>
+          <button
+            type="button"
+            @click="dismissUpdate"
+            class="text-xs text-slate-400 hover:text-slate-200 px-2 py-1"
+          >稍後</button>
+          <button
+            type="button"
+            @click="applyUpdate"
+            class="text-xs font-semibold bg-amber-400 text-slate-900 hover:bg-amber-300 px-3 py-1.5"
+          >重新載入</button>
+        </div>
+      </div>
+    </transition>
 
     <!-- Footer: thin status bar, looks like a tool, not a marketing page. -->
     <footer class="border-t" :style="{ borderColor: 'var(--rule)', background: 'var(--surface-2)' }">
