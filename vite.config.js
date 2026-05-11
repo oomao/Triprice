@@ -13,7 +13,10 @@ export default defineConfig(({ mode }) => ({
     vue(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // 'prompt' 才會 fire onNeedRefresh → 觸發 App.vue 的 banner。
+      // 'autoUpdate' 模式 plugin 內部直接 window.location.reload(),
+      // 不會呼叫 onNeedRefresh,banner 等於 dead code。
+      registerType: 'prompt',
       includeAssets: ['icon.svg'],
       manifest: {
         name: 'Triprice',
@@ -32,12 +35,9 @@ export default defineConfig(({ mode }) => ({
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,json}'],
         navigateFallback: mode === 'production' ? `${BASE}index.html` : '/index.html',
-        // Force the new SW to take control immediately instead of waiting for
-        // every tab + the home-screen PWA to fully close. Combined with
-        // registerType:'autoUpdate' + the in-app banner, users see new builds
-        // within ~1 page refresh of deploy.
-        clientsClaim: true,
-        skipWaiting: true,
+        // 不設 clientsClaim / skipWaiting — 配合 'prompt' 模式由 user 點
+        // 「重新載入」才觸發 skipWaiting,避免使用者操作到一半被自動切版
+        // 造成已 lazy-load 的 chunk 404。
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {

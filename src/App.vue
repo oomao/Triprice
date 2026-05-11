@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, provide } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, provide } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 // vite-plugin-pwa virtual module: tracks SW update lifecycle.
 // `needRefresh` flips to true when a new SW has been downloaded and is
@@ -7,7 +7,7 @@ import { RouterLink, RouterView, useRoute } from 'vue-router'
 // jumps to the new version without manually clearing cache.
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 
-// Track the SW registration so we can ping it on visibility change too.
+// Track the SW registration so we can ping it on visibility / hourly poll.
 const swRegistration = ref(null)
 
 const { needRefresh, updateServiceWorker } = useRegisterSW({
@@ -15,23 +15,28 @@ const { needRefresh, updateServiceWorker } = useRegisterSW({
   onRegisteredSW(_url, registration) {
     if (!registration) return
     swRegistration.value = registration
-    // Background hourly check while app is open.
-    setInterval(() => registration.update(), 60 * 60 * 1000)
   },
 })
 
-// PWA-specific: when the app comes back to foreground (user swipes back
-// in / unlocks phone / refocuses tab), immediately re-check for updates.
-// This is the most reliable trigger on iOS/Android where users rarely
-// "close" the PWA — they background and resume, which would otherwise
-// miss the hourly poll window for hours.
-onMounted(() => {
-  const handler = () => {
-    if (!document.hidden && swRegistration.value) {
-      swRegistration.value.update()
-    }
+// 三層觸發更新檢查的 layer 2 + 3 — 都掛在 mount 時、unmount 時 cleanup。
+// App 是 root component 不會卸載,但 lifecycle 對齊比較好維護。
+let swPollIntervalId
+function onVisibilityChange() {
+  if (!document.hidden) {
+    swRegistration.value?.update().catch(() => {})
   }
-  document.addEventListener('visibilitychange', handler)
+}
+
+onMounted(() => {
+  swPollIntervalId = setInterval(() => {
+    swRegistration.value?.update().catch(() => {})
+  }, 60 * 60 * 1000)
+  document.addEventListener('visibilitychange', onVisibilityChange)
+})
+
+onBeforeUnmount(() => {
+  clearInterval(swPollIntervalId)
+  document.removeEventListener('visibilitychange', onVisibilityChange)
 })
 
 function applyUpdate() {
