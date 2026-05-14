@@ -3470,12 +3470,12 @@
   "adr": {
     "symbol": "CHT",
     "close": 43.5,
-    "close_date": "2026-05-13",
-    "change": 0.18,
-    "change_pct": 0.42,
+    "close_date": "2026-05-14",
+    "change": 0.0,
+    "change_pct": 0.0,
     "ratio": 10,
-    "fx_rate": 31.547,
+    "fx_rate": 31.548,
     "implied_tw_price": 137.23,
-    "premium_pct": -0.2
+    "premium_pct": -0.19
   }
 }
