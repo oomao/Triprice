@@ -2,6 +2,7 @@
 import { ref, onMounted, computed, inject } from 'vue'
 import { useWatchlistStore } from '../stores/watchlist'
 import { computeFreshness } from '../lib/freshness.js'
+import { positionPct, preferredBands, positionTier, clampPct } from '../lib/position.js'
 
 const watchlist = useWatchlistStore()
 const lastUpdated = inject('lastUpdated', ref({}))
@@ -10,6 +11,8 @@ const stocks = ref(null)
 const loading = ref(true)
 const error = ref(null)
 const search = ref('')
+const sortByCheap = ref(false)
+const priced = ref(new Map()) // code -> stock JSON (current price + valuation bands)
 
 // Day-scale thresholds so a normal weekend gap does NOT show as stale.
 const freshness = computed(() =>
@@ -24,6 +27,13 @@ onMounted(async () => {
   try {
     const res = await fetch(`${import.meta.env.BASE_URL}data/stocks.json`)
     stocks.value = await res.json()
+    // Background-load each preloaded stock's valuation so the list can show a
+    // cheapness bar — turns the catalog into a scannable decision panel. Cards
+    // render immediately; bars fill in as data arrives.
+    const codes = new Set()
+    for (const cat of Object.values(stocks.value.categories)) cat.stocks.forEach((c) => codes.add(c))
+    watchlist.codes.forEach((c) => codes.add(c))
+    loadPrices([...codes])
   } catch (e) {
     error.value = e.message
   } finally {
@@ -31,33 +41,79 @@ onMounted(async () => {
   }
 })
 
+async function loadPrices(codes) {
+  await Promise.all(codes.map(async (code) => {
+    if (priced.value.has(code)) return
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL}data/tw/${code}.json`)
+      if (res.ok) {
+        priced.value.set(code, await res.json())
+        priced.value = new Map(priced.value) // Map mutation isn't deep-reactive
+      }
+    } catch { /* not preloaded — skip */ }
+  }))
+}
+
+// code -> { price, change_pct, pct (0..100 within cheap↔expensive), tier, bar }
+const posByCode = computed(() => {
+  const m = {}
+  for (const [code, d] of priced.value) {
+    const pb = preferredBands(d)
+    const pct = pb ? positionPct(d.current_price, pb.bands) : null
+    m[code] = {
+      price: d.current_price,
+      change_pct: d.change_pct,
+      pct,
+      tier: positionTier(pct),
+      bar: clampPct(pct),
+    }
+  }
+  return m
+})
+
+function matchesSearch(code) {
+  const q = search.value.trim().toLowerCase()
+  if (!q) return true
+  const meta = stocks.value.tw_stocks[code]
+  return code.toLowerCase().includes(q) || meta?.name?.toLowerCase().includes(q)
+}
+
+// Flat, de-duplicated, search-filtered, sorted cheapest → expensive (unknown last).
+const sortedStocks = computed(() => {
+  if (!stocks.value) return []
+  const seen = new Set()
+  const codes = []
+  for (const cat of Object.values(stocks.value.categories)) {
+    for (const c of cat.stocks) {
+      if (seen.has(c)) continue
+      seen.add(c)
+      if (matchesSearch(c)) codes.push(c)
+    }
+  }
+  return codes.sort((a, b) => {
+    const pa = posByCode.value[a]?.pct
+    const pb = posByCode.value[b]?.pct
+    if (pa == null && pb == null) return 0
+    if (pa == null) return 1
+    if (pb == null) return -1
+    return pa - pb
+  })
+})
+
 const filteredCategories = computed(() => {
   if (!stocks.value) return []
-  const cats = []
-
-  if (watchlist.codes.length > 0) {
-    cats.push({
-      key: '_watchlist',
-      label: '自選',
-      stocks: [...watchlist.codes],
-      isWatchlist: true,
-    })
+  if (sortByCheap.value) {
+    return [{ key: '_sorted', label: '依便宜度（便宜 → 昂貴）', stocks: sortedStocks.value, isWatchlist: false }]
   }
-
+  const cats = []
+  if (watchlist.codes.length > 0) {
+    cats.push({ key: '_watchlist', label: '自選', stocks: [...watchlist.codes], isWatchlist: true })
+  }
   for (const [key, cat] of Object.entries(stocks.value.categories)) {
     cats.push({ key, label: cat.label, stocks: cat.stocks, isWatchlist: false })
   }
-
-  const q = search.value.trim().toLowerCase()
   return cats
-    .map((c) => ({
-      ...c,
-      stocks: c.stocks.filter((code) => {
-        if (!q) return true
-        const meta = stocks.value.tw_stocks[code]
-        return code.toLowerCase().includes(q) || meta?.name?.toLowerCase().includes(q)
-      }),
-    }))
+    .map((c) => ({ ...c, stocks: c.stocks.filter(matchesSearch) }))
     .filter((c) => c.stocks.length > 0)
 })
 </script>
@@ -75,8 +131,17 @@ const filteredCategories = computed(() => {
           資料 {{ freshness.label }}
         </span>
       </div>
-      <div class="text-xs text-slate-500 font-mono uppercase tracking-wider hidden sm:block">
-        {{ stocks ? Object.values(stocks.categories).reduce((s, c) => s + c.stocks.length, 0) : '—' }} 檔預載
+      <div class="flex flex-col items-end gap-1.5 shrink-0">
+        <button
+          @click="sortByCheap = !sortByCheap"
+          class="text-xs px-2.5 py-1 rounded border transition"
+          :class="sortByCheap ? 'border-[#0a0e16] bg-[#0a0e16] text-white' : 'border-[#d8d8d2] text-slate-600 hover:border-[#0a0e16]'"
+        >
+          {{ sortByCheap ? '✓ 依便宜度' : '依便宜度排序' }}
+        </button>
+        <span class="text-xs text-slate-500 font-mono uppercase tracking-wider hidden sm:block">
+          {{ stocks ? Object.values(stocks.categories).reduce((s, c) => s + c.stocks.length, 0) : '—' }} 檔預載
+        </span>
       </div>
     </div>
 
@@ -134,6 +199,20 @@ const filteredCategories = computed(() => {
             </div>
             <div v-if="stocks.tw_stocks[code]?.adr" class="text-xs text-slate-500 mt-1 font-mono">
               ADR · {{ stocks.tw_stocks[code].adr }}
+            </div>
+            <!-- cheapness position bar (fills in once valuation loads in background) -->
+            <div v-if="posByCode[code]?.pct != null" class="mt-2">
+              <div class="flex items-baseline justify-between text-[10px] leading-none mb-1">
+                <span :class="posByCode[code].tier.text" class="font-semibold">{{ posByCode[code].tier.label }} · {{ posByCode[code].pct }}%</span>
+                <span v-if="posByCode[code].change_pct != null"
+                      :class="posByCode[code].change_pct >= 0 ? 'text-red-500' : 'text-emerald-600'"
+                      class="font-mono">
+                  {{ posByCode[code].change_pct >= 0 ? '+' : '' }}{{ posByCode[code].change_pct }}%
+                </span>
+              </div>
+              <div class="h-1 bg-slate-200 rounded-full relative overflow-hidden" title="0% = 便宜價, 100% = 昂貴價">
+                <div class="absolute inset-y-0 left-0 rounded-full" :class="posByCode[code].tier.bar" :style="{ width: posByCode[code].bar + '%' }"></div>
+              </div>
             </div>
           </RouterLink>
         </div>
