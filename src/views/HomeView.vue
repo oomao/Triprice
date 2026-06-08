@@ -49,10 +49,14 @@ async function loadPrices(codes) {
     if (priced.value.has(code)) return
     try {
       const res = await fetch(`${import.meta.env.BASE_URL}data/tw/${code}.json`)
-      if (res.ok) {
-        priced.value.set(code, await res.json())
-        priced.value = new Map(priced.value) // Map mutation isn't deep-reactive
-      }
+      if (!res.ok) return
+      const data = await res.json()
+      // Read priced.value AFTER the await, then copy-set-assign atomically.
+      // (Capturing the Map before the await races under 26 concurrent fetches —
+      //  each would mutate a stale copy and lose all but the last update.)
+      const next = new Map(priced.value)
+      next.set(code, data)
+      priced.value = next
     } catch { /* not preloaded — skip */ }
   }))
 }
