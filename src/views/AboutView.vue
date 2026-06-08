@@ -216,7 +216,7 @@ const showRidgeDetails = ref(false)
         <p><strong>建模 + 驗證</strong>：</p>
         <ul class="text-xs list-disc pl-5 space-y-1 text-slate-600">
           <li>RidgeCV 三訊號合成 → 單一點估，per-stock per-target 校準權重</li>
-          <li>80% Conformal 區間（finite-sample valid coverage 保證）</li>
+          <li>80% Conformal 區間（split-conformal 校準；分布穩定假設下趨近 80% 名目覆蓋，<strong>非數學保證</strong>，regime 漂移時可能偏離，以實測 coverage 為準）</li>
           <li>Walk-forward：過去 30 個交易日，每日重新訓練、預測、跟實際比對</li>
           <li>一致性 enforce：高 ≥ 開 ≥ 低（少數情況自動 clip）</li>
         </ul>

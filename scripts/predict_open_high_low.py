@@ -316,7 +316,13 @@ def fit_ridge_conformal(rows, target):
     Xs_c = scaler.transform(X_c)
     model = RidgeCV(alphas=np.logspace(-3, 2, 20)).fit(Xs_t, y_t)
     calib_pred = model.predict(Xs_c)
-    q80 = float(np.quantile(np.abs(y_c - calib_pred), 0.80))
+    # Split-conformal finite-sample quantile: the ⌈(n+1)(1−α)⌉-th smallest abs
+    # residual (α=0.20), NOT a plain 0.80 np.quantile — the latter is
+    # anticonservative for small calibration sets (n_calib≈38 here) and yields
+    # intervals that are too narrow. Clamp to the largest residual when k > n.
+    calib_resid = np.sort(np.abs(y_c - calib_pred))
+    k = int(np.ceil((len(calib_resid) + 1) * 0.80))
+    q80 = float(calib_resid[min(k, len(calib_resid)) - 1])
 
     return {
         'model': model,
@@ -375,7 +381,10 @@ def walk_forward(rows, target, window=WALK_FORWARD_WINDOW):
         Xs_c = scaler.transform(X_c)
         model = RidgeCV(alphas=np.logspace(-3, 2, 15)).fit(Xs_t, y_t)
         calib_pred = model.predict(Xs_c)
-        q80 = float(np.quantile(np.abs(y_c - calib_pred), 0.80))
+        # Split-conformal finite-sample quantile (see fit_ridge_conformal).
+        calib_resid = np.sort(np.abs(y_c - calib_pred))
+        k = int(np.ceil((len(calib_resid) + 1) * 0.80))
+        q80 = float(calib_resid[min(k, len(calib_resid)) - 1])
 
         _, today_row = eligible[j]
         Xs_today = scaler.transform(np.array([features_of(today_row)]))

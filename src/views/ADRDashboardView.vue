@@ -695,7 +695,7 @@ const soxRange = computed(() => {
             </table>
             </div><!-- /overflow-x-auto -->
             <div class="text-[10px] text-slate-400 mt-1 leading-relaxed">
-              命中率基準：擲銅板 50%。Coverage 目標 80%（finite-sample 保證）。
+              命中率基準：擲銅板 50%。Coverage 目標 80%（split-conformal；分布漂移時可能低於目標，非數學保證）。
             </div>
 
             <!-- Per-day expansion (open_gap only) -->

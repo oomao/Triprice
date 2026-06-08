@@ -110,7 +110,7 @@ ADR 溢價率   = (ADR 隱含台股價 − 台股收盤) / 台股收盤
 
 **建模 + 驗證**：
 - RidgeCV 三訊號合成 → 每股票每目標獨立校準權重
-- 80% Conformal 區間（finite-sample valid coverage 保證）
+- 80% Conformal 區間（split-conformal 校準；**分布穩定時趨近 80% 名目覆蓋，非數學保證** — 時序非交換、regime 漂移時可能偏離，以實測 walk-forward coverage 為準）
 - Walk-forward：過去 30 個交易日，每日重訓、預測、跟實際比對
 - 一致性 enforce：高 ≥ 開 ≥ 低（少數情況自動 clip）
 
