@@ -403,19 +403,46 @@ def walk_forward(rows, target, window=WALK_FORWARD_WINDOW):
     return out
 
 
+def _wilson_ci(k, n, z=1.96):
+    """Wilson score 95% CI for a binomial proportion → [lo_pct, hi_pct].
+    Honest about how noisy a rate is at n≈30 (the half-width is ~±15pp)."""
+    if n == 0:
+        return [None, None]
+    p = k / n
+    denom = 1 + z * z / n
+    center = (p + z * z / (2 * n)) / denom
+    # float() wrap: np.sqrt yields np.float64, which json.dump can't serialize.
+    half = float(z * np.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / denom)
+    return [round(max(0.0, center - half) * 100, 1), round(min(1.0, center + half) * 100, 1)]
+
+
 def summarize_walk_forward(records):
     if not records:
         return None
     n = len(records)
     errs = np.array([r['error_pct'] for r in records])
     widths = np.array([r['hi80_pct'] - r['lo80_pct'] for r in records])
+    n_in = sum(r['in_interval'] for r in records)
+    n_hit = sum(r['hit_direction'] for r in records)
+    # Majority-class direction baseline = the hit rate you'd get by ALWAYS guessing
+    # the more common sign. For max_gain (next-day high ≥ today's close almost
+    # always) and max_loss this is ~90%, so a high hit_rate there is mostly
+    # structural, not skill. hit_edge_pp = hit_rate − baseline is the honest
+    # directional edge — that is the right comparison, NOT a coin-flip 50%.
+    n_pos = sum(1 for r in records if r['actual_pct'] >= 0)
+    base_rate = max(n_pos, n - n_pos) / n
+    hit_rate = n_hit / n
     return {
         'n': n,
         'mae_pct':  round(float(np.mean(np.abs(errs))), 3),
         'rmse_pct': round(float(np.sqrt(np.mean(errs**2))), 3),
         'bias_pct': round(float(np.mean(errs)), 3),
-        'coverage_pct':            round(sum(r['in_interval']    for r in records) / n * 100, 1),
-        'hit_rate_pct':            round(sum(r['hit_direction']  for r in records) / n * 100, 1),
+        'coverage_pct':            round(n_in / n * 100, 1),
+        'coverage_ci95_pct':       _wilson_ci(n_in, n),
+        'hit_rate_pct':            round(hit_rate * 100, 1),
+        'hit_rate_ci95_pct':       _wilson_ci(n_hit, n),
+        'baseline_hit_pct':        round(base_rate * 100, 1),
+        'hit_edge_pp':             round((hit_rate - base_rate) * 100, 1),
         'avg_interval_width_pct':  round(float(np.mean(widths)), 3),
     }
 

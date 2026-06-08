@@ -663,7 +663,7 @@ const soxRange = computed(() => {
                   <th class="px-2 py-1 text-right" title="平均誤差（預測 - 實際）。負值表示模型系統性低估，正值表示高估">偏差</th>
                   <th class="px-2 py-1 text-right" title="80% conformal 區間的平均寬度（pp）越窄越精確">區間寬</th>
                   <th class="px-2 py-1 text-right" title="80% 區間實際包住真值的比率，目標 80%">coverage</th>
-                  <th class="px-2 py-1 text-right" title="預測方向（漲/跌）跟實際相符的比率，隨機是 50%，>70% 算可用">命中率</th>
+                  <th class="px-2 py-1 text-right" title="預測方向命中率＋基準/edge。基準=永遠猜多數方向；盤中高/低結構上幾乎恆正/負、基準本就高，要看 edge=命中率−基準 才是真方向預測力">命中率 / edge</th>
                 </tr>
               </thead>
               <tbody>
@@ -683,19 +683,25 @@ const soxRange = computed(() => {
                   </td>
                   <td class="px-2 py-1 text-right font-mono">{{ stock.walk_forward_30d[tgt].summary.avg_interval_width_pct }}%</td>
                   <td class="px-2 py-1 text-right font-mono"
+                      :title="stock.walk_forward_30d[tgt].summary.coverage_ci95_pct ? ('95% CI ' + stock.walk_forward_30d[tgt].summary.coverage_ci95_pct[0] + '–' + stock.walk_forward_30d[tgt].summary.coverage_ci95_pct[1] + '%') : ''"
                       :class="stock.walk_forward_30d[tgt].summary.coverage_pct >= 75 ? 'text-emerald-600' : 'text-amber-600'">
                     {{ stock.walk_forward_30d[tgt].summary.coverage_pct }}%
                   </td>
                   <td class="px-2 py-1 text-right font-mono"
-                      :class="stock.walk_forward_30d[tgt].summary.hit_rate_pct >= 70 ? 'text-emerald-600 font-semibold' : 'text-slate-600'">
+                      :class="stock.walk_forward_30d[tgt].summary.hit_edge_pp > 0 ? 'text-emerald-600 font-semibold' : 'text-slate-500'">
                     {{ stock.walk_forward_30d[tgt].summary.hit_rate_pct }}%
+                    <div v-if="stock.walk_forward_30d[tgt].summary.hit_edge_pp != null"
+                         class="text-[9px] text-slate-400 font-normal whitespace-nowrap">
+                      基準 {{ stock.walk_forward_30d[tgt].summary.baseline_hit_pct }}%
+                      · edge {{ stock.walk_forward_30d[tgt].summary.hit_edge_pp > 0 ? '+' : '' }}{{ stock.walk_forward_30d[tgt].summary.hit_edge_pp }}pp
+                    </div>
                   </td>
                 </tr>
               </tbody>
             </table>
             </div><!-- /overflow-x-auto -->
             <div class="text-[10px] text-slate-400 mt-1 leading-relaxed">
-              命中率基準：擲銅板 50%。Coverage 目標 80%（split-conformal；分布漂移時可能低於目標，非數學保證）。
+              命中率的「基準」是永遠猜多數方向（非擲銅板 50%）；edge = 命中率 − 基準 > 0 才代表有方向預測力。樣本 n≈30，命中率/coverage 的 95% 信賴區間約 ±15pp（滑鼠移到數字可看），勿過度解讀單月數字。Coverage 目標 80%（split-conformal；分布漂移時可能低於目標，非數學保證）。
             </div>
 
             <!-- Per-day expansion (open_gap only) -->
@@ -761,7 +767,7 @@ const soxRange = computed(() => {
         <p class="text-[11px] text-slate-500 leading-relaxed bg-slate-50 p-3 border border-slate-200">
           <strong>讀法</strong>：
           區間是 80% conformal — 過去 30 天實測，coverage 應接近 80%。
-          <strong>命中率</strong>：預測方向（漲/跌）跟實際相符的比率（隨機是 50%）。
+          <strong>命中率</strong>：預測方向跟實際相符的比率。注意「盤中最高/最低」結構上幾乎恆正/負、命中率本就高 —— 要看 <strong>edge</strong>（命中率 − 永遠猜多數方向的基準）才是真方向預測力；單月 n≈30、誤差大。
           盤中最高 / 最低 RMSE 通常較大（極值有 long tail），當作「<strong>合理範圍</strong>」而非精確 target。
           事件日（除息、漲跌停、長假後、HNHPF 停滯）會自動標警告，預測可信度降低。
         </p>
