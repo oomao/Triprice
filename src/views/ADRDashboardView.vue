@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import DiffBars from '../components/DiffBars.vue'
+import { computeFreshness } from '../lib/freshness.js'
 
 const signal = ref(null)
 const history = ref([])
@@ -47,36 +48,9 @@ function pctSign(v) {
   return (v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%'
 }
 
-// Parse "2026-05-09 20:32:13+08:00" → ms-since-epoch (best effort).
-function parseTpe(s) {
-  if (!s) return null
-  // Replace space with T to get a parseable ISO-ish format
-  const iso = s.replace(' ', 'T')
-  const t = Date.parse(iso)
-  return isNaN(t) ? null : t
-}
-
 // Freshness badge for the prediction file: green ≤6h, amber 6–30h, red >30h.
-const freshness = computed(() => {
-  const ts = parseTpe(prediction.value?.updated)
-  if (!ts) return null
-  const ageHours = (Date.now() - ts) / 3.6e6
-  let label, cls
-  if (ageHours <= 1) {
-    label = `${Math.max(0, Math.round(ageHours * 60))} 分鐘前更新`
-    cls = 'bg-emerald-50 border-emerald-300 text-emerald-700'
-  } else if (ageHours <= 6) {
-    label = `${ageHours.toFixed(1)} 小時前更新`
-    cls = 'bg-emerald-50 border-emerald-300 text-emerald-700'
-  } else if (ageHours <= 30) {
-    label = `${ageHours.toFixed(1)} 小時前更新`
-    cls = 'bg-amber-50 border-amber-300 text-amber-700'
-  } else {
-    label = `${(ageHours / 24).toFixed(1)} 天前 · cron 可能失敗`
-    cls = 'bg-rose-50 border-rose-300 text-rose-700'
-  }
-  return { label, cls, ageHours }
-})
+// Shared logic in lib/freshness.js (also used by the list + per-stock pages).
+const freshness = computed(() => computeFreshness(prediction.value?.updated))
 
 // Map of stock code → hnhpf_stale flag from prediction JSON (so we can propagate
 // the warning onto the top per-ADR cards which only have signal data).

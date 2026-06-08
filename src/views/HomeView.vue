@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, inject } from 'vue'
 import { useWatchlistStore } from '../stores/watchlist'
+import { computeFreshness } from '../lib/freshness.js'
 
 const watchlist = useWatchlistStore()
 const lastUpdated = inject('lastUpdated', ref({}))
@@ -9,6 +10,15 @@ const stocks = ref(null)
 const loading = ref(true)
 const error = ref(null)
 const search = ref('')
+
+// Day-scale thresholds so a normal weekend gap does NOT show as stale.
+const freshness = computed(() =>
+  computeFreshness(lastUpdated.value.tw, {
+    warnHours: 80,   // ~3.3 days
+    staleHours: 168, // 7 days → red
+    staleNote: '資料可能過期，請查 GitHub Actions',
+  })
+)
 
 onMounted(async () => {
   try {
@@ -59,6 +69,11 @@ const filteredCategories = computed(() => {
       <div>
         <h1 class="text-2xl font-bold tracking-tight">股票清單</h1>
         <p class="text-sm text-slate-500 mt-1">點選任一股票查看 三價 估值</p>
+        <span v-if="freshness"
+              class="inline-block mt-1.5 px-2 py-0.5 rounded border text-[11px] font-medium"
+              :class="freshness.cls">
+          資料 {{ freshness.label }}
+        </span>
       </div>
       <div class="text-xs text-slate-500 font-mono uppercase tracking-wider hidden sm:block">
         {{ stocks ? Object.values(stocks.categories).reduce((s, c) => s + c.stocks.length, 0) : '—' }} 檔預載

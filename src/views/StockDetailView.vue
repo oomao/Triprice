@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, inject } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { useWatchlistStore } from '../stores/watchlist'
 import { useSettingsStore } from '../stores/settings'
@@ -8,6 +8,7 @@ import BandChart from '../components/BandChart.vue'
 import CandleChart from '../components/CandleChart.vue'
 import ChipsChart from '../components/ChipsChart.vue'
 import DiffBars from '../components/DiffBars.vue'
+import { computeFreshness } from '../lib/freshness.js'
 
 const settingsStore = useSettingsStore()
 const summaryState = ref(null)      // {text, generated_at, provider, model, fingerprint} | null
@@ -22,6 +23,13 @@ const adrPrediction = ref(null)   // headline-stock prediction from data/adr_pre
 const loading = ref(true)
 const loadingMessage = ref('載入中…')
 const error = ref(null)
+
+const lastUpdated = inject('lastUpdated', ref({}))
+// Day-scale thresholds (weekend-safe). The cron silently died for ~30 days once;
+// the per-stock page must show staleness, not present month-old data as current.
+const freshness = computed(() =>
+  computeFreshness(lastUpdated.value.tw, { warnHours: 80, staleHours: 168, staleNote: '資料可能過期' })
+)
 
 const code = computed(() => route.params.code)
 const meta = computed(() => stocksMeta.value?.tw_stocks?.[code.value])
@@ -300,6 +308,11 @@ const epsLabel = computed(() =>
             </span>
           </div>
           <div class="text-[11px] text-slate-500 mt-1 font-mono">收盤 {{ rawData.close_date }}</div>
+          <span v-if="freshness"
+                class="inline-block mt-1.5 px-2 py-0.5 rounded border text-[11px] font-medium"
+                :class="freshness.cls">
+            資料 {{ freshness.label }}
+          </span>
         </div>
         <button
           @click="watchlist.toggle(code)"
@@ -637,6 +650,10 @@ const epsLabel = computed(() =>
       <!-- 明日開盤預測（only for headline 3 stocks，from /adr Ridge model） -->
       <section v-if="adrPrediction?.predictions?.open_gap" class="mb-6">
         <h2 class="text-lg font-semibold mb-2">明日開盤預測</h2>
+        <div v-if="freshness?.stale"
+             class="mb-2 px-3 py-2 bg-rose-50 border border-rose-200 rounded text-xs text-rose-700 leading-relaxed">
+          ⚠️ 資料已過期（{{ freshness.label }}），此「明日預測」是以 {{ adrPrediction.tw_close_date }} 收盤推論，<strong>非今日有效訊號</strong>，請勿據此交易。
+        </div>
         <RouterLink to="/adr" class="block bg-white border-2 border-slate-900/80 hover:border-slate-900 transition">
           <div class="px-4 py-2 bg-slate-900 text-slate-100 text-xs uppercase tracking-wider flex items-baseline justify-between flex-wrap gap-2">
             <span>Ridge + Conformal 80% 區間</span>
