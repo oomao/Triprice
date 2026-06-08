@@ -12,6 +12,7 @@ Usage:
 import argparse
 import json
 import sys
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -25,28 +26,48 @@ FX_FILE = ROOT / 'data' / 'fx.json'
 TAIPEI = timezone(timedelta(hours=8))
 
 
-def get_close(symbol: str):
-    """Return dict {close, close_date, change, change_pct} or None."""
-    t = yf.Ticker(symbol)
-    h = t.history(period='5d', auto_adjust=False)
-    if h.empty:
-        return None
-    closes = [float(c) for c in h['Close'].tolist()]
-    dates = [str(d.date()) for d in h.index]
-    last = closes[-1]
-    prev = closes[-2] if len(closes) > 1 else None
-    if prev:
-        change = round(last - prev, 2)
-        change_pct = round((last - prev) / prev * 100, 2)
-    else:
-        change = 0.0
-        change_pct = 0.0
-    return {
-        'close': round(last, 4),
-        'close_date': dates[-1],
-        'change': change,
-        'change_pct': change_pct,
-    }
+def get_close(symbol: str, retries: int = 3, backoff: float = 2.0):
+    """Return dict {close, close_date, change, change_pct} or None.
+
+    Wrapped in retry + try/except: a transient yfinance failure (rate limit,
+    network blip, schema change) for ONE symbol must not crash the whole
+    pipeline — otherwise the downstream predict step and the commit/push never
+    run and the site silently goes stale. yfinance rate-limiting often shows up
+    as an empty DataFrame rather than an exception, so both are retried.
+    Returns None on persistent failure; callers skip that symbol (FX is the one
+    hard dependency and still sys.exit(1)s in main()).
+    """
+    for attempt in range(1, retries + 1):
+        try:
+            h = yf.Ticker(symbol).history(period='5d', auto_adjust=False)
+        except Exception as e:
+            print(f"  fetch fail {symbol} (attempt {attempt}/{retries}): {e}", file=sys.stderr)
+            h = None
+        if h is not None and not h.empty:
+            try:
+                closes = [float(c) for c in h['Close'].tolist()]
+                dates = [str(d.date()) for d in h.index]
+            except (KeyError, ValueError, TypeError) as e:
+                print(f"  parse fail {symbol}: {e}", file=sys.stderr)
+                return None
+            last = closes[-1]
+            prev = closes[-2] if len(closes) > 1 else None
+            if prev:
+                change = round(last - prev, 2)
+                change_pct = round((last - prev) / prev * 100, 2)
+            else:
+                change = 0.0
+                change_pct = 0.0
+            return {
+                'close': round(last, 4),
+                'close_date': dates[-1],
+                'change': change,
+                'change_pct': change_pct,
+            }
+        if attempt < retries:
+            time.sleep(backoff * attempt)
+    print(f"  giving up on {symbol} after {retries} attempts", file=sys.stderr)
+    return None
 
 
 def main():
