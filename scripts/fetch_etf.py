@@ -111,13 +111,25 @@ def fetch_etf_universe(include_bond: bool, limit: int | None) -> list[dict]:
 
 
 def annualized_vol(closes: list[float]) -> float | None:
-    """Daily log-return std × sqrt(250)."""
+    """Daily log-return std × sqrt(250).
+
+    Single-day moves larger than ±30% (|log-return| > 0.30) are skipped: the
+    only thing that moves a TW-listed ETF that much in one day is a split /
+    reverse-split on FinMind's *unadjusted* free-tier prices (e.g. 0050's 1:4
+    split → a −75% gap). Counting that artificial gap as real volatility
+    crushed flagship ETFs (0050 showed ~137% annualized vol → stability ≈ 0,
+    ranked near the bottom). Real moves are capped at the ±10% daily limit, so
+    this filter is a no-op for non-split ETFs.
+    """
     if len(closes) < 30:
         return None
     rets = []
     for i in range(1, len(closes)):
         if closes[i - 1] > 0:
-            rets.append(math.log(closes[i] / closes[i - 1]))
+            r = math.log(closes[i] / closes[i - 1])
+            if abs(r) > 0.30:
+                continue  # split / reverse-split artifact (unadjusted prices)
+            rets.append(r)
     if not rets:
         return None
     mean = sum(rets) / len(rets)
