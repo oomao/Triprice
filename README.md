@@ -352,7 +352,7 @@ GitHub Pages 還沒啟用。Settings → Pages → Source 選 "GitHub Actions"�
 代表 `data/tw/{code}.json` 不存在。手動跑 `python scripts/fetch_tw.py {code}` 補抓，或在 `stocks.json` 加進去等下次 cron。
 
 **殖利率法的便宜價低得不合理**  
-成長股本身殖利率就低，便宜價會被算得很低。請改看 PE 法（個股頁同時顯示）。系統會在平均殖利率 < 2% 時自動提醒。
+成長股本身殖利率就低，便宜價會被算得很低。請改看 PE 法（個股頁同時顯示）。系統會在中位數殖利率 < 2% 時自動提醒。
 
 **0050 / 0056 沒有 PE 法資料**  
 ETF 沒有 EPS 概念，所以沒 PE。改看殖利率法即可。

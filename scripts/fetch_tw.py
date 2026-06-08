@@ -105,7 +105,7 @@ def compute_yield_valuation(latest_dividend, yields):
         return None, None
     high = percentile(pos, HIGH_PCT)
     low = percentile(pos, LOW_PCT)
-    avg = sum(pos) / len(pos)
+    avg = percentile(pos, 0.50)  # fair = median (P50); key kept 'avg' for data compat
     return (
         {
             'cheap': round(latest_dividend / high, 2),
@@ -122,7 +122,7 @@ def compute_pe_valuation(eps_ttm, pes):
         return None, None
     high = percentile(pos, HIGH_PCT)
     low = percentile(pos, LOW_PCT)
-    avg = sum(pos) / len(pos)
+    avg = percentile(pos, 0.50)  # fair = median (P50); key kept 'avg' for data compat
     return (
         {
             'cheap': round(eps_ttm * low, 2),

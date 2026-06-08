@@ -469,7 +469,7 @@ const epsLabel = computed(() =>
             v-if="data.yield_stats && data.yield_stats.avg < 0.02"
             class="mb-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-xs text-slate-700 leading-relaxed"
           >
-            ⚠️ 此股殖利率偏低（平均 {{ fmt(data.yield_stats.avg * 100, 2) }}%）—— 殖利率法對成長股會嚴重低估合理價，請以下方 PE 法為主要參考。
+            ⚠️ 此股殖利率偏低（中位數 {{ fmt(data.yield_stats.avg * 100, 2) }}%）—— 殖利率法對成長股會嚴重低估合理價，請以下方 PE 法為主要參考。
           </div>
           <div class="bg-white border border-[#e7e7e1] overflow-hidden">
             <table class="w-full text-sm">
@@ -485,7 +485,7 @@ const epsLabel = computed(() =>
                   <td class="px-4 py-2.5 bg-slate-50">合理價</td>
                   <td class="px-4 py-2.5 text-[#0a0e16] font-bold">{{ fmt(data.valuation_yield?.fair) }}</td>
                   <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
-                    股利 {{ fmt(data.dividend_used) }} / 平均殖利率 {{ fmt(data.yield_stats?.avg * 100, 2) }}%
+                    股利 {{ fmt(data.dividend_used) }} / 中位數殖利率 {{ fmt(data.yield_stats?.avg * 100, 2) }}%
                   </td>
                 </tr>
                 <tr>
@@ -535,7 +535,7 @@ const epsLabel = computed(() =>
               <tr class="border-b border-slate-100">
                 <td class="px-4 py-2.5 bg-slate-50">合理價</td>
                 <td class="px-4 py-2.5 text-[#0a0e16] font-bold">{{ fmt(data.valuation_pe.fair) }}</td>
-                <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">EPS × 平均 PE {{ fmt(data.pe_stats?.avg, 1) }}</td>
+                <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">EPS × 中位數 PE {{ fmt(data.pe_stats?.avg, 1) }}</td>
               </tr>
               <tr>
                 <td class="px-4 py-2.5 bg-slate-50">昂貴價</td>

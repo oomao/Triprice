@@ -38,7 +38,7 @@ const showRidgeDetails = ref(false)
       <p class="text-sm leading-relaxed mb-3">適合<strong>穩定配息</strong>的標的（金融股、傳產龍頭、配息型 ETF）。</p>
       <div class="bg-slate-50 border border-slate-200 p-3 mb-3 font-mono text-xs space-y-1">
         <div>便宜價 = 最近一年現金股利 ÷ 近 3 年第 95 百分位殖利率</div>
-        <div>合理價 = 最近一年現金股利 ÷ 近 3 年平均殖利率</div>
+        <div>合理價 = 最近一年現金股利 ÷ 近 3 年中位數殖利率</div>
         <div>昂貴價 = 最近一年現金股利 ÷ 近 3 年第 5 百分位殖利率</div>
       </div>
       <p class="text-xs leading-relaxed mb-2">
@@ -59,7 +59,7 @@ const showRidgeDetails = ref(false)
       <p class="text-sm leading-relaxed mb-3">適合<strong>所有有獲利的個股</strong>，特別是成長股。ETF 沒有 EPS 概念，沒有 PE 法。</p>
       <div class="bg-slate-50 border border-slate-200 p-3 mb-3 font-mono text-xs space-y-1">
         <div>便宜價 = 近 4 季 EPS 合計 × 近 3 年第 5 百分位 PE</div>
-        <div>合理價 = 近 4 季 EPS 合計 × 近 3 年平均 PE</div>
+        <div>合理價 = 近 4 季 EPS 合計 × 近 3 年中位數 PE</div>
         <div>昂貴價 = 近 4 季 EPS 合計 × 近 3 年第 95 百分位 PE</div>
       </div>
       <p class="text-xs leading-relaxed">

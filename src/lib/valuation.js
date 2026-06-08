@@ -46,7 +46,7 @@ export function computeYieldValuation(latestDividend, yields) {
   if (pos.length === 0 || !latestDividend) return [null, null]
   const high = percentile(pos, HIGH_PCT)
   const low = percentile(pos, LOW_PCT)
-  const avg = pos.reduce((a, b) => a + b, 0) / pos.length
+  const avg = percentile(pos, 0.5) // fair = median (P50); key kept 'avg' for data compat
   return [
     {
       cheap: round(latestDividend / high, 2),
@@ -62,7 +62,7 @@ export function computePeValuation(epsTtm, pes) {
   if (pos.length === 0 || !epsTtm || epsTtm <= 0) return [null, null]
   const high = percentile(pos, HIGH_PCT)
   const low = percentile(pos, LOW_PCT)
-  const avg = pos.reduce((a, b) => a + b, 0) / pos.length
+  const avg = percentile(pos, 0.5) // fair = median (P50); key kept 'avg' for data compat
   return [
     {
       cheap: round(epsTtm * low, 2),
