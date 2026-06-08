@@ -456,54 +456,64 @@ const epsLabel = computed(() =>
             目前位置：{{ yieldTier.label }}
           </span>
         </div>
+        <!-- 資料含股票分割／減資（FinMind 未還原），殖利率分布被混合價位汙染 → 停用 -->
         <div
-          v-if="data.yield_stats && data.yield_stats.avg < 0.02"
+          v-if="data.split_detected"
           class="mb-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-xs text-slate-700 leading-relaxed"
         >
-          ⚠️ 此股殖利率偏低（平均 {{ fmt(data.yield_stats.avg * 100, 2) }}%）—— 殖利率法對成長股會嚴重低估合理價，請以下方 PE 法為主要參考。
+          ⚠️ 近 3 年資料含股票分割／減資（價格未還原），殖利率分布會被混合價位汙染，故暫不提供殖利率法估值。請以下方 PE 法為主要參考。
         </div>
-        <div class="bg-white border border-[#e7e7e1] overflow-hidden">
-          <table class="w-full text-sm">
-            <tbody>
-              <tr class="border-b border-slate-100">
-                <td class="px-4 py-2.5 bg-slate-50 w-1/3 sm:w-1/4">便宜價</td>
-                <td class="px-4 py-2.5 text-emerald-600 font-bold">{{ fmt(data.valuation_yield?.cheap) }}</td>
-                <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
-                  股利 {{ fmt(data.dividend_used) }} / 高殖利率 {{ fmt(data.yield_stats?.high * 100, 2) }}%
-                </td>
-              </tr>
-              <tr class="border-b border-slate-100">
-                <td class="px-4 py-2.5 bg-slate-50">合理價</td>
-                <td class="px-4 py-2.5 text-[#0a0e16] font-bold">{{ fmt(data.valuation_yield?.fair) }}</td>
-                <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
-                  股利 {{ fmt(data.dividend_used) }} / 平均殖利率 {{ fmt(data.yield_stats?.avg * 100, 2) }}%
-                </td>
-              </tr>
-              <tr>
-                <td class="px-4 py-2.5 bg-slate-50">昂貴價</td>
-                <td class="px-4 py-2.5 text-red-500 font-bold">{{ fmt(data.valuation_yield?.expensive) }}</td>
-                <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
-                  股利 {{ fmt(data.dividend_used) }} / 低殖利率 {{ fmt(data.yield_stats?.low * 100, 2) }}%
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="text-xs text-slate-500 mt-1">
-          {{ dividendLabel }} {{ fmt(data.dividend_used) }} 元 · 殖利率區間取自近 3 年
-          <span v-if="settings.margin_of_safety > 0" class="text-amber-600">· 安全邊際 {{ settings.margin_of_safety }}%</span>
-        </p>
 
-        <div
-          v-if="data.valuation_yield && data.price_history?.length"
-          class="mt-3 bg-white border border-[#e7e7e1] p-3"
-        >
-          <BandChart
-            :history="data.price_history"
-            :bands="data.valuation_yield"
-            :current-price="data.current_price"
-          />
-        </div>
+        <template v-if="data.valuation_yield">
+          <div
+            v-if="data.yield_stats && data.yield_stats.avg < 0.02"
+            class="mb-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-xs text-slate-700 leading-relaxed"
+          >
+            ⚠️ 此股殖利率偏低（平均 {{ fmt(data.yield_stats.avg * 100, 2) }}%）—— 殖利率法對成長股會嚴重低估合理價，請以下方 PE 法為主要參考。
+          </div>
+          <div class="bg-white border border-[#e7e7e1] overflow-hidden">
+            <table class="w-full text-sm">
+              <tbody>
+                <tr class="border-b border-slate-100">
+                  <td class="px-4 py-2.5 bg-slate-50 w-1/3 sm:w-1/4">便宜價</td>
+                  <td class="px-4 py-2.5 text-emerald-600 font-bold">{{ fmt(data.valuation_yield?.cheap) }}</td>
+                  <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
+                    股利 {{ fmt(data.dividend_used) }} / 高殖利率 {{ fmt(data.yield_stats?.high * 100, 2) }}%
+                  </td>
+                </tr>
+                <tr class="border-b border-slate-100">
+                  <td class="px-4 py-2.5 bg-slate-50">合理價</td>
+                  <td class="px-4 py-2.5 text-[#0a0e16] font-bold">{{ fmt(data.valuation_yield?.fair) }}</td>
+                  <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
+                    股利 {{ fmt(data.dividend_used) }} / 平均殖利率 {{ fmt(data.yield_stats?.avg * 100, 2) }}%
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2.5 bg-slate-50">昂貴價</td>
+                  <td class="px-4 py-2.5 text-red-500 font-bold">{{ fmt(data.valuation_yield?.expensive) }}</td>
+                  <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
+                    股利 {{ fmt(data.dividend_used) }} / 低殖利率 {{ fmt(data.yield_stats?.low * 100, 2) }}%
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">
+            {{ dividendLabel }} {{ fmt(data.dividend_used) }} 元 · 殖利率區間取自近 3 年
+            <span v-if="settings.margin_of_safety > 0" class="text-amber-600">· 安全邊際 {{ settings.margin_of_safety }}%</span>
+          </p>
+
+          <div
+            v-if="data.price_history?.length"
+            class="mt-3 bg-white border border-[#e7e7e1] p-3"
+          >
+            <BandChart
+              :history="data.price_history"
+              :bands="data.valuation_yield"
+              :current-price="data.current_price"
+            />
+          </div>
+        </template>
       </section>
 
       <!-- PE 法估值表 -->

@@ -276,8 +276,34 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
     except Exception as e:
         print(f"  [{code}] EPS fetch failed: {e}")
 
-    # 6. Compute valuations from yearly aggregates
+    # 6. Compute valuations from yearly aggregates.
+    # Detect a split / reverse-split in the 3y window first. FinMind free tier serves
+    # UNADJUSTED prices, so a 1:4 split (e.g. 0050 in 2024-12) leaves the daily close
+    # series spanning two scales (~47 ↔ ~202 within one year). Dividing a single
+    # annual dividend by that mixed-scale series produces a nonsense yield
+    # distribution — 0050 came out cheap 51 / fair 95 / expensive 194 for a ~97 ETF.
+    # Disable + flag the yield method rather than show wrong numbers. (The PE method
+    # uses FinMind's PER field directly, which is a scale-invariant ratio, so it stays.)
+    split_detected = False
+    prev_c = None
+    for p in prices_3y:
+        try:
+            c = float(p['close'])
+        except (KeyError, ValueError, TypeError):
+            continue
+        if c <= 0:
+            continue
+        if prev_c is not None:
+            r = c / prev_c
+            if r < 0.70 or r > 1.43:  # >30% single-day move; TW daily limit is only ±10%
+                split_detected = True
+                break
+        prev_c = c
+
     valuation_yield, yield_stats = compute_yield_valuation(latest_dividend, yearly_yields)
+    if split_detected:
+        # Mixed-scale closes → contaminated yield distribution; suppress.
+        valuation_yield, yield_stats = None, None
     valuation_pe, pe_stats = compute_pe_valuation(eps_ttm, yearly_pes)
 
     # 7. Build sampled price history time series for band chart.
@@ -394,6 +420,7 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
         'eps_ttm': eps_ttm,
         'valuation_yield': valuation_yield,
         'yield_stats': yield_stats,
+        'split_detected': split_detected,
         'valuation_pe': valuation_pe,
         'pe_stats': pe_stats,
         'eps_quarterly': eps_quarterly[:4],
