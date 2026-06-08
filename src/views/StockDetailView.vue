@@ -2,6 +2,7 @@
 import { ref, onMounted, watch, computed, inject } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { useWatchlistStore } from '../stores/watchlist'
+import { useAlertsStore } from '../stores/alerts'
 import { useSettingsStore } from '../stores/settings'
 import { generateSummary, loadCachedSummary, clearCachedSummary } from '../lib/summarize.js'
 import BandChart from '../components/BandChart.vue'
@@ -17,6 +18,8 @@ const summaryError = ref('')
 
 const route = useRoute()
 const watchlist = useWatchlistStore()
+const alerts = useAlertsStore()
+const alertInput = ref('')
 const rawData = ref(null)
 const stocksMeta = ref(null)
 const adrPrediction = ref(null)   // headline-stock prediction from data/adr_prediction.json
@@ -34,6 +37,13 @@ const freshness = computed(() =>
 const code = computed(() => route.params.code)
 const meta = computed(() => stocksMeta.value?.tw_stocks?.[code.value])
 const isDynamic = computed(() => rawData.value?._dynamic === true)
+
+// Price alert (fires when latest close ≤ target — the "等便宜了買" case).
+const alertTarget = computed(() => alerts.get(code.value))
+function setAlert() {
+  alerts.set(code.value, alertInput.value)
+  alertInput.value = ''
+}
 
 // === User customization settings (per-stock localStorage) ===
 const defaultSettings = {
@@ -325,6 +335,33 @@ const epsLabel = computed(() =>
         >
           {{ watchlist.has(code) ? '✓ 自選中' : '+ 加入自選' }}
         </button>
+      </div>
+
+      <!-- 到價提醒（純前端：localStorage 存目標價，下次開 app 在清單頁比對提醒） -->
+      <div class="mb-5 flex items-center flex-wrap gap-2 text-sm">
+        <span class="text-slate-500 text-xs uppercase tracking-wider">到價提醒</span>
+        <template v-if="alertTarget != null">
+          <span class="px-2 py-0.5 rounded border border-amber-300 bg-amber-50 text-amber-800 text-xs font-mono">
+            跌破 {{ fmt(alertTarget) }} 提醒
+          </span>
+          <span v-if="rawData.current_price != null && rawData.current_price <= alertTarget"
+                class="text-xs text-emerald-600 font-semibold">✓ 已到價</span>
+          <button @click="alerts.remove(code)" class="text-xs text-slate-400 hover:text-red-500">清除</button>
+        </template>
+        <template v-else>
+          <input
+            v-model="alertInput"
+            type="number" inputmode="decimal" step="0.01"
+            :placeholder="data.valuation_yield?.cheap || data.valuation_pe?.cheap || '目標價'"
+            class="w-24 px-2 py-1 rounded border border-[#d8d8d2] text-sm focus:outline-none focus:border-[#0a0e16]"
+            @keyup.enter="setAlert"
+          />
+          <button
+            @click="setAlert"
+            class="text-xs px-2.5 py-1 rounded border border-[#0a0e16] text-[#0a0e16] hover:bg-[#0a0e16] hover:text-white transition"
+          >設定</button>
+          <span class="text-[11px] text-slate-400 hidden sm:inline">價格跌到目標時，下次開 app 會在清單頁提醒</span>
+        </template>
       </div>
 
       <!-- 摘要（瀏覽器端用使用者本地的 LLM key 產生；快取在 localStorage） -->

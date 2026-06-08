@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted, computed, inject } from 'vue'
 import { useWatchlistStore } from '../stores/watchlist'
+import { useAlertsStore } from '../stores/alerts'
 import { computeFreshness } from '../lib/freshness.js'
 import { positionPct, preferredBands, positionTier, clampPct } from '../lib/position.js'
 
 const watchlist = useWatchlistStore()
+const alerts = useAlertsStore()
 const lastUpdated = inject('lastUpdated', ref({}))
 
 const stocks = ref(null)
@@ -33,6 +35,7 @@ onMounted(async () => {
     const codes = new Set()
     for (const cat of Object.values(stocks.value.categories)) cat.stocks.forEach((c) => codes.add(c))
     watchlist.codes.forEach((c) => codes.add(c))
+    Object.keys(alerts.targets).forEach((c) => codes.add(c)) // so alerts on any code get checked
     loadPrices([...codes])
   } catch (e) {
     error.value = e.message
@@ -100,6 +103,20 @@ const sortedStocks = computed(() => {
   })
 })
 
+// Alerts whose target is reached (latest close ≤ target). posByCode only holds
+// fetched codes; onMounted also fetches alerted codes so every alert is checked.
+const triggeredAlerts = computed(() => {
+  if (!stocks.value) return []
+  const out = []
+  for (const [code, target] of Object.entries(alerts.targets)) {
+    const p = posByCode.value[code]?.price
+    if (p != null && p <= target) {
+      out.push({ code, name: stocks.value.tw_stocks[code]?.name || code, price: p, target })
+    }
+  }
+  return out
+})
+
 const filteredCategories = computed(() => {
   if (!stocks.value) return []
   if (sortByCheap.value) {
@@ -142,6 +159,19 @@ const filteredCategories = computed(() => {
         <span class="text-xs text-slate-500 font-mono uppercase tracking-wider hidden sm:block">
           {{ stocks ? Object.values(stocks.categories).reduce((s, c) => s + c.stocks.length, 0) : '—' }} 檔預載
         </span>
+      </div>
+    </div>
+
+    <!-- 到價提醒：有目標價達成時置頂提醒（純前端、開 app 時比對） -->
+    <div v-if="triggeredAlerts.length" class="mb-4 px-3 py-2.5 rounded border border-amber-300 bg-amber-50">
+      <div class="text-sm font-semibold text-amber-800 mb-1">🔔 {{ triggeredAlerts.length }} 檔已到價（跌破你設的目標）</div>
+      <div class="flex flex-wrap gap-x-4 gap-y-1">
+        <RouterLink
+          v-for="a in triggeredAlerts"
+          :key="a.code"
+          :to="`/stock/${a.code}`"
+          class="text-xs text-amber-900 hover:underline font-mono"
+        >{{ a.code }} {{ a.name }} · {{ a.price.toFixed(2) }} ≤ {{ a.target.toFixed(2) }}</RouterLink>
       </div>
     </div>
 
