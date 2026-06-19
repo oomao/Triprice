@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-19 07:44:58+08:00",
+  "updated": "2026-06-20 06:57:31+08:00",
   "method": "Ridge + Conformal 80% interval",
   "lookback_days": 730,
   "walk_forward_window_days": 30,
@@ -25,9 +25,9 @@
       "fx_rate": 31.638399124145508,
       "implied_tw_price": 2924.15,
       "signals_cleaned": {
-        "adr_alpha_pct": 2.293,
-        "sox_chg_pct": 6.416,
-        "sox_beta": 0.687,
+        "adr_alpha_pct": null,
+        "sox_chg_pct": NaN,
+        "sox_beta": 0.671,
         "premium_z": 2.715,
         "premium_raw_pct": 21.334,
         "fx_chg_pct": 0.236,
@@ -36,53 +36,7 @@
         "is_ex_div": false,
         "hnhpf_stale": false
       },
-      "predictions": {
-        "open_gap": {
-          "point_pct": 3.827,
-          "lo80_pct": 2.168,
-          "hi80_pct": 5.485,
-          "point_price": 2502.23,
-          "lo80_price": 2462.25,
-          "hi80_price": 2542.19,
-          "crosses_zero": false,
-          "contributions": {
-            "adr_alpha": 0.391,
-            "sox_chg": 1.918,
-            "premium_z": 1.342,
-            "intercept": 0.176
-          }
-        },
-        "max_gain": {
-          "point_pct": 4.687,
-          "lo80_pct": 2.742,
-          "hi80_pct": 6.633,
-          "point_price": 2522.96,
-          "lo80_price": 2476.08,
-          "hi80_price": 2569.86,
-          "crosses_zero": false,
-          "contributions": {
-            "adr_alpha": 0.452,
-            "sox_chg": 1.7,
-            "premium_z": 1.369,
-            "intercept": 1.167
-          }
-        },
-        "max_loss": {
-          "point_pct": 2.663,
-          "lo80_pct": 0.759,
-          "hi80_pct": 4.566,
-          "point_price": 2474.18,
-          "lo80_price": 2428.29,
-          "hi80_price": 2520.04,
-          "crosses_zero": false,
-          "contributions": {
-            "adr_alpha": 0.354,
-            "sox_chg": 1.519,
-            "premium_z": 1.351,
-            "intercept": -0.561
-          }
-        }
-      },
+      "predictions": {},
       "consistency_violated": false,
       "model_quality": {
         "open_gap": {
@@ -1097,70 +1051,24 @@
       "ratio": 2,
       "tw_close": 268.5,
       "tw_close_date": "2026-06-18",
-      "adr_close": 17.19,
+      "adr_close": 17.40999984741211,
       "adr_close_date": "2026-06-18",
-      "fx_rate": 31.626,
-      "implied_tw_price": 271.83,
+      "fx_rate": 31.638399124145508,
+      "implied_tw_price": 275.41,
       "signals_cleaned": {
-        "adr_alpha_pct": -3.593,
-        "sox_chg_pct": 6.416,
-        "sox_beta": 0.511,
-        "premium_z": 0.744,
-        "premium_raw_pct": 1.239,
-        "fx_chg_pct": 0.197,
-        "adr_chg_usd_pct": -0.12,
+        "adr_alpha_pct": null,
+        "sox_chg_pct": NaN,
+        "sox_beta": 0.534,
+        "premium_z": 1.937,
+        "premium_raw_pct": 2.574,
+        "fx_chg_pct": 0.236,
+        "adr_chg_usd_pct": 1.28,
         "is_event_day": false,
         "is_ex_div": false,
         "hnhpf_stale": false
       },
-      "predictions": {
-        "open_gap": {
-          "point_pct": 2.161,
-          "lo80_pct": 0.939,
-          "hi80_pct": 3.382,
-          "point_price": 274.3,
-          "lo80_price": 271.02,
-          "hi80_price": 277.58,
-          "crosses_zero": false,
-          "contributions": {
-            "adr_alpha": -0.044,
-            "sox_chg": 1.64,
-            "premium_z": 0.279,
-            "intercept": 0.286
-          }
-        },
-        "max_gain": {
-          "point_pct": 2.824,
-          "lo80_pct": 0.939,
-          "hi80_pct": 5.9,
-          "point_price": 276.08,
-          "lo80_price": 271.02,
-          "hi80_price": 284.34,
-          "crosses_zero": true,
-          "contributions": {
-            "adr_alpha": -0.067,
-            "sox_chg": 1.173,
-            "premium_z": 0.323,
-            "intercept": 1.395
-          }
-        },
-        "max_loss": {
-          "point_pct": 0.526,
-          "lo80_pct": -1.829,
-          "hi80_pct": 2.88,
-          "point_price": 269.91,
-          "lo80_price": 263.59,
-          "hi80_price": 276.23,
-          "crosses_zero": true,
-          "contributions": {
-            "adr_alpha": 0.091,
-            "sox_chg": 1.272,
-            "premium_z": 0.233,
-            "intercept": -1.071
-          }
-        }
-      },
-      "consistency_violated": true,
+      "predictions": {},
+      "consistency_violated": false,
       "model_quality": {
         "open_gap": {
           "n_train": 117,
@@ -2179,9 +2087,9 @@
       "fx_rate": 31.638399124145508,
       "implied_tw_price": 641.63,
       "signals_cleaned": {
-        "adr_alpha_pct": 1.957,
-        "sox_chg_pct": 6.416,
-        "sox_beta": 0.957,
+        "adr_alpha_pct": null,
+        "sox_chg_pct": NaN,
+        "sox_beta": 0.945,
         "premium_z": 1.782,
         "premium_raw_pct": 4.67,
         "fx_chg_pct": 0.236,
@@ -2190,53 +2098,7 @@
         "is_ex_div": false,
         "hnhpf_stale": false
       },
-      "predictions": {
-        "open_gap": {
-          "point_pct": 4.416,
-          "lo80_pct": 2.471,
-          "hi80_pct": 6.361,
-          "point_price": 640.07,
-          "lo80_price": 628.15,
-          "hi80_price": 651.99,
-          "crosses_zero": false,
-          "contributions": {
-            "adr_alpha": 0.226,
-            "sox_chg": 2.651,
-            "premium_z": 1.036,
-            "intercept": 0.502
-          }
-        },
-        "max_gain": {
-          "point_pct": 6.938,
-          "lo80_pct": 4.131,
-          "hi80_pct": 9.746,
-          "point_price": 655.53,
-          "lo80_price": 638.32,
-          "hi80_price": 672.74,
-          "crosses_zero": false,
-          "contributions": {
-            "adr_alpha": 0.272,
-            "sox_chg": 2.98,
-            "premium_z": 1.076,
-            "intercept": 2.611
-          }
-        },
-        "max_loss": {
-          "point_pct": 2.828,
-          "lo80_pct": 0.106,
-          "hi80_pct": 5.549,
-          "point_price": 630.34,
-          "lo80_price": 613.65,
-          "hi80_price": 647.02,
-          "crosses_zero": false,
-          "contributions": {
-            "adr_alpha": 0.172,
-            "sox_chg": 2.651,
-            "premium_z": 1.138,
-            "intercept": -1.134
-          }
-        }
-      },
+      "predictions": {},
       "consistency_violated": false,
       "model_quality": {
         "open_gap": {

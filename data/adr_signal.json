@@ -1,10 +1,10 @@
 {
-  "updated": "2026-06-19 07:44:54+08:00",
-  "avg_premium_pct": 9.05,
-  "avg_adr_change_pct": 5.05,
+  "updated": "2026-06-20 06:57:27+08:00",
+  "avg_premium_pct": 9.64,
+  "avg_adr_change_pct": 5.52,
   "signal_label": "強烈偏多",
   "signal_code": "strong_bull",
-  "fx_rate": 31.626,
+  "fx_rate": 31.67,
   "fx_date": "2026-06-19",
   "adrs": [
     {
@@ -19,8 +19,8 @@
       "adr_close_date": "2026-06-18",
       "adr_change": 29.97,
       "adr_change_pct": 6.94,
-      "implied_tw_price": 2923.0,
-      "premium_pct": 21.29,
+      "implied_tw_price": 2927.07,
+      "premium_pct": 21.46,
       "ratio": 5
     },
     {
@@ -31,12 +31,12 @@
       "tw_close_date": "2026-06-18",
       "tw_change": -3.5,
       "tw_change_pct": -1.29,
-      "adr_close": 17.19,
-      "adr_close_date": "2026-06-17",
-      "adr_change": -0.02,
-      "adr_change_pct": -0.12,
-      "implied_tw_price": 271.83,
-      "premium_pct": 1.24,
+      "adr_close": 17.41,
+      "adr_close_date": "2026-06-18",
+      "adr_change": 0.22,
+      "adr_change_pct": 1.28,
+      "implied_tw_price": 275.69,
+      "premium_pct": 2.68,
       "ratio": 2
     },
     {
@@ -51,8 +51,8 @@
       "adr_close_date": "2026-06-18",
       "adr_change": 3.12,
       "adr_change_pct": 8.33,
-      "implied_tw_price": 641.38,
-      "premium_pct": 4.63,
+      "implied_tw_price": 642.27,
+      "premium_pct": 4.77,
       "ratio": 2
     }
   ],
