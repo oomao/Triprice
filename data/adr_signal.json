@@ -1,10 +1,10 @@
 {
-  "updated": "2026-07-10 07:10:57+08:00",
-  "avg_premium_pct": 7.56,
-  "avg_adr_change_pct": 4.05,
+  "updated": "2026-07-11 06:58:43+08:00",
+  "avg_premium_pct": 6.64,
+  "avg_adr_change_pct": -0.86,
   "signal_label": "強烈偏多",
   "signal_code": "strong_bull",
-  "fx_rate": 32.11,
+  "fx_rate": 32.099,
   "fx_date": "2026-07-10",
   "adrs": [
     {
@@ -15,12 +15,12 @@
       "tw_close_date": "2026-07-09",
       "tw_change": -50.0,
       "tw_change_pct": -2.03,
-      "adr_close": 436.96,
-      "adr_close_date": "2026-07-09",
-      "adr_change": -0.02,
-      "adr_change_pct": -0.0,
-      "implied_tw_price": 2806.16,
-      "premium_pct": 16.2,
+      "adr_close": 434.11,
+      "adr_close_date": "2026-07-10",
+      "adr_change": -2.85,
+      "adr_change_pct": -0.65,
+      "implied_tw_price": 2786.9,
+      "premium_pct": 15.4,
       "ratio": 5
     },
     {
@@ -31,12 +31,12 @@
       "tw_close_date": "2026-07-09",
       "tw_change": 0.0,
       "tw_change_pct": 0.0,
-      "adr_close": 15.37,
-      "adr_close_date": "2026-07-09",
-      "adr_change": 0.57,
-      "adr_change_pct": 3.85,
-      "implied_tw_price": 246.77,
-      "premium_pct": 3.9,
+      "adr_close": 15.3,
+      "adr_close_date": "2026-07-10",
+      "adr_change": -0.09,
+      "adr_change_pct": -0.58,
+      "implied_tw_price": 245.56,
+      "premium_pct": 3.39,
       "ratio": 2
     },
     {
@@ -47,19 +47,19 @@
       "tw_close_date": "2026-07-09",
       "tw_change": 52.0,
       "tw_change_pct": 8.32,
-      "adr_close": 43.25,
-      "adr_close_date": "2026-07-09",
-      "adr_change": 3.32,
-      "adr_change_pct": 8.31,
-      "implied_tw_price": 694.38,
-      "premium_pct": 2.57,
+      "adr_close": 42.66,
+      "adr_close_date": "2026-07-10",
+      "adr_change": -0.59,
+      "adr_change_pct": -1.36,
+      "implied_tw_price": 684.67,
+      "premium_pct": 1.13,
       "ratio": 2
     }
   ],
   "sox": {
-    "close": 12960.0,
-    "close_date": "2026-07-09",
-    "change": 385.03,
-    "change_pct": 3.06
+    "close": 12967.16,
+    "close_date": "2026-07-10",
+    "change": 7.16,
+    "change_pct": 0.06
   }
 }
