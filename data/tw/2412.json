@@ -3512,13 +3512,13 @@
   "pbr": 2.6,
   "adr": {
     "symbol": "CHT",
-    "close": 41.55,
-    "close_date": "2026-07-15",
-    "change": 0.11,
-    "change_pct": 0.27,
+    "close": 42.29,
+    "close_date": "2026-07-16",
+    "change": 0.74,
+    "change_pct": 1.78,
     "ratio": 10,
-    "fx_rate": 32.179,
-    "implied_tw_price": 133.7,
-    "premium_pct": 0.53
+    "fx_rate": 32.264,
+    "implied_tw_price": 136.44,
+    "premium_pct": 0.33
   }
 }
