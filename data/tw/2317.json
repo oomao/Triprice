@@ -3504,13 +3504,13 @@
   "pbr": 1.81,
   "adr": {
     "symbol": "HNHPF",
-    "close": 14.93,
-    "close_date": "2026-07-30",
-    "change": 0.27,
-    "change_pct": 1.84,
+    "close": 15.16,
+    "close_date": "2026-07-31",
+    "change": 0.31,
+    "change_pct": 2.09,
     "ratio": 2,
-    "fx_rate": 32.394,
-    "implied_tw_price": 241.82,
-    "premium_pct": 5.37
+    "fx_rate": 32.295,
+    "implied_tw_price": 244.8,
+    "premium_pct": -2.28
   }
 }
