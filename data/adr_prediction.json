@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-07 09:29:37+08:00",
+  "updated": "2026-08-08 06:33:51+08:00",
   "method": "Ridge + Conformal 80% interval",
   "lookback_days": 730,
   "walk_forward_window_days": 30,
