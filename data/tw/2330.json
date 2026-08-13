@@ -3512,13 +3512,13 @@
   "pbr": 10.63,
   "adr": {
     "symbol": "TSM",
-    "close": 429.15,
-    "close_date": "2026-08-12",
-    "change": 7.09,
-    "change_pct": 1.68,
+    "close": 430.49,
+    "close_date": "2026-08-13",
+    "change": 1.34,
+    "change_pct": 0.31,
     "ratio": 5,
-    "fx_rate": 32.217,
-    "implied_tw_price": 2765.19,
-    "premium_pct": 14.5
+    "fx_rate": 32.12,
+    "implied_tw_price": 2765.47,
+    "premium_pct": 13.57
   }
 }
