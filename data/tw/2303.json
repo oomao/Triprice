@@ -3512,13 +3512,13 @@
   "pbr": 3.52,
   "adr": {
     "symbol": "UMC",
-    "close": 19.38,
-    "close_date": "2026-08-13",
-    "change": 0.07,
-    "change_pct": 0.36,
+    "close": 19.15,
+    "close_date": "2026-08-14",
+    "change": -0.23,
+    "change_pct": -1.19,
     "ratio": 5,
-    "fx_rate": 32.12,
-    "implied_tw_price": 124.5,
-    "premium_pct": -0.0
+    "fx_rate": 32.004,
+    "implied_tw_price": 122.58,
+    "premium_pct": 1.3
   }
 }
