@@ -3512,13 +3512,13 @@
   "pbr": 6.96,
   "adr": {
     "symbol": "ASX",
-    "close": 39.54,
-    "close_date": "2026-08-14",
-    "change": -0.1,
-    "change_pct": -0.25,
+    "close": 39.91,
+    "close_date": "2026-08-17",
+    "change": 0.37,
+    "change_pct": 0.94,
     "ratio": 2,
-    "fx_rate": 32.004,
-    "implied_tw_price": 632.72,
-    "premium_pct": 2.71
+    "fx_rate": 31.86,
+    "implied_tw_price": 635.77,
+    "premium_pct": 3.38
   }
 }
