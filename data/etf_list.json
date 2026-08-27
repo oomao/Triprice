@@ -1,66 +1,126 @@
 {
-  "updated": "2026-08-26 14:42:25+08:00",
-  "count": 78,
+  "updated": "2026-08-28 01:18:20+08:00",
+  "count": 82,
   "etfs": [
+    {
+      "code": "00961",
+      "name": "FT臺灣永續高息",
+      "category": "dividend",
+      "scores": {
+        "yield": 91.6,
+        "return": 25.0,
+        "scale": 73.1,
+        "stability": 79.3,
+        "total": 67.2
+      },
+      "current_price": 13.17,
+      "change_pct": 0.08,
+      "return_1y": 41.31,
+      "split_detected": false,
+      "volatility": 17.26,
+      "ttm_dividend": 1.308,
+      "yield_pct": 9.93,
+      "avg_turnover": 214151249.0
+    },
     {
       "code": "00830",
       "name": "國泰費城半導體",
       "category": "us_tech",
       "scores": {
         "yield": 100.0,
-        "return": 49.8,
+        "return": 52.1,
         "scale": 82.6,
         "stability": 32.3,
-        "total": 66.2
+        "total": 66.8
       },
-      "current_price": 82.2,
-      "change_pct": -0.06,
-      "return_1y": 91.03,
+      "current_price": 83.65,
+      "change_pct": 1.76,
+      "return_1y": 95.26,
       "split_detected": false,
-      "volatility": 41.57,
+      "volatility": 41.62,
       "ttm_dividend": 9.0,
-      "yield_pct": 10.95,
-      "avg_turnover": 976011796.0
+      "yield_pct": 10.76,
+      "avg_turnover": 974007625.0
     },
     {
       "code": "0056",
       "name": "元大高股息",
       "category": "dividend",
       "scores": {
-        "yield": 67.4,
-        "return": 31.7,
+        "yield": 68.2,
+        "return": 31.3,
         "scale": 89.2,
         "stability": 71.5,
         "total": 65.0
       },
-      "current_price": 53.25,
-      "change_pct": 1.33,
-      "return_1y": 54.71,
+      "current_price": 53.6,
+      "change_pct": 0.66,
+      "return_1y": 53.8,
       "split_detected": false,
-      "volatility": 21.28,
+      "volatility": 21.31,
       "ttm_dividend": 4.082,
-      "yield_pct": 7.67,
-      "avg_turnover": 2815307351.0
+      "yield_pct": 7.62,
+      "avg_turnover": 2788489598.0
+    },
+    {
+      "code": "00877",
+      "name": "復華中國5G",
+      "category": "foreign",
+      "scores": {
+        "yield": null,
+        "return": 92.0,
+        "scale": 72.4,
+        "stability": 28.8,
+        "total": 64.4
+      },
+      "current_price": 37.65,
+      "change_pct": 2.28,
+      "return_1y": 174.62,
+      "split_detected": false,
+      "volatility": 43.48,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 192539381.0
+    },
+    {
+      "code": "00878",
+      "name": "國泰永續高股息",
+      "category": "dividend",
+      "scores": {
+        "yield": null,
+        "return": 31.4,
+        "scale": 86.0,
+        "stability": 74.0,
+        "total": 63.8
+      },
+      "current_price": 32.71,
+      "change_pct": -0.34,
+      "return_1y": 54.07,
+      "split_detected": false,
+      "volatility": 20.01,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 1678615952.0
     },
     {
       "code": "00712",
       "name": "復華富時不動產",
       "category": "other",
       "scores": {
-        "yield": 81.7,
-        "return": 7.4,
+        "yield": 84.2,
+        "return": 5.6,
         "scale": 74.5,
-        "stability": 86.8,
-        "total": 62.6
+        "stability": 86.9,
+        "total": 62.8
       },
-      "current_price": 8.84,
-      "change_pct": -0.34,
-      "return_1y": 6.0,
+      "current_price": 8.75,
+      "change_pct": -1.02,
+      "return_1y": 2.7,
       "split_detected": false,
-      "volatility": 13.33,
+      "volatility": 13.28,
       "ttm_dividend": 0.805,
-      "yield_pct": 9.11,
-      "avg_turnover": 267997934.0
+      "yield_pct": 9.2,
+      "avg_turnover": 270158462.0
     },
     {
       "code": "00646",
@@ -68,19 +128,19 @@
       "category": "us_tech",
       "scores": {
         "yield": null,
-        "return": 20.9,
+        "return": 20.3,
         "scale": 73.6,
         "stability": 88.9,
-        "total": 61.1
+        "total": 60.9
       },
       "current_price": 76.95,
       "change_pct": 0.0,
-      "return_1y": 33.02,
+      "return_1y": 31.99,
       "split_detected": false,
-      "volatility": 12.24,
+      "volatility": 12.26,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 233002719.0
+      "avg_turnover": 233557241.0
     },
     {
       "code": "00662",
@@ -88,99 +148,119 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 22.7,
+        "return": 22.9,
         "scale": 79.1,
         "stability": 77.8,
         "total": 59.9
       },
-      "current_price": 119.4,
-      "change_pct": 0.0,
-      "return_1y": 36.61,
+      "current_price": 119.85,
+      "change_pct": 0.38,
+      "return_1y": 37.05,
       "split_detected": false,
-      "volatility": 18.0,
+      "volatility": 18.02,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 562602073.0
+      "avg_turnover": 559122790.0
     },
     {
       "code": "00690",
       "name": "兆豐藍籌30",
       "category": "other",
       "scores": {
-        "yield": 62.7,
-        "return": 60.0,
-        "scale": 62.8,
+        "yield": 64.1,
+        "return": 59.0,
+        "scale": 62.7,
         "stability": 51.6,
-        "total": 59.3
+        "total": 59.4
       },
-      "current_price": 76.85,
-      "change_pct": 2.47,
-      "return_1y": 111.53,
+      "current_price": 76.55,
+      "change_pct": -0.39,
+      "return_1y": 108.92,
       "split_detected": false,
-      "volatility": 31.57,
+      "volatility": 31.63,
       "ttm_dividend": 5.53,
-      "yield_pct": 7.2,
-      "avg_turnover": 42094829.0
+      "yield_pct": 7.22,
+      "avg_turnover": 41220186.0
     },
     {
-      "code": "00678",
-      "name": "群益那斯達克生技",
-      "category": "us_tech",
+      "code": "00876",
+      "name": "元大全球5G",
+      "category": "other",
       "scores": {
         "yield": null,
-        "return": 43.9,
-        "scale": 57.5,
-        "stability": 72.2,
-        "total": 57.9
+        "return": 69.9,
+        "scale": 62.2,
+        "stability": 45.4,
+        "total": 59.2
       },
-      "current_price": 45.04,
-      "change_pct": 1.19,
-      "return_1y": 79.23,
+      "current_price": 87.4,
+      "change_pct": 0.81,
+      "return_1y": 130.67,
       "split_detected": false,
-      "volatility": 20.89,
+      "volatility": 34.83,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 18013993.0
+      "avg_turnover": 37821941.0
     },
     {
       "code": "00735",
       "name": "國泰臺韓科技",
       "category": "other",
       "scores": {
-        "yield": 29.9,
+        "yield": 30.2,
         "return": 100.0,
         "scale": 77.4,
         "stability": 23.5,
-        "total": 57.7
+        "total": 57.8
       },
-      "current_price": 102.65,
-      "change_pct": 1.18,
-      "return_1y": 192.03,
+      "current_price": 103.3,
+      "change_pct": 0.63,
+      "return_1y": 190.58,
       "split_detected": false,
-      "volatility": 46.11,
+      "volatility": 46.19,
       "ttm_dividend": 4.0,
-      "yield_pct": 3.9,
-      "avg_turnover": 431251333.0
+      "yield_pct": 3.87,
+      "avg_turnover": 424344803.0
+    },
+    {
+      "code": "00858",
+      "name": "永豐美國500大",
+      "category": "us_tech",
+      "scores": {
+        "yield": 70.1,
+        "return": 15.2,
+        "scale": 57.4,
+        "stability": 87.0,
+        "total": 57.4
+      },
+      "current_price": 35.84,
+      "change_pct": 0.06,
+      "return_1y": 21.86,
+      "split_detected": false,
+      "volatility": 13.23,
+      "ttm_dividend": 2.8,
+      "yield_pct": 7.81,
+      "avg_turnover": 17701272.0
     },
     {
       "code": "00713",
       "name": "元大台灣高息低波",
       "category": "dividend",
       "scores": {
-        "yield": 45.0,
-        "return": 15.0,
-        "scale": 77.2,
+        "yield": 45.9,
+        "return": 14.6,
+        "scale": 77.0,
         "stability": 91.0,
-        "total": 57.0
+        "total": 57.1
       },
-      "current_price": 61.65,
-      "change_pct": 0.0,
-      "return_1y": 21.24,
+      "current_price": 61.6,
+      "change_pct": -0.08,
+      "return_1y": 20.55,
       "split_detected": false,
       "volatility": 11.16,
       "ttm_dividend": 3.34,
       "yield_pct": 5.42,
-      "avg_turnover": 417657950.0
+      "avg_turnover": 402690614.0
     },
     {
       "code": "0057",
@@ -188,19 +268,39 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 60.3,
-        "scale": 52.6,
+        "return": 60.2,
+        "scale": 52.7,
         "stability": 57.9,
         "total": 56.9
       },
-      "current_price": 317.0,
-      "change_pct": 1.86,
-      "return_1y": 112.32,
+      "current_price": 318.95,
+      "change_pct": 0.62,
+      "return_1y": 111.37,
       "split_detected": false,
-      "volatility": 28.32,
+      "volatility": 28.37,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 8269525.0
+      "avg_turnover": 8313742.0
+    },
+    {
+      "code": "00678",
+      "name": "群益那斯達克生技",
+      "category": "us_tech",
+      "scores": {
+        "yield": null,
+        "return": 40.3,
+        "scale": 57.6,
+        "stability": 72.4,
+        "total": 56.8
+      },
+      "current_price": 44.71,
+      "change_pct": -0.73,
+      "return_1y": 71.83,
+      "split_detected": false,
+      "volatility": 20.83,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 18195679.0
     },
     {
       "code": "00861",
@@ -208,99 +308,59 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 52.1,
-        "scale": 58.1,
+        "return": 52.6,
+        "scale": 58.0,
         "stability": 59.8,
-        "total": 56.7
+        "total": 56.8
       },
-      "current_price": 85.35,
-      "change_pct": 0.71,
-      "return_1y": 95.8,
+      "current_price": 86.0,
+      "change_pct": 0.76,
+      "return_1y": 96.3,
       "split_detected": false,
-      "volatility": 27.32,
+      "volatility": 27.37,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 19910565.0
-    },
-    {
-      "code": "00858",
-      "name": "永豐美國500大",
-      "category": "us_tech",
-      "scores": {
-        "yield": 69.0,
-        "return": 12.7,
-        "scale": 57.7,
-        "stability": 85.8,
-        "total": 56.3
-      },
-      "current_price": 35.77,
-      "change_pct": 0.03,
-      "return_1y": 16.51,
-      "split_detected": false,
-      "volatility": 13.88,
-      "ttm_dividend": 2.8,
-      "yield_pct": 7.83,
-      "avg_turnover": 18548228.0
+      "avg_turnover": 19521226.0
     },
     {
       "code": "0050",
       "name": "元大台灣50",
       "category": "tw_market",
       "scores": {
-        "yield": 6.1,
-        "return": 58.9,
+        "yield": 6.3,
+        "return": 58.5,
         "scale": 100.0,
         "stability": 59.5,
         "total": 56.1
       },
-      "current_price": 105.9,
-      "change_pct": 1.44,
-      "return_1y": 109.5,
+      "current_price": 106.05,
+      "change_pct": 0.14,
+      "return_1y": 107.94,
       "split_detected": false,
-      "volatility": 27.47,
+      "volatility": 27.52,
       "ttm_dividend": 1.6,
       "yield_pct": 1.51,
-      "avg_turnover": 15670965814.0
+      "avg_turnover": 15606460473.0
     },
     {
       "code": "006208",
       "name": "富邦台50",
       "category": "other",
       "scores": {
-        "yield": 24.7,
-        "return": 57.1,
+        "yield": 25.1,
+        "return": 56.5,
         "scale": 82.8,
         "stability": 58.6,
         "total": 55.8
       },
-      "current_price": 242.85,
-      "change_pct": 1.42,
-      "return_1y": 105.89,
+      "current_price": 243.15,
+      "change_pct": 0.12,
+      "return_1y": 104.07,
       "split_detected": false,
-      "volatility": 27.94,
+      "volatility": 27.99,
       "ttm_dividend": 8.198,
-      "yield_pct": 3.38,
-      "avg_turnover": 1006426874.0
-    },
-    {
-      "code": "00964",
-      "name": "中信亞太高股息",
-      "category": "dividend",
-      "scores": {
-        "yield": null,
-        "return": 24.9,
-        "scale": 61.9,
-        "stability": 78.2,
-        "total": 55.0
-      },
-      "current_price": 14.82,
-      "change_pct": 0.2,
-      "return_1y": 41.01,
-      "split_detected": false,
-      "volatility": 17.78,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 36213193.0
+      "yield_pct": 3.37,
+      "avg_turnover": 1002129351.0
     },
     {
       "code": "00757",
@@ -308,39 +368,19 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 19.6,
-        "scale": 74.3,
+        "return": 19.9,
+        "scale": 74.2,
         "stability": 68.4,
-        "total": 54.1
+        "total": 54.2
       },
-      "current_price": 137.2,
-      "change_pct": -0.04,
-      "return_1y": 30.48,
+      "current_price": 137.95,
+      "change_pct": 0.55,
+      "return_1y": 31.13,
       "split_detected": false,
-      "volatility": 22.87,
+      "volatility": 22.88,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 261077430.0
-    },
-    {
-      "code": "00668",
-      "name": "國泰美國道瓊",
-      "category": "us_tech",
-      "scores": {
-        "yield": null,
-        "return": 20.0,
-        "scale": 51.7,
-        "stability": 87.9,
-        "total": 53.2
-      },
-      "current_price": 62.35,
-      "change_pct": 0.0,
-      "return_1y": 31.15,
-      "split_detected": false,
-      "volatility": 12.79,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 7162204.0
+      "avg_turnover": 257557224.0
     },
     {
       "code": "00643",
@@ -348,39 +388,59 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 26.1,
+        "return": 26.2,
         "scale": 64.7,
         "stability": 67.7,
-        "total": 52.8
+        "total": 52.9
       },
-      "current_price": 18.52,
-      "change_pct": 0.65,
-      "return_1y": 43.45,
+      "current_price": 18.62,
+      "change_pct": 0.54,
+      "return_1y": 43.67,
       "split_detected": false,
-      "volatility": 23.23,
+      "volatility": 23.28,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 56720725.0
+      "avg_turnover": 56403999.0
+    },
+    {
+      "code": "00668",
+      "name": "國泰美國道瓊",
+      "category": "us_tech",
+      "scores": {
+        "yield": null,
+        "return": 19.2,
+        "scale": 51.8,
+        "stability": 87.8,
+        "total": 52.9
+      },
+      "current_price": 62.25,
+      "change_pct": -0.16,
+      "return_1y": 29.77,
+      "split_detected": false,
+      "volatility": 12.81,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 7252038.0
     },
     {
       "code": "00692",
       "name": "富邦公司治理",
       "category": "other",
       "scores": {
-        "yield": 25.8,
-        "return": 53.4,
-        "scale": 70.0,
+        "yield": 26.2,
+        "return": 52.8,
+        "scale": 69.9,
         "stability": 61.4,
         "total": 52.6
       },
-      "current_price": 91.0,
-      "change_pct": 1.45,
-      "return_1y": 98.39,
+      "current_price": 91.15,
+      "change_pct": 0.16,
+      "return_1y": 96.66,
       "split_detected": false,
-      "volatility": 26.48,
+      "volatility": 26.53,
       "ttm_dividend": 3.172,
-      "yield_pct": 3.49,
-      "avg_turnover": 132241879.0
+      "yield_pct": 3.48,
+      "avg_turnover": 129410878.0
     },
     {
       "code": "006205",
@@ -388,39 +448,19 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 17.3,
-        "scale": 59.2,
+        "return": 16.9,
+        "scale": 59.1,
         "stability": 81.1,
-        "total": 52.5
+        "total": 52.4
       },
-      "current_price": 40.62,
-      "change_pct": 0.82,
-      "return_1y": 25.84,
+      "current_price": 40.74,
+      "change_pct": 0.3,
+      "return_1y": 25.2,
       "split_detected": false,
-      "volatility": 16.31,
+      "volatility": 16.32,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 23540127.0
-    },
-    {
-      "code": "00645",
-      "name": "富邦日本",
-      "category": "foreign",
-      "scores": {
-        "yield": null,
-        "return": 28.4,
-        "scale": 54.3,
-        "stability": 73.0,
-        "total": 51.9
-      },
-      "current_price": 58.05,
-      "change_pct": 0.52,
-      "return_1y": 48.16,
-      "split_detected": false,
-      "volatility": 20.51,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 10804979.0
+      "avg_turnover": 23127388.0
     },
     {
       "code": "00636",
@@ -428,19 +468,19 @@
       "category": "foreign",
       "scores": {
         "yield": null,
-        "return": 16.8,
+        "return": 16.1,
         "scale": 57.9,
-        "stability": 80.6,
-        "total": 51.8
+        "stability": 80.7,
+        "total": 51.6
       },
-      "current_price": 27.89,
-      "change_pct": 0.65,
-      "return_1y": 24.79,
+      "current_price": 27.82,
+      "change_pct": -0.25,
+      "return_1y": 23.7,
       "split_detected": false,
       "volatility": 16.53,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 19339510.0
+      "avg_turnover": 19062863.0
     },
     {
       "code": "006207",
@@ -448,19 +488,99 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 20.6,
+        "return": 20.0,
         "scale": 54.3,
         "stability": 78.9,
-        "total": 51.3
+        "total": 51.1
       },
-      "current_price": 32.49,
-      "change_pct": 0.9,
-      "return_1y": 32.34,
+      "current_price": 32.45,
+      "change_pct": -0.12,
+      "return_1y": 31.27,
       "split_detected": false,
-      "volatility": 17.45,
+      "volatility": 17.46,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 10798018.0
+      "avg_turnover": 10725583.0
+    },
+    {
+      "code": "00645",
+      "name": "富邦日本",
+      "category": "foreign",
+      "scores": {
+        "yield": null,
+        "return": 24.8,
+        "scale": 54.3,
+        "stability": 73.6,
+        "total": 50.9
+      },
+      "current_price": 58.15,
+      "change_pct": 0.17,
+      "return_1y": 40.94,
+      "split_detected": false,
+      "volatility": 20.23,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 10705891.0
+    },
+    {
+      "code": "00731",
+      "name": "復華富時高息低波",
+      "category": "dividend",
+      "scores": {
+        "yield": 30.2,
+        "return": 23.4,
+        "scale": 65.5,
+        "stability": 84.4,
+        "total": 50.9
+      },
+      "current_price": 93.5,
+      "change_pct": 0.59,
+      "return_1y": 38.11,
+      "split_detected": false,
+      "volatility": 14.6,
+      "ttm_dividend": 3.614,
+      "yield_pct": 3.87,
+      "avg_turnover": 64122070.0
+    },
+    {
+      "code": "00770",
+      "name": "國泰北美科技",
+      "category": "other",
+      "scores": {
+        "yield": 54.0,
+        "return": 25.8,
+        "scale": 57.5,
+        "stability": 65.8,
+        "total": 50.8
+      },
+      "current_price": 67.55,
+      "change_pct": 1.2,
+      "return_1y": 42.99,
+      "split_detected": false,
+      "volatility": 24.27,
+      "ttm_dividend": 4.2,
+      "yield_pct": 6.22,
+      "avg_turnover": 17911365.0
+    },
+    {
+      "code": "0052",
+      "name": "富邦科技",
+      "category": "other",
+      "scores": {
+        "yield": 10.6,
+        "return": null,
+        "scale": 86.1,
+        "stability": 55.2,
+        "total": 50.6
+      },
+      "current_price": 61.9,
+      "change_pct": -0.08,
+      "return_1y": null,
+      "split_detected": true,
+      "volatility": 29.76,
+      "ttm_dividend": 1.199,
+      "yield_pct": 1.94,
+      "avg_turnover": 1718328100.0
     },
     {
       "code": "00639",
@@ -468,159 +588,19 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 26.8,
-        "scale": 58.0,
-        "stability": 67.5,
-        "total": 50.8
-      },
-      "current_price": 16.65,
-      "change_pct": 0.48,
-      "return_1y": 44.91,
-      "split_detected": false,
-      "volatility": 23.36,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 19494223.0
-    },
-    {
-      "code": "00731",
-      "name": "復華富時高息低波",
-      "category": "dividend",
-      "scores": {
-        "yield": 29.8,
-        "return": 23.2,
-        "scale": 65.5,
-        "stability": 84.4,
-        "total": 50.7
-      },
-      "current_price": 92.95,
-      "change_pct": 0.6,
-      "return_1y": 37.7,
-      "split_detected": false,
-      "volatility": 14.6,
-      "ttm_dividend": 3.614,
-      "yield_pct": 3.89,
-      "avg_turnover": 64348625.0
-    },
-    {
-      "code": "0052",
-      "name": "富邦科技",
-      "category": "other",
-      "scores": {
-        "yield": 10.3,
-        "return": null,
-        "scale": 86.2,
-        "stability": 55.2,
-        "total": 50.6
-      },
-      "current_price": 61.95,
-      "change_pct": 1.56,
-      "return_1y": null,
-      "split_detected": true,
-      "volatility": 29.71,
-      "ttm_dividend": 1.199,
-      "yield_pct": 1.94,
-      "avg_turnover": 1744192816.0
-    },
-    {
-      "code": "00661",
-      "name": "元大日經225",
-      "category": "other",
-      "scores": {
-        "yield": null,
-        "return": 39.2,
-        "scale": 54.9,
-        "stability": 57.7,
-        "total": 50.6
-      },
-      "current_price": 85.9,
-      "change_pct": 0.7,
-      "return_1y": 69.76,
-      "split_detected": false,
-      "volatility": 28.42,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 11931694.0
-    },
-    {
-      "code": "00770",
-      "name": "國泰北美科技",
-      "category": "other",
-      "scores": {
-        "yield": 53.6,
-        "return": 25.1,
-        "scale": 57.5,
-        "stability": 65.8,
+        "return": 26.2,
+        "scale": 57.9,
+        "stability": 67.4,
         "total": 50.5
       },
-      "current_price": 66.75,
-      "change_pct": 0.23,
-      "return_1y": 41.45,
+      "current_price": 16.61,
+      "change_pct": -0.24,
+      "return_1y": 43.69,
       "split_detected": false,
-      "volatility": 24.23,
-      "ttm_dividend": 4.2,
-      "yield_pct": 6.29,
-      "avg_turnover": 18140297.0
-    },
-    {
-      "code": "0061",
-      "name": "元大寶滬深",
-      "category": "other",
-      "scores": {
-        "yield": null,
-        "return": 19.4,
-        "scale": 51.4,
-        "stability": 79.8,
-        "total": 50.2
-      },
-      "current_price": 24.38,
-      "change_pct": 0.58,
-      "return_1y": 30.1,
-      "split_detected": false,
-      "volatility": 16.95,
+      "volatility": 23.4,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 6812244.0
-    },
-    {
-      "code": "00709",
-      "name": "富邦歐洲",
-      "category": "other",
-      "scores": {
-        "yield": null,
-        "return": 19.9,
-        "scale": 47.2,
-        "stability": 83.1,
-        "total": 50.1
-      },
-      "current_price": 41.29,
-      "change_pct": -0.02,
-      "return_1y": 31.12,
-      "split_detected": false,
-      "volatility": 15.27,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 3503315.0
-    },
-    {
-      "code": "00657",
-      "name": "國泰日經225",
-      "category": "other",
-      "scores": {
-        "yield": null,
-        "return": 38.4,
-        "scale": 53.5,
-        "stability": 58.0,
-        "total": 50.0
-      },
-      "current_price": 78.0,
-      "change_pct": 0.78,
-      "return_1y": 68.25,
-      "split_detected": false,
-      "volatility": 28.26,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 9518882.0
+      "avg_turnover": 19126710.0
     },
     {
       "code": "00762",
@@ -628,19 +608,39 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 32.7,
-        "scale": 60.7,
+        "return": 33.6,
+        "scale": 60.8,
         "stability": 56.6,
-        "total": 50.0
+        "total": 50.3
       },
-      "current_price": 111.05,
-      "change_pct": 0.27,
-      "return_1y": 56.85,
+      "current_price": 112.65,
+      "change_pct": 1.44,
+      "return_1y": 58.44,
       "split_detected": false,
-      "volatility": 29.0,
+      "volatility": 29.04,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 30131337.0
+      "avg_turnover": 30356671.0
+    },
+    {
+      "code": "0061",
+      "name": "元大寶滬深",
+      "category": "other",
+      "scores": {
+        "yield": null,
+        "return": 19.2,
+        "scale": 51.3,
+        "stability": 79.8,
+        "total": 50.1
+      },
+      "current_price": 24.48,
+      "change_pct": 0.41,
+      "return_1y": 29.8,
+      "split_detected": false,
+      "volatility": 16.96,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 6677745.0
     },
     {
       "code": "00693U",
@@ -648,99 +648,179 @@
       "category": "us_tech",
       "scores": {
         "yield": null,
-        "return": 11.1,
-        "scale": 57.4,
-        "stability": 79.9,
-        "total": 49.5
+        "return": 12.3,
+        "scale": 57.6,
+        "stability": 79.8,
+        "total": 49.9
       },
-      "current_price": 22.52,
-      "change_pct": 0.85,
-      "return_1y": 13.39,
+      "current_price": 23.0,
+      "change_pct": 2.13,
+      "return_1y": 16.04,
       "split_detected": false,
-      "volatility": 16.91,
+      "volatility": 17.0,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 17738657.0
+      "avg_turnover": 18346252.0
+    },
+    {
+      "code": "00709",
+      "name": "富邦歐洲",
+      "category": "other",
+      "scores": {
+        "yield": null,
+        "return": 18.5,
+        "scale": 47.3,
+        "stability": 83.2,
+        "total": 49.7
+      },
+      "current_price": 41.36,
+      "change_pct": 0.17,
+      "return_1y": 28.37,
+      "split_detected": false,
+      "volatility": 15.22,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 3515952.0
     },
     {
       "code": "00850",
       "name": "元大臺灣ESG永續",
       "category": "tw_market",
       "scores": {
-        "yield": 16.9,
-        "return": 53.7,
+        "yield": 17.3,
+        "return": 52.9,
         "scale": 66.4,
         "stability": 60.4,
-        "total": 49.4
+        "total": 49.2
       },
-      "current_price": 90.4,
-      "change_pct": 1.8,
-      "return_1y": 98.94,
+      "current_price": 90.55,
+      "change_pct": 0.17,
+      "return_1y": 96.85,
       "split_detected": false,
-      "volatility": 27.02,
+      "volatility": 27.07,
       "ttm_dividend": 2.35,
       "yield_pct": 2.6,
-      "avg_turnover": 74751302.0
+      "avg_turnover": 74658950.0
+    },
+    {
+      "code": "00661",
+      "name": "元大日經225",
+      "category": "other",
+      "scores": {
+        "yield": null,
+        "return": 34.3,
+        "scale": 54.9,
+        "stability": 58.1,
+        "total": 49.1
+      },
+      "current_price": 85.45,
+      "change_pct": -0.52,
+      "return_1y": 59.87,
+      "split_detected": false,
+      "volatility": 28.23,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 11786751.0
     },
     {
       "code": "00702",
       "name": "國泰標普低波高息",
       "category": "dividend",
       "scores": {
-        "yield": 43.3,
-        "return": 13.4,
+        "yield": 44.2,
+        "return": 12.5,
         "scale": 44.9,
-        "stability": 94.9,
+        "stability": 95.0,
         "total": 49.1
       },
       "current_price": 25.34,
-      "change_pct": -0.12,
-      "return_1y": 17.97,
+      "change_pct": 0.0,
+      "return_1y": 16.51,
       "split_detected": false,
-      "volatility": 9.16,
+      "volatility": 9.11,
       "ttm_dividend": 1.33,
       "yield_pct": 5.25,
-      "avg_turnover": 2414419.0
+      "avg_turnover": 2407631.0
     },
     {
       "code": "00728",
       "name": "第一金工業30",
       "category": "other",
       "scores": {
-        "yield": 18.3,
-        "return": 64.1,
-        "scale": 56.1,
+        "yield": 18.7,
+        "return": 63.6,
+        "scale": 56.6,
         "stability": 55.8,
-        "total": 48.6
+        "total": 48.7
       },
       "current_price": 68.25,
-      "change_pct": 1.56,
-      "return_1y": 119.88,
+      "change_pct": 0.0,
+      "return_1y": 118.05,
       "split_detected": false,
-      "volatility": 29.41,
+      "volatility": 29.47,
       "ttm_dividend": 1.871,
       "yield_pct": 2.74,
-      "avg_turnover": 14429647.0
+      "avg_turnover": 15579856.0
+    },
+    {
+      "code": "00657",
+      "name": "國泰日經225",
+      "category": "other",
+      "scores": {
+        "yield": null,
+        "return": 33.7,
+        "scale": 53.5,
+        "stability": 58.5,
+        "total": 48.6
+      },
+      "current_price": 77.55,
+      "change_pct": -0.58,
+      "return_1y": 58.56,
+      "split_detected": false,
+      "volatility": 28.06,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 9474674.0
     },
     {
       "code": "00701",
       "name": "國泰股利精選30",
       "category": "other",
       "scores": {
-        "yield": 33.1,
-        "return": 19.7,
-        "scale": 61.6,
+        "yield": 33.9,
+        "return": 19.3,
+        "scale": 61.5,
         "stability": 78.8,
+        "total": 48.4
+      },
+      "current_price": 37.7,
+      "change_pct": -0.24,
+      "return_1y": 30.04,
+      "split_detected": false,
+      "volatility": 17.49,
+      "ttm_dividend": 1.6,
+      "yield_pct": 4.24,
+      "avg_turnover": 33909803.0
+    },
+    {
+      "code": "00875",
+      "name": "國泰網路資安",
+      "category": "other",
+      "scores": {
+        "yield": null,
+        "return": 26.4,
+        "scale": 54.6,
+        "stability": 63.8,
         "total": 48.3
       },
-      "current_price": 37.79,
-      "change_pct": -0.26,
-      "return_1y": 30.72,
+      "current_price": 53.45,
+      "change_pct": 1.81,
+      "return_1y": 44.07,
       "split_detected": false,
-      "volatility": 17.46,
-      "ttm_dividend": 1.6,
-      "yield_pct": 4.23,
-      "avg_turnover": 34737732.0
+      "volatility": 25.27,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 11392671.0
     },
     {
       "code": "00783",
@@ -748,19 +828,19 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 26.7,
+        "return": 26.4,
         "scale": 50.0,
         "stability": 68.0,
-        "total": 48.2
+        "total": 48.1
       },
-      "current_price": 28.14,
-      "change_pct": 0.93,
-      "return_1y": 44.75,
+      "current_price": 28.35,
+      "change_pct": 0.75,
+      "return_1y": 44.05,
       "split_detected": false,
-      "volatility": 23.09,
+      "volatility": 23.13,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 5461651.0
+      "avg_turnover": 5441685.0
     },
     {
       "code": "006206",
@@ -768,79 +848,59 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 15.9,
-        "scale": 46.2,
-        "stability": 81.8,
-        "total": 48.0
+        "return": 15.3,
+        "scale": 46.0,
+        "stability": 81.9,
+        "total": 47.7
       },
-      "current_price": 37.73,
-      "change_pct": 0.8,
-      "return_1y": 22.94,
+      "current_price": 37.8,
+      "change_pct": 0.19,
+      "return_1y": 22.05,
       "split_detected": false,
-      "volatility": 15.94,
+      "volatility": 15.92,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 2976546.0
+      "avg_turnover": 2873323.0
     },
     {
       "code": "00840B",
       "name": "凱基IG精選15+",
       "category": "other",
       "scores": {
-        "yield": 40.5,
-        "return": 5.7,
+        "yield": 41.0,
+        "return": 6.0,
         "scale": 46.3,
         "stability": 95.3,
-        "total": 46.9
+        "total": 47.1
       },
-      "current_price": 28.76,
-      "change_pct": 0.24,
-      "return_1y": 2.46,
+      "current_price": 28.93,
+      "change_pct": -0.14,
+      "return_1y": 3.54,
       "split_detected": false,
-      "volatility": 8.94,
+      "volatility": 8.96,
       "ttm_dividend": 1.428,
-      "yield_pct": 4.97,
-      "avg_turnover": 3030811.0
-    },
-    {
-      "code": "00737",
-      "name": "國泰AI機器人",
-      "category": "other",
-      "scores": {
-        "yield": null,
-        "return": 18.3,
-        "scale": 51.8,
-        "stability": 70.3,
-        "total": 46.8
-      },
-      "current_price": 40.67,
-      "change_pct": 0.17,
-      "return_1y": 27.73,
-      "split_detected": false,
-      "volatility": 21.91,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 7263769.0
+      "yield_pct": 4.94,
+      "avg_turnover": 3026808.0
     },
     {
       "code": "0055",
       "name": "元大MSCI金融",
       "category": "other",
       "scores": {
-        "yield": 19.0,
-        "return": 29.5,
-        "scale": 60.3,
+        "yield": 19.5,
+        "return": 29.8,
+        "scale": 60.1,
         "stability": 78.1,
-        "total": 46.7
+        "total": 46.9
       },
-      "current_price": 44.52,
-      "change_pct": 0.07,
-      "return_1y": 50.41,
+      "current_price": 44.53,
+      "change_pct": 0.02,
+      "return_1y": 50.9,
       "split_detected": false,
-      "volatility": 17.86,
+      "volatility": 17.88,
       "ttm_dividend": 1.25,
       "yield_pct": 2.81,
-      "avg_turnover": 27924182.0
+      "avg_turnover": 27358953.0
     },
     {
       "code": "00652",
@@ -848,19 +908,39 @@
       "category": "foreign",
       "scores": {
         "yield": null,
-        "return": 1.3,
+        "return": 0.5,
         "scale": 54.8,
-        "stability": 83.7,
-        "total": 46.6
+        "stability": 83.6,
+        "total": 46.3
       },
-      "current_price": 33.44,
-      "change_pct": 0.72,
-      "return_1y": -6.36,
+      "current_price": 33.07,
+      "change_pct": -1.11,
+      "return_1y": -7.5,
       "split_detected": false,
-      "volatility": 14.94,
+      "volatility": 15.0,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 11778530.0
+      "avg_turnover": 11633227.0
+    },
+    {
+      "code": "00737",
+      "name": "國泰AI機器人",
+      "category": "other",
+      "scores": {
+        "yield": null,
+        "return": 16.5,
+        "scale": 51.7,
+        "stability": 70.4,
+        "total": 46.2
+      },
+      "current_price": 40.87,
+      "change_pct": 0.49,
+      "return_1y": 24.41,
+      "split_detected": false,
+      "volatility": 21.84,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 7076280.0
     },
     {
       "code": "00752",
@@ -868,39 +948,59 @@
       "category": "foreign",
       "scores": {
         "yield": null,
-        "return": 4.4,
-        "scale": 65.2,
-        "stability": 69.1,
-        "total": 46.2
+        "return": 2.2,
+        "scale": 65.1,
+        "stability": 69.3,
+        "total": 45.5
       },
-      "current_price": 23.4,
-      "change_pct": 1.21,
-      "return_1y": -0.13,
+      "current_price": 23.25,
+      "change_pct": -0.64,
+      "return_1y": -4.04,
       "split_detected": false,
-      "volatility": 22.53,
+      "volatility": 22.44,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 61762578.0
+      "avg_turnover": 60365641.0
     },
     {
       "code": "00717",
       "name": "富邦美國特別股",
       "category": "us_tech",
       "scores": {
-        "yield": 29.0,
+        "yield": 29.5,
         "return": 7.4,
-        "scale": 45.2,
+        "scale": 45.1,
         "stability": 99.4,
-        "total": 45.2
+        "total": 45.4
       },
-      "current_price": 14.82,
-      "change_pct": 0.27,
-      "return_1y": 5.93,
+      "current_price": 14.83,
+      "change_pct": 0.07,
+      "return_1y": 6.23,
       "split_detected": false,
-      "volatility": 6.79,
+      "volatility": 6.8,
       "ttm_dividend": 0.564,
-      "yield_pct": 3.81,
-      "avg_turnover": 2543071.0
+      "yield_pct": 3.8,
+      "avg_turnover": 2509688.0
+    },
+    {
+      "code": "0051",
+      "name": "元大中型100",
+      "category": "other",
+      "scores": {
+        "yield": 11.9,
+        "return": 48.5,
+        "scale": 55.3,
+        "stability": 60.4,
+        "total": 44.0
+      },
+      "current_price": 145.8,
+      "change_pct": 0.9,
+      "return_1y": 88.13,
+      "split_detected": false,
+      "volatility": 27.07,
+      "ttm_dividend": 3.0,
+      "yield_pct": 2.06,
+      "avg_turnover": 12561923.0
     },
     {
       "code": "00660",
@@ -908,59 +1008,39 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 14.3,
+        "return": 12.8,
         "scale": 38.5,
-        "stability": 80.6,
-        "total": 44.5
+        "stability": 80.7,
+        "total": 44.0
       },
-      "current_price": 46.6,
-      "change_pct": -0.02,
-      "return_1y": 19.76,
+      "current_price": 46.61,
+      "change_pct": 0.02,
+      "return_1y": 17.02,
       "split_detected": false,
-      "volatility": 16.56,
+      "volatility": 16.51,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 876736.0
-    },
-    {
-      "code": "0051",
-      "name": "元大中型100",
-      "category": "other",
-      "scores": {
-        "yield": 11.7,
-        "return": 49.7,
-        "scale": 55.3,
-        "stability": 60.3,
-        "total": 44.2
-      },
-      "current_price": 144.5,
-      "change_pct": 1.58,
-      "return_1y": 91.01,
-      "split_detected": false,
-      "volatility": 27.06,
-      "ttm_dividend": 3.0,
-      "yield_pct": 2.08,
-      "avg_turnover": 12739511.0
+      "avg_turnover": 872275.0
     },
     {
       "code": "0053",
       "name": "元大電子",
       "category": "other",
       "scores": {
-        "yield": 3.4,
-        "return": 66.3,
-        "scale": 55.5,
+        "yield": 3.5,
+        "return": 65.7,
+        "scale": 55.6,
         "stability": 50.6,
-        "total": 44.0
+        "total": 43.9
       },
-      "current_price": 241.15,
-      "change_pct": 2.12,
-      "return_1y": 124.33,
+      "current_price": 241.55,
+      "change_pct": 0.17,
+      "return_1y": 122.32,
       "split_detected": false,
-      "volatility": 32.09,
+      "volatility": 32.15,
       "ttm_dividend": 3.0,
       "yield_pct": 1.24,
-      "avg_turnover": 13123348.0
+      "avg_turnover": 13200324.0
     },
     {
       "code": "00682U",
@@ -968,19 +1048,39 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 5.6,
-        "scale": 29.3,
-        "stability": 96.3,
-        "total": 43.7
+        "return": 5.7,
+        "scale": 28.7,
+        "stability": 96.2,
+        "total": 43.5
       },
-      "current_price": 20.36,
-      "change_pct": 0.1,
-      "return_1y": 2.21,
+      "current_price": 20.39,
+      "change_pct": 0.15,
+      "return_1y": 2.98,
       "split_detected": false,
-      "volatility": 8.44,
+      "volatility": 8.45,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 201712.0
+      "avg_turnover": 182396.0
+    },
+    {
+      "code": "006203",
+      "name": "元大MSCI台灣",
+      "category": "tw_market",
+      "scores": {
+        "yield": 7.0,
+        "return": 58.1,
+        "scale": 48.8,
+        "stability": 59.0,
+        "total": 43.2
+      },
+      "current_price": 193.5,
+      "change_pct": 0.16,
+      "return_1y": 107.17,
+      "split_detected": false,
+      "volatility": 27.78,
+      "ttm_dividend": 3.05,
+      "yield_pct": 1.58,
+      "avg_turnover": 4524328.0
     },
     {
       "code": "00700",
@@ -988,59 +1088,59 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 5.3,
-        "scale": 51.4,
-        "stability": 74.3,
-        "total": 43.7
+        "return": 3.3,
+        "scale": 51.3,
+        "stability": 74.4,
+        "total": 43.0
       },
-      "current_price": 17.56,
-      "change_pct": 1.21,
-      "return_1y": 1.74,
+      "current_price": 17.39,
+      "change_pct": -0.97,
+      "return_1y": -1.92,
       "split_detected": false,
-      "volatility": 19.81,
+      "volatility": 19.77,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 6769322.0
-    },
-    {
-      "code": "006203",
-      "name": "元大MSCI台灣",
-      "category": "tw_market",
-      "scores": {
-        "yield": 6.8,
-        "return": 58.4,
-        "scale": 49.0,
-        "stability": 59.0,
-        "total": 43.3
-      },
-      "current_price": 193.2,
-      "change_pct": 2.47,
-      "return_1y": 108.41,
-      "split_detected": false,
-      "volatility": 27.73,
-      "ttm_dividend": 3.05,
-      "yield_pct": 1.58,
-      "avg_turnover": 4656927.0
+      "avg_turnover": 6706396.0
     },
     {
       "code": "00730",
       "name": "富邦臺灣優質高息",
       "category": "dividend",
       "scores": {
-        "yield": 32.3,
-        "return": 18.7,
-        "scale": 50.4,
+        "yield": 33.1,
+        "return": 17.7,
+        "scale": 50.2,
         "stability": 70.9,
-        "total": 43.1
+        "total": 43.0
       },
-      "current_price": 29.13,
-      "change_pct": 1.53,
-      "return_1y": 28.61,
+      "current_price": 29.11,
+      "change_pct": -0.07,
+      "return_1y": 26.73,
       "split_detected": false,
-      "volatility": 21.58,
+      "volatility": 21.61,
       "ttm_dividend": 1.21,
-      "yield_pct": 4.15,
-      "avg_turnover": 5830069.0
+      "yield_pct": 4.16,
+      "avg_turnover": 5582670.0
+    },
+    {
+      "code": "00771",
+      "name": "元大US高息特別股",
+      "category": "dividend",
+      "scores": {
+        "yield": 32.3,
+        "return": 5.2,
+        "scale": 34.3,
+        "stability": 100.0,
+        "total": 42.9
+      },
+      "current_price": 15.43,
+      "change_pct": -0.13,
+      "return_1y": 1.92,
+      "split_detected": false,
+      "volatility": 6.5,
+      "ttm_dividend": 0.63,
+      "yield_pct": 4.08,
+      "avg_turnover": 448473.0
     },
     {
       "code": "00738U",
@@ -1049,38 +1149,18 @@
       "scores": {
         "yield": null,
         "return": null,
-        "scale": 73.6,
-        "stability": 12.0,
+        "scale": 73.5,
+        "stability": 12.1,
         "total": 42.8
       },
-      "current_price": 55.2,
-      "change_pct": 1.66,
+      "current_price": 54.9,
+      "change_pct": -0.54,
       "return_1y": null,
       "split_detected": true,
-      "volatility": 52.07,
+      "volatility": 52.14,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 232918364.0
-    },
-    {
-      "code": "00771",
-      "name": "元大US高息特別股",
-      "category": "dividend",
-      "scores": {
-        "yield": 31.6,
-        "return": 5.3,
-        "scale": 34.4,
-        "stability": 100.0,
-        "total": 42.8
-      },
-      "current_price": 15.45,
-      "change_pct": 0.13,
-      "return_1y": 1.64,
-      "split_detected": false,
-      "volatility": 6.5,
-      "ttm_dividend": 0.63,
-      "yield_pct": 4.08,
-      "avg_turnover": 457991.0
+      "avg_turnover": 230344717.0
     },
     {
       "code": "00402A",
@@ -1088,79 +1168,39 @@
       "category": "us_tech",
       "scores": {
         "yield": null,
-        "return": 2.0,
-        "scale": 71.1,
-        "stability": 54.5,
-        "total": 42.5
+        "return": 2.3,
+        "scale": 71.0,
+        "stability": 54.8,
+        "total": 42.7
       },
-      "current_price": 9.51,
-      "change_pct": 0.53,
-      "return_1y": -5.0,
+      "current_price": 9.63,
+      "change_pct": 1.26,
+      "return_1y": -3.8,
       "split_detected": false,
-      "volatility": 30.08,
+      "volatility": 29.94,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 155976471.0
+      "avg_turnover": 153733960.0
     },
     {
       "code": "006204",
       "name": "永豐臺灣加權",
       "category": "tw_market",
       "scores": {
-        "yield": 5.3,
+        "yield": 5.4,
         "return": 50.5,
-        "scale": 50.2,
+        "scale": 49.8,
         "stability": 61.3,
         "total": 41.8
       },
-      "current_price": 228.1,
-      "change_pct": 2.38,
-      "return_1y": 92.57,
+      "current_price": 229.8,
+      "change_pct": 0.75,
+      "return_1y": 91.98,
       "split_detected": false,
-      "volatility": 26.54,
+      "volatility": 26.59,
       "ttm_dividend": 3.259,
-      "yield_pct": 1.43,
-      "avg_turnover": 5650418.0
-    },
-    {
-      "code": "00733",
-      "name": "富邦臺灣中小",
-      "category": "tw_market",
-      "scores": {
-        "yield": 15.3,
-        "return": 40.1,
-        "scale": 66.5,
-        "stability": 42.4,
-        "total": 41.1
-      },
-      "current_price": 67.15,
-      "change_pct": 2.83,
-      "return_1y": 71.7,
-      "split_detected": false,
-      "volatility": 36.33,
-      "ttm_dividend": 1.641,
-      "yield_pct": 2.44,
-      "avg_turnover": 75087666.0
-    },
-    {
-      "code": "00739",
-      "name": "元大MSCI A股",
-      "category": "other",
-      "scores": {
-        "yield": 23.2,
-        "return": 17.6,
-        "scale": 45.6,
-        "stability": 77.7,
-        "total": 41.0
-      },
-      "current_price": 27.84,
-      "change_pct": 0.51,
-      "return_1y": 26.37,
-      "split_detected": false,
-      "volatility": 18.05,
-      "ttm_dividend": 0.9,
-      "yield_pct": 3.23,
-      "avg_turnover": 2720738.0
+      "yield_pct": 1.42,
+      "avg_turnover": 5234558.0
     },
     {
       "code": "00408A",
@@ -1168,39 +1208,79 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 5.8,
-        "scale": 65.5,
-        "stability": 51.5,
-        "total": 40.9
+        "return": 5.9,
+        "scale": 65.3,
+        "stability": 52.6,
+        "total": 41.3
       },
-      "current_price": 10.44,
-      "change_pct": 1.95,
-      "return_1y": 2.76,
+      "current_price": 10.49,
+      "change_pct": 0.48,
+      "return_1y": 3.25,
       "split_detected": false,
-      "volatility": 31.62,
+      "volatility": 31.12,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 63925233.0
+      "avg_turnover": 62245179.0
     },
     {
-      "code": "00714",
-      "name": "群益道瓊美國地產",
-      "category": "us_tech",
+      "code": "00733",
+      "name": "富邦臺灣中小",
+      "category": "tw_market",
       "scores": {
-        "yield": 12.9,
-        "return": 12.8,
-        "scale": 49.5,
-        "stability": 86.5,
-        "total": 40.4
+        "yield": 15.3,
+        "return": 40.2,
+        "scale": 66.4,
+        "stability": 42.4,
+        "total": 41.1
       },
-      "current_price": 22.34,
-      "change_pct": 0.09,
-      "return_1y": 16.78,
+      "current_price": 68.25,
+      "change_pct": 1.64,
+      "return_1y": 71.53,
       "split_detected": false,
-      "volatility": 13.51,
-      "ttm_dividend": 0.492,
-      "yield_pct": 2.2,
-      "avg_turnover": 5062105.0
+      "volatility": 36.41,
+      "ttm_dividend": 1.641,
+      "yield_pct": 2.4,
+      "avg_turnover": 73615085.0
+    },
+    {
+      "code": "00739",
+      "name": "元大MSCI A股",
+      "category": "other",
+      "scores": {
+        "yield": 23.6,
+        "return": 17.3,
+        "scale": 45.6,
+        "stability": 77.7,
+        "total": 41.1
+      },
+      "current_price": 27.94,
+      "change_pct": 0.36,
+      "return_1y": 25.91,
+      "split_detected": false,
+      "volatility": 18.05,
+      "ttm_dividend": 0.9,
+      "yield_pct": 3.22,
+      "avg_turnover": 2696819.0
+    },
+    {
+      "code": "006201",
+      "name": "元大富櫃50",
+      "category": "other",
+      "scores": {
+        "yield": 8.6,
+        "return": 62.6,
+        "scale": 56.0,
+        "stability": 35.3,
+        "total": 40.6
+      },
+      "current_price": 44.14,
+      "change_pct": 1.49,
+      "return_1y": 116.16,
+      "split_detected": false,
+      "volatility": 40.11,
+      "ttm_dividend": 0.77,
+      "yield_pct": 1.74,
+      "avg_turnover": 14153866.0
     },
     {
       "code": "00403A",
@@ -1208,39 +1288,59 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 1.5,
-        "scale": 91.2,
-        "stability": 28.1,
-        "total": 40.3
+        "return": 1.7,
+        "scale": 91.1,
+        "stability": 28.8,
+        "total": 40.5
       },
-      "current_price": 10.16,
-      "change_pct": 2.21,
-      "return_1y": -5.93,
+      "current_price": 10.25,
+      "change_pct": 0.89,
+      "return_1y": -5.09,
       "split_detected": false,
-      "volatility": 43.73,
+      "volatility": 43.47,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 3830676750.0
+      "avg_turnover": 3784875890.0
     },
     {
-      "code": "006201",
-      "name": "元大富櫃50",
-      "category": "other",
+      "code": "00714",
+      "name": "群益道瓊美國地產",
+      "category": "us_tech",
       "scores": {
-        "yield": 9.0,
-        "return": 60.9,
-        "scale": 56.1,
-        "stability": 35.2,
-        "total": 40.3
+        "yield": 13.5,
+        "return": 11.1,
+        "scale": 49.6,
+        "stability": 86.6,
+        "total": 40.2
       },
-      "current_price": 42.69,
-      "change_pct": 0.28,
-      "return_1y": 113.34,
+      "current_price": 22.13,
+      "change_pct": -0.94,
+      "return_1y": 13.72,
       "split_detected": false,
-      "volatility": 40.08,
-      "ttm_dividend": 0.77,
-      "yield_pct": 1.8,
-      "avg_turnover": 14460344.0
+      "volatility": 13.48,
+      "ttm_dividend": 0.492,
+      "yield_pct": 2.22,
+      "avg_turnover": 5082675.0
+    },
+    {
+      "code": "00736",
+      "name": "國泰新興市場",
+      "category": "foreign",
+      "scores": {
+        "yield": 8.5,
+        "return": 20.1,
+        "scale": 47.7,
+        "stability": 83.0,
+        "total": 39.8
+      },
+      "current_price": 31.79,
+      "change_pct": 0.03,
+      "return_1y": 31.47,
+      "split_detected": false,
+      "volatility": 15.31,
+      "ttm_dividend": 0.55,
+      "yield_pct": 1.73,
+      "avg_turnover": 3783201.0
     },
     {
       "code": "00703",
@@ -1248,59 +1348,19 @@
       "category": "foreign",
       "scores": {
         "yield": null,
-        "return": 5.4,
-        "scale": 40.3,
-        "stability": 74.4,
-        "total": 40.0
+        "return": 3.4,
+        "scale": 39.7,
+        "stability": 74.6,
+        "total": 39.2
       },
-      "current_price": 19.71,
-      "change_pct": 1.08,
-      "return_1y": 1.81,
+      "current_price": 19.54,
+      "change_pct": -0.86,
+      "return_1y": -1.61,
       "split_detected": false,
-      "volatility": 19.75,
+      "volatility": 19.7,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 1171166.0
-    },
-    {
-      "code": "00736",
-      "name": "國泰新興市場",
-      "category": "foreign",
-      "scores": {
-        "yield": 8.3,
-        "return": 20.9,
-        "scale": 47.7,
-        "stability": 83.0,
-        "total": 40.0
-      },
-      "current_price": 31.78,
-      "change_pct": 1.31,
-      "return_1y": 33.08,
-      "split_detected": false,
-      "volatility": 15.3,
-      "ttm_dividend": 0.55,
-      "yield_pct": 1.73,
-      "avg_turnover": 3782935.0
-    },
-    {
-      "code": "00763U",
-      "name": "期街口道瓊銅",
-      "category": "other",
-      "scores": {
-        "yield": null,
-        "return": 12.0,
-        "scale": 59.3,
-        "stability": 44.9,
-        "total": 38.7
-      },
-      "current_price": 35.88,
-      "change_pct": 2.46,
-      "return_1y": 15.18,
-      "split_detected": false,
-      "volatility": 35.02,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 24144623.0
+      "avg_turnover": 1054535.0
     },
     {
       "code": "00404A",
@@ -1308,59 +1368,59 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 2.8,
-        "scale": 70.0,
-        "stability": 40.4,
-        "total": 37.7
+        "return": 2.5,
+        "scale": 69.9,
+        "stability": 41.2,
+        "total": 37.9
       },
-      "current_price": 9.63,
-      "change_pct": 1.8,
-      "return_1y": -3.31,
+      "current_price": 9.61,
+      "change_pct": -0.21,
+      "return_1y": -3.51,
       "split_detected": false,
-      "volatility": 37.36,
+      "volatility": 37.02,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 132011015.0
+      "avg_turnover": 130297185.0
+    },
+    {
+      "code": "00763U",
+      "name": "期街口道瓊銅",
+      "category": "other",
+      "scores": {
+        "yield": null,
+        "return": 7.8,
+        "scale": 59.3,
+        "stability": 45.2,
+        "total": 37.4
+      },
+      "current_price": 35.08,
+      "change_pct": -2.23,
+      "return_1y": 7.15,
+      "split_detected": false,
+      "volatility": 34.97,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 23804571.0
     },
     {
       "code": "00851",
       "name": "台新全球AI",
       "category": "other",
       "scores": {
-        "yield": 15.2,
-        "return": 26.2,
-        "scale": 38.9,
+        "yield": 15.6,
+        "return": 25.8,
+        "scale": 39.2,
         "stability": 67.0,
-        "total": 36.8
+        "total": 36.9
       },
-      "current_price": 69.95,
-      "change_pct": 0.36,
-      "return_1y": 43.63,
+      "current_price": 70.05,
+      "change_pct": 0.14,
+      "return_1y": 42.99,
       "split_detected": false,
-      "volatility": 23.6,
+      "volatility": 23.63,
       "ttm_dividend": 1.7,
       "yield_pct": 2.43,
-      "avg_turnover": 928672.0
-    },
-    {
-      "code": "00668K",
-      "name": "國泰美國道瓊+U",
-      "category": "us_tech",
-      "scores": {
-        "yield": null,
-        "return": 15.0,
-        "scale": 4.3,
-        "stability": 88.5,
-        "total": 35.9
-      },
-      "current_price": 19.6,
-      "change_pct": 0.31,
-      "return_1y": 21.14,
-      "split_detected": false,
-      "volatility": 12.47,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 3769.0
+      "avg_turnover": 972354.0
     },
     {
       "code": "00642U",
@@ -1368,19 +1428,19 @@
       "category": "us_tech",
       "scores": {
         "yield": null,
-        "return": 36.3,
+        "return": 37.2,
         "scale": 69.5,
         "stability": 0.0,
-        "total": 35.3
+        "total": 35.6
       },
-      "current_price": 26.86,
-      "change_pct": -4.92,
-      "return_1y": 64.08,
+      "current_price": 27.16,
+      "change_pct": 1.12,
+      "return_1y": 65.51,
       "split_detected": false,
-      "volatility": 58.3,
+      "volatility": 58.41,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 122653581.0
+      "avg_turnover": 121229655.0
     },
     {
       "code": "00407A",
@@ -1388,39 +1448,59 @@
       "category": "tw_market",
       "scores": {
         "yield": null,
-        "return": 3.5,
+        "return": 3.7,
         "scale": 83.2,
-        "stability": 18.3,
-        "total": 35.0
+        "stability": 19.5,
+        "total": 35.5
       },
-      "current_price": 9.68,
-      "change_pct": 2.54,
-      "return_1y": -2.02,
+      "current_price": 9.77,
+      "change_pct": 0.93,
+      "return_1y": -1.11,
       "split_detected": false,
-      "volatility": 48.81,
+      "volatility": 48.31,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 1080879942.0
+      "avg_turnover": 1069432172.0
+    },
+    {
+      "code": "00668K",
+      "name": "國泰美國道瓊+U",
+      "category": "us_tech",
+      "scores": {
+        "yield": null,
+        "return": 13.8,
+        "scale": 4.3,
+        "stability": 88.5,
+        "total": 35.5
+      },
+      "current_price": 19.57,
+      "change_pct": -0.15,
+      "return_1y": 19.11,
+      "split_detected": false,
+      "volatility": 12.45,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 3772.0
     },
     {
       "code": "00400A",
       "name": "主動國泰動能高息",
       "category": "dividend",
       "scores": {
-        "yield": 7.3,
-        "return": 21.9,
-        "scale": 81.0,
-        "stability": 29.5,
-        "total": 34.9
+        "yield": 7.4,
+        "return": 22.3,
+        "scale": 80.9,
+        "stability": 30.1,
+        "total": 35.2
       },
-      "current_price": 14.71,
-      "change_pct": 2.29,
-      "return_1y": 34.95,
+      "current_price": 14.81,
+      "change_pct": 0.68,
+      "return_1y": 35.87,
       "split_detected": false,
-      "volatility": 43.0,
+      "volatility": 42.78,
       "ttm_dividend": 0.24,
-      "yield_pct": 1.63,
-      "avg_turnover": 756432471.0
+      "yield_pct": 1.62,
+      "avg_turnover": 749596036.0
     },
     {
       "code": "00401A",
@@ -1428,39 +1508,19 @@
       "category": "tw_market",
       "scores": {
         "yield": 0.0,
-        "return": 18.0,
+        "return": 18.5,
         "scale": 68.3,
-        "stability": 46.6,
-        "total": 33.2
+        "stability": 47.0,
+        "total": 33.5
       },
-      "current_price": 13.5,
-      "change_pct": 1.81,
-      "return_1y": 27.24,
+      "current_price": 13.63,
+      "change_pct": 0.96,
+      "return_1y": 28.46,
       "split_detected": false,
-      "volatility": 34.18,
+      "volatility": 34.02,
       "ttm_dividend": 0.121,
-      "yield_pct": 0.9,
-      "avg_turnover": 100286295.0
-    },
-    {
-      "code": "00636K",
-      "name": "國泰中國A50+U",
-      "category": "foreign",
-      "scores": {
-        "yield": null,
-        "return": 12.1,
-        "scale": 0.0,
-        "stability": 79.7,
-        "total": 30.6
-      },
-      "current_price": 8.76,
-      "change_pct": 1.15,
-      "return_1y": 15.26,
-      "split_detected": false,
-      "volatility": 17.01,
-      "ttm_dividend": 0.0,
-      "yield_pct": null,
-      "avg_turnover": 1897.0
+      "yield_pct": 0.89,
+      "avg_turnover": 99849219.0
     },
     {
       "code": "00405A",
@@ -1470,17 +1530,57 @@
         "yield": null,
         "return": 0.0,
         "scale": 83.3,
-        "stability": 6.6,
-        "total": 30.0
+        "stability": 7.7,
+        "total": 30.3
       },
-      "current_price": 8.63,
-      "change_pct": 3.6,
-      "return_1y": -8.97,
+      "current_price": 8.68,
+      "change_pct": 0.58,
+      "return_1y": -8.44,
       "split_detected": false,
-      "volatility": 54.87,
+      "volatility": 54.39,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 1102043002.0
+      "avg_turnover": 1092319793.0
+    },
+    {
+      "code": "00636K",
+      "name": "國泰中國A50+U",
+      "category": "foreign",
+      "scores": {
+        "yield": null,
+        "return": 11.1,
+        "scale": 0.0,
+        "stability": 79.9,
+        "total": 30.3
+      },
+      "current_price": 8.78,
+      "change_pct": 0.23,
+      "return_1y": 13.73,
+      "split_detected": false,
+      "volatility": 16.93,
+      "ttm_dividend": 0.0,
+      "yield_pct": null,
+      "avg_turnover": 1896.0
+    },
+    {
+      "code": "00406A",
+      "name": "主動中信台灣收益",
+      "category": "tw_market",
+      "scores": {
+        "yield": 4.4,
+        "return": 4.6,
+        "scale": 81.0,
+        "stability": 27.5,
+        "total": 29.4
+      },
+      "current_price": 9.7,
+      "change_pct": 0.41,
+      "return_1y": 0.62,
+      "split_detected": false,
+      "volatility": 44.15,
+      "ttm_dividend": 0.128,
+      "yield_pct": 1.32,
+      "avg_turnover": 756283939.0
     },
     {
       "code": "00657K",
@@ -1488,39 +1588,19 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 31.3,
+        "return": 27.6,
         "scale": 5.9,
-        "stability": 52.8,
-        "total": 30.0
+        "stability": 53.1,
+        "total": 28.9
       },
-      "current_price": 24.51,
-      "change_pct": 0.66,
-      "return_1y": 53.86,
+      "current_price": 24.66,
+      "change_pct": 0.61,
+      "return_1y": 46.52,
       "split_detected": false,
-      "volatility": 30.97,
+      "volatility": 30.82,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 4879.0
-    },
-    {
-      "code": "00406A",
-      "name": "主動中信台灣收益",
-      "category": "tw_market",
-      "scores": {
-        "yield": 4.3,
-        "return": 4.6,
-        "scale": 80.8,
-        "stability": 26.5,
-        "total": 29.1
-      },
-      "current_price": 9.66,
-      "change_pct": 2.66,
-      "return_1y": 0.21,
-      "split_detected": false,
-      "volatility": 44.57,
-      "ttm_dividend": 0.128,
-      "yield_pct": 1.33,
-      "avg_turnover": 736506885.0
+      "avg_turnover": 4836.0
     },
     {
       "code": "00625K",
@@ -1528,19 +1608,19 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 9.9,
-        "scale": 19.3,
-        "stability": 50.9,
-        "total": 26.7
+        "return": 8.3,
+        "scale": 19.4,
+        "stability": 51.2,
+        "total": 26.3
       },
       "current_price": 8.77,
       "change_pct": -1.9,
-      "return_1y": 10.87,
+      "return_1y": 8.14,
       "split_detected": false,
-      "volatility": 31.92,
+      "volatility": 31.82,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 41147.0
+      "avg_turnover": 41710.0
     },
     {
       "code": "00643K",
@@ -1548,19 +1628,19 @@
       "category": "other",
       "scores": {
         "yield": null,
-        "return": 15.4,
+        "return": 15.6,
         "scale": 16.8,
-        "stability": 33.8,
-        "total": 22.0
+        "stability": 34.5,
+        "total": 22.3
       },
-      "current_price": 3.89,
-      "change_pct": 1.3,
-      "return_1y": 21.94,
+      "current_price": 3.91,
+      "change_pct": 0.51,
+      "return_1y": 22.57,
       "split_detected": false,
-      "volatility": 40.77,
+      "volatility": 40.51,
       "ttm_dividend": 0.0,
       "yield_pct": null,
-      "avg_turnover": 27488.0
+      "avg_turnover": 27611.0
     }
   ]
 }
