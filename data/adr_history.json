@@ -2217,6 +2217,29 @@
       },
       "sox_close": 11824.0,
       "sox_change_pct": 1.81
+    },
+    {
+      "date": "2026-09-15",
+      "updated": "2026-09-15 08:19:25+08:00",
+      "avg_premium_pct": NaN,
+      "avg_adr_change_pct": NaN,
+      "signal_code": "strong_bear",
+      "per_adr": {
+        "TSM": {
+          "premium_pct": NaN,
+          "adr_change_pct": NaN
+        },
+        "HNHPF": {
+          "premium_pct": -0.17,
+          "adr_change_pct": -1.88
+        },
+        "ASX": {
+          "premium_pct": NaN,
+          "adr_change_pct": NaN
+        }
+      },
+      "sox_close": 11131.28,
+      "sox_change_pct": -5.86
     }
   ]
 }
