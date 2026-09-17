@@ -3513,13 +3513,13 @@
   "pbr": 3.07,
   "adr": {
     "symbol": "CHT",
-    "close": NaN,
-    "close_date": "2026-09-16",
-    "change": NaN,
-    "change_pct": NaN,
+    "close": 45.72,
+    "close_date": "2026-09-17",
+    "change": 0.54,
+    "change_pct": 1.2,
     "ratio": 10,
-    "fx_rate": 31.86,
-    "implied_tw_price": NaN,
-    "premium_pct": NaN
+    "fx_rate": 31.855,
+    "implied_tw_price": 145.64,
+    "premium_pct": 0.44
   }
 }
