@@ -3514,11 +3514,11 @@
   "adr": {
     "symbol": "ASX",
     "close": NaN,
-    "close_date": "2026-09-22",
+    "close_date": "2026-09-23",
     "change": NaN,
     "change_pct": NaN,
     "ratio": 2,
-    "fx_rate": 31.695,
+    "fx_rate": 31.782,
     "implied_tw_price": NaN,
     "premium_pct": NaN
   }
