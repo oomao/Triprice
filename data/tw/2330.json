@@ -3514,11 +3514,11 @@
   "adr": {
     "symbol": "TSM",
     "close": NaN,
-    "close_date": "2026-09-24",
+    "close_date": "2026-09-25",
     "change": NaN,
     "change_pct": NaN,
     "ratio": 5,
-    "fx_rate": 31.809,
+    "fx_rate": 31.695,
     "implied_tw_price": NaN,
     "premium_pct": NaN
   }

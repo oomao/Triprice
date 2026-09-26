@@ -1,10 +1,10 @@
 {
-  "updated": "2026-09-25 08:17:34+08:00",
+  "updated": "2026-09-26 08:22:57+08:00",
   "avg_premium_pct": NaN,
   "avg_adr_change_pct": NaN,
   "signal_label": "強烈偏空",
   "signal_code": "strong_bear",
-  "fx_rate": 31.809,
+  "fx_rate": 31.695,
   "fx_date": "2026-09-25",
   "adrs": [
     {
@@ -16,7 +16,7 @@
       "tw_change": -25.0,
       "tw_change_pct": -1.0,
       "adr_close": NaN,
-      "adr_close_date": "2026-09-24",
+      "adr_close_date": "2026-09-25",
       "adr_change": NaN,
       "adr_change_pct": NaN,
       "implied_tw_price": NaN,
@@ -31,12 +31,12 @@
       "tw_close_date": "2026-09-24",
       "tw_change": -5.5,
       "tw_change_pct": -2.15,
-      "adr_close": 15.7,
-      "adr_close_date": "2026-09-24",
-      "adr_change": -0.37,
-      "adr_change_pct": -2.3,
-      "implied_tw_price": 249.7,
-      "premium_pct": -0.32,
+      "adr_close": 15.76,
+      "adr_close_date": "2026-09-25",
+      "adr_change": 0.05,
+      "adr_change_pct": 0.32,
+      "implied_tw_price": 249.76,
+      "premium_pct": -0.3,
       "ratio": 2
     },
     {
@@ -48,7 +48,7 @@
       "tw_change": 6.0,
       "tw_change_pct": 0.87,
       "adr_close": NaN,
-      "adr_close_date": "2026-09-24",
+      "adr_close_date": "2026-09-25",
       "adr_change": NaN,
       "adr_change_pct": NaN,
       "implied_tw_price": NaN,
@@ -57,9 +57,9 @@
     }
   ],
   "sox": {
-    "close": 12492.54,
-    "close_date": "2026-09-24",
-    "change": -41.74,
-    "change_pct": -0.33
+    "close": 12668.93,
+    "close_date": "2026-09-25",
+    "change": 176.39,
+    "change_pct": 1.41
   }
 }
