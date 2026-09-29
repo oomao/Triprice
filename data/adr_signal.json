@@ -1,11 +1,11 @@
 {
-  "updated": "2026-09-26 08:22:57+08:00",
-  "avg_premium_pct": NaN,
-  "avg_adr_change_pct": NaN,
-  "signal_label": "強烈偏空",
-  "signal_code": "strong_bear",
-  "fx_rate": 31.695,
-  "fx_date": "2026-09-25",
+  "updated": "2026-09-29 09:29:35+08:00",
+  "avg_premium_pct": 4.75,
+  "avg_adr_change_pct": -1.02,
+  "signal_label": "偏多",
+  "signal_code": "bull",
+  "fx_rate": 31.82,
+  "fx_date": "2026-09-29",
   "adrs": [
     {
       "adr": "TSM",
@@ -15,12 +15,12 @@
       "tw_close_date": "2026-09-24",
       "tw_change": -25.0,
       "tw_change_pct": -1.0,
-      "adr_close": NaN,
-      "adr_close_date": "2026-09-25",
-      "adr_change": NaN,
-      "adr_change_pct": NaN,
-      "implied_tw_price": NaN,
-      "premium_pct": NaN,
+      "adr_close": 452.88,
+      "adr_close_date": "2026-09-28",
+      "adr_change": 2.27,
+      "adr_change_pct": 0.5,
+      "implied_tw_price": 2882.13,
+      "premium_pct": 16.45,
       "ratio": 5
     },
     {
@@ -31,12 +31,12 @@
       "tw_close_date": "2026-09-24",
       "tw_change": -5.5,
       "tw_change_pct": -2.15,
-      "adr_close": 15.76,
-      "adr_close_date": "2026-09-25",
-      "adr_change": 0.05,
-      "adr_change_pct": 0.32,
-      "implied_tw_price": 249.76,
-      "premium_pct": -0.3,
+      "adr_close": 15.45,
+      "adr_close_date": "2026-09-28",
+      "adr_change": -0.38,
+      "adr_change_pct": -2.4,
+      "implied_tw_price": 245.81,
+      "premium_pct": -1.87,
       "ratio": 2
     },
     {
@@ -47,19 +47,19 @@
       "tw_close_date": "2026-09-24",
       "tw_change": 6.0,
       "tw_change_pct": 0.87,
-      "adr_close": NaN,
-      "adr_close_date": "2026-09-25",
-      "adr_change": NaN,
-      "adr_change_pct": NaN,
-      "implied_tw_price": NaN,
-      "premium_pct": NaN,
+      "adr_close": 43.79,
+      "adr_close_date": "2026-09-28",
+      "adr_change": -0.52,
+      "adr_change_pct": -1.17,
+      "implied_tw_price": 696.7,
+      "premium_pct": -0.33,
       "ratio": 2
     }
   ],
   "sox": {
-    "close": 12668.93,
-    "close_date": "2026-09-25",
-    "change": 176.39,
-    "change_pct": 1.41
+    "close": 12465.24,
+    "close_date": "2026-09-28",
+    "change": -203.69,
+    "change_pct": -1.61
   }
 }
