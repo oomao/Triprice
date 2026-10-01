@@ -3509,11 +3509,11 @@
   "adr": {
     "symbol": "CHT",
     "close": NaN,
-    "close_date": "2026-09-29",
+    "close_date": "2026-09-30",
     "change": NaN,
     "change_pct": NaN,
     "ratio": 10,
-    "fx_rate": 31.854,
+    "fx_rate": 31.885,
     "implied_tw_price": NaN,
     "premium_pct": NaN
   }
