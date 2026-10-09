@@ -3508,13 +3508,13 @@
   "pbr": 3.1,
   "adr": {
     "symbol": "CHT",
-    "close": NaN,
-    "close_date": "2026-10-07",
-    "change": NaN,
-    "change_pct": NaN,
+    "close": 46.2,
+    "close_date": "2026-10-08",
+    "change": 0.42,
+    "change_pct": 0.92,
     "ratio": 10,
-    "fx_rate": 31.868,
-    "implied_tw_price": NaN,
-    "premium_pct": NaN
+    "fx_rate": 31.943,
+    "implied_tw_price": 147.58,
+    "premium_pct": 0.73
   }
 }
