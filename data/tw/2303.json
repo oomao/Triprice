@@ -3514,11 +3514,11 @@
   "adr": {
     "symbol": "UMC",
     "close": NaN,
-    "close_date": "2026-10-21",
+    "close_date": "2026-10-22",
     "change": NaN,
     "change_pct": NaN,
     "ratio": 5,
-    "fx_rate": 32.364,
+    "fx_rate": 32.596,
     "implied_tw_price": NaN,
     "premium_pct": NaN
   }
