@@ -63,7 +63,7 @@ def fetch_yf(symbol, start):
     for ts, row in h.iterrows():
         d = str(ts.date())
         try:
-            out[d] = {
+            bar = {
                 'o': float(row['Open']),
                 'h': float(row['High']),
                 'l': float(row['Low']),
@@ -72,6 +72,10 @@ def fetch_yf(symbol, start):
             }
         except (KeyError, ValueError, TypeError):
             continue
+        # Skip yfinance's NaN placeholder row for an unfinished session.
+        if not all(np.isfinite(bar[k]) for k in ('o', 'h', 'l', 'c')):
+            continue
+        out[d] = bar
     return out
 
 

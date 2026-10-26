@@ -11,6 +11,7 @@ Usage:
 """
 import argparse
 import json
+import math
 import sys
 import time
 from datetime import datetime, timedelta, timezone
@@ -43,13 +44,22 @@ def get_close(symbol: str, retries: int = 3, backoff: float = 2.0):
         except Exception as e:
             print(f"  fetch fail {symbol} (attempt {attempt}/{retries}): {e}", file=sys.stderr)
             h = None
+        rows = []
         if h is not None and not h.empty:
             try:
-                closes = [float(c) for c in h['Close'].tolist()]
-                dates = [str(d.date()) for d in h.index]
+                # yfinance sometimes appends the in-progress session as a row whose
+                # Close is NaN (seen at our 22:00 UTC run since 2026-10). float(NaN)
+                # doesn't raise, so it flowed into the JSON as a bare `NaN` token —
+                # invalid JSON that broke the 2330/2303/3711 pages and /adr. Keep
+                # only finite, positive closes.
+                rows = [(str(d.date()), float(c)) for d, c in zip(h.index, h['Close'].tolist())]
+                rows = [(d, c) for d, c in rows if math.isfinite(c) and c > 0]
             except (KeyError, ValueError, TypeError) as e:
                 print(f"  parse fail {symbol}: {e}", file=sys.stderr)
                 return None
+        if rows:
+            dates = [d for d, _ in rows]
+            closes = [c for _, c in rows]
             last = closes[-1]
             prev = closes[-2] if len(closes) > 1 else None
             if prev:
@@ -68,6 +78,22 @@ def get_close(symbol: str, retries: int = 3, backoff: float = 2.0):
             time.sleep(backoff * attempt)
     print(f"  giving up on {symbol} after {retries} attempts", file=sys.stderr)
     return None
+
+
+def _finite_or_none(o):
+    """Recursively replace NaN/±Inf with None so json.dump never emits bare NaN."""
+    if isinstance(o, float) and not math.isfinite(o):
+        return None
+    if isinstance(o, dict):
+        return {k: _finite_or_none(v) for k, v in o.items()}
+    if isinstance(o, list):
+        return [_finite_or_none(v) for v in o]
+    return o
+
+
+def write_json(path, payload):
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(_finite_or_none(payload), f, ensure_ascii=False, indent=2, allow_nan=False)
 
 
 def main():
@@ -107,8 +133,7 @@ def main():
         payload['vix'] = round(vix_info['close'], 2)
         payload['vix_date'] = vix_info['close_date']
         payload['vix_change_pct'] = vix_info['change_pct']
-    with open(FX_FILE, 'w', encoding='utf-8') as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
+    write_json(FX_FILE, payload)
 
     # --- ADR data ---
     success = 0
@@ -154,8 +179,7 @@ def main():
             'premium_pct': round(premium, 2),
         }
 
-        with open(tw_file, 'w', encoding='utf-8') as f:
-            json.dump(tw_data, f, ensure_ascii=False, indent=2)
+        write_json(tw_file, tw_data)
         print(f"  ADR ${adr_close:.2f} ({adr_info['change']:+.2f}, {adr_info['change_pct']:+.2f}%) -> implied {implied:.2f} (TW {tw_price:.2f}, premium {premium:+.2f}%)")
 
         if is_headline:
@@ -216,8 +240,7 @@ def main():
                 'change_pct': sox_info['change_pct'],
             }
         signal_file = ROOT / 'data' / 'adr_signal.json'
-        with open(signal_file, 'w', encoding='utf-8') as f:
-            json.dump(signal_payload, f, ensure_ascii=False, indent=2)
+        write_json(signal_file, signal_payload)
         print(f"ADR signal: avg_premium {avg_premium:+.2f}% -> {label}")
 
         # Append to rolling history (one row per ADR-fetch run, keeps last ~365 entries).
@@ -249,8 +272,7 @@ def main():
         history.append(record)
         history.sort(key=lambda h: h.get('date', ''))
         history = history[-365:]  # cap at one year
-        with open(history_file, 'w', encoding='utf-8') as f:
-            json.dump({'records': history}, f, ensure_ascii=False, indent=2)
+        write_json(history_file, {'records': history})
 
     # Update last_updated.json (preserve 'tw' if present)
     last_updated_file = ROOT / 'data' / 'last_updated.json'
@@ -262,8 +284,7 @@ def main():
         except Exception:
             existing = {}
     existing['us'] = datetime.now(TAIPEI).strftime('%Y-%m-%d %H:%M:%S+08:00')
-    with open(last_updated_file, 'w', encoding='utf-8') as f:
-        json.dump(existing, f, ensure_ascii=False, indent=2)
+    write_json(last_updated_file, existing)
 
 
 if __name__ == '__main__':

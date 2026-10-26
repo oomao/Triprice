@@ -13,6 +13,7 @@ Env:
 """
 import argparse
 import json
+import math
 import os
 import re
 import sys
@@ -133,6 +134,65 @@ def compute_pe_valuation(eps_ttm, pes):
     )
 
 
+def detect_splits(prices: list) -> list[tuple[str, float]]:
+    """Return [(date, factor)] for overnight gaps > 30% (TW daily limit is ±10%,
+    so these are splits / reverse splits / capital reductions, not market moves).
+    factor = old shares per new share basis, snapped to an integer ratio when close
+    (0050 2025-06-18: 188.65 → 47.57 = 3.97 → 4)."""
+    events = []
+    prev_c = None
+    for p in prices:
+        try:
+            c = float(p['close'])
+        except (KeyError, ValueError, TypeError):
+            continue
+        if c <= 0:
+            continue
+        if prev_c is not None:
+            r = prev_c / c
+            if r > 1.43 or r < 0.70:
+                snapped = round(r) if r >= 1 else 1 / round(1 / r)
+                f = snapped if snapped != 1 and abs(r / snapped - 1) < 0.12 else r
+                events.append((p['date'], f))
+        prev_c = c
+    return events
+
+
+def split_factor_after(events, date: str) -> float:
+    """Cumulative factor of all split events strictly after `date`."""
+    f = 1.0
+    for d, k in events:
+        if d > date:
+            f *= k
+    return f
+
+
+def back_adjust_prices(prices: list, events) -> list:
+    """Rescale OHLC/volume before each split onto the latest share basis."""
+    if not events:
+        return prices
+    out = []
+    for p in prices:
+        f = split_factor_after(events, p.get('date', ''))
+        if f == 1.0:
+            out.append(p)
+            continue
+        q = dict(p)
+        for k in ('open', 'max', 'min', 'close', 'high', 'low'):
+            if q.get(k) is not None:
+                try:
+                    q[k] = float(q[k]) / f
+                except (TypeError, ValueError):
+                    pass
+        if q.get('Trading_Volume') is not None:
+            try:
+                q['Trading_Volume'] = float(q['Trading_Volume']) * f
+            except (TypeError, ValueError):
+                pass
+        out.append(q)
+    return out
+
+
 def fetch_stock(code: str, name: str | None = None) -> dict | None:
     today = now_taipei()
     today_str = today.strftime('%Y-%m-%d')
@@ -145,6 +205,16 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
     if not prices_3y:
         print(f"  [{code}] no price data")
         return None
+    # FinMind free tier serves UNADJUSTED prices, so a split leaves the series on
+    # two scales (0050: ~188 ↔ ~47). That used to wreck the yield distribution
+    # (cheap 51 / fair 95 / expensive 194) and later we simply disabled the yield
+    # method — leaving 0050, an ETF with no PE, with no valuation at all. Instead,
+    # back-adjust prices (and, below, dividends) onto the current share basis.
+    split_events = detect_splits(prices_3y)
+    split_detected = bool(split_events)
+    if split_events:
+        print(f"  [{code}] split detected: {split_events} → back-adjusting")
+        prices_3y = back_adjust_prices(prices_3y, split_events)
     latest = prices_3y[-1]
     prev = prices_3y[-2] if len(prices_3y) > 1 else None
     current_price = float(latest['close'])
@@ -163,6 +233,9 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
             float(d.get('CashEarningsDistribution') or 0)
             + float(d.get('CashStatutorySurplus') or 0)
         )
+        if split_events:
+            ex_date = d.get('CashExDividendTradingDate') or d.get('date') or ''
+            cash /= split_factor_after(split_events, ex_date)
         by_year[year] += cash
 
     latest_year, latest_dividend = pick_latest_dividend(dict(by_year), today.year)
@@ -276,34 +349,8 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
     except Exception as e:
         print(f"  [{code}] EPS fetch failed: {e}")
 
-    # 6. Compute valuations from yearly aggregates.
-    # Detect a split / reverse-split in the 3y window first. FinMind free tier serves
-    # UNADJUSTED prices, so a 1:4 split (e.g. 0050 in 2024-12) leaves the daily close
-    # series spanning two scales (~47 ↔ ~202 within one year). Dividing a single
-    # annual dividend by that mixed-scale series produces a nonsense yield
-    # distribution — 0050 came out cheap 51 / fair 95 / expensive 194 for a ~97 ETF.
-    # Disable + flag the yield method rather than show wrong numbers. (The PE method
-    # uses FinMind's PER field directly, which is a scale-invariant ratio, so it stays.)
-    split_detected = False
-    prev_c = None
-    for p in prices_3y:
-        try:
-            c = float(p['close'])
-        except (KeyError, ValueError, TypeError):
-            continue
-        if c <= 0:
-            continue
-        if prev_c is not None:
-            r = c / prev_c
-            if r < 0.70 or r > 1.43:  # >30% single-day move; TW daily limit is only ±10%
-                split_detected = True
-                break
-        prev_c = c
-
+    # 6. Compute valuations (prices/dividends already split-adjusted above).
     valuation_yield, yield_stats = compute_yield_valuation(latest_dividend, yearly_yields)
-    if split_detected:
-        # Mixed-scale closes → contaminated yield distribution; suppress.
-        valuation_yield, yield_stats = None, None
     valuation_pe, pe_stats = compute_pe_valuation(eps_ttm, yearly_pes)
 
     # 7. Build sampled price history time series for band chart.
@@ -432,6 +479,17 @@ def fetch_stock(code: str, name: str | None = None) -> dict | None:
     }
 
 
+def _finite_or_none(o):
+    """Recursively replace NaN/±Inf with None so json.dump never emits bare NaN."""
+    if isinstance(o, float) and not math.isfinite(o):
+        return None
+    if isinstance(o, dict):
+        return {k: _finite_or_none(v) for k, v in o.items()}
+    if isinstance(o, list):
+        return [_finite_or_none(v) for v in o]
+    return o
+
+
 def main():
     parser = argparse.ArgumentParser(description='Fetch TW stock data and compute valuations.')
     parser.add_argument('codes', nargs='*', help='Stock codes (default: all from stocks.json)')
@@ -468,7 +526,7 @@ def main():
                 except Exception:
                     pass
             with open(target_path, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
+                json.dump(_finite_or_none(data), f, ensure_ascii=False, indent=2, allow_nan=False)
             success += 1
             tags = []
             if data.get('valuation_yield'):

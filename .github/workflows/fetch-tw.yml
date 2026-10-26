@@ -22,15 +22,17 @@ jobs:
         env:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: python scripts/fetch_tw.py
-      - name: Fetch ETF universe
-        env:
-          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
-        run: python scripts/fetch_etf.py
-        continue-on-error: true
+      # Market is 3 API calls; run it before the ~200-call ETF loop so the
+      # FinMind hourly quota can't starve it (it was empty from 2026-05 to 10).
       - name: Fetch market (TAIEX/OTC + institutional)
         env:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: python scripts/fetch_market.py
+        continue-on-error: true
+      - name: Fetch ETF universe
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: python scripts/fetch_etf.py
         continue-on-error: true
       - name: Commit & push
         run: |

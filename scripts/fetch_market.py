@@ -17,6 +17,7 @@ Usage:
 import json
 import os
 import sys
+import time
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -31,16 +32,28 @@ TOKEN = os.environ.get('FINMIND_TOKEN', '')
 TAIPEI = timezone(timedelta(hours=8))
 
 
-def finmind(dataset, **params):
+def finmind(dataset, retries=3, backoff=20, **params):
+    """FinMind GET with retry. This runs in the same job as fetch_tw/fetch_etf,
+    which can exhaust the hourly quota — FinMind then answers 402 / a non-200
+    status. Without retry the page went empty for months (2026-05 → 2026-10)."""
     p = {'dataset': dataset, **params}
     if TOKEN:
         p['token'] = TOKEN
-    r = requests.get(FINMIND_BASE, params=p, timeout=30)
-    r.raise_for_status()
-    j = r.json()
-    if j.get('status') != 200:
-        raise RuntimeError(f"FinMind {dataset}: {j.get('msg')}")
-    return j.get('data', [])
+    last_err = None
+    for attempt in range(1, retries + 1):
+        try:
+            r = requests.get(FINMIND_BASE, params=p, timeout=30)
+            r.raise_for_status()
+            j = r.json()
+            if j.get('status') != 200:
+                raise RuntimeError(f"FinMind {dataset}: {j.get('msg')}")
+            return j.get('data', [])
+        except Exception as e:
+            last_err = e
+            print(f"  {dataset} attempt {attempt}/{retries} failed: {e}")
+            if attempt < retries:
+                time.sleep(backoff * attempt)
+    raise last_err
 
 
 def fetch_index(code: str, start: str, end: str) -> dict | None:
@@ -144,6 +157,25 @@ def main():
     except Exception as e:
         print(f"  FAILED {e}")
         inst = {'records': [], 'latest': None}
+
+    # Never replace good data with an empty fetch: keep the previous file's
+    # sections (they carry their own dates, so the page still shows how old they are).
+    prev = {}
+    if OUTPUT.exists():
+        try:
+            with open(OUTPUT, encoding='utf-8') as f:
+                prev = json.load(f)
+        except Exception:
+            prev = {}
+    for label, info in (prev.get('indices') or {}).items():
+        if label not in indices:
+            print(f"  {label}: keeping previous ({info.get('date')})")
+            indices[label] = info
+    if not inst.get('records') and (prev.get('institutional') or {}).get('records'):
+        print('  institutional: keeping previous')
+        inst = prev['institutional']
+    if not indices and not inst.get('records'):
+        print('::warning::market fetch returned nothing')
 
     payload = {
         'updated': today.strftime('%Y-%m-%d %H:%M:%S+08:00'),

@@ -42,6 +42,7 @@ import requests
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT_FILE = ROOT / 'data' / 'etf_list.json'
+NAMES_FILE = ROOT / 'data' / 'names.json'
 
 FINMIND_BASE = 'https://api.finmindtrade.com/api/v4/data'
 TOKEN = os.environ.get('FINMIND_TOKEN', '')
@@ -82,8 +83,36 @@ def categorize(name: str) -> str:
     return 'other'
 
 
+def write_name_index(rows: list[dict]) -> None:
+    """code -> name for every listed / OTC security, so the site's search box can
+    find any company by name and a live-fetched stock page can show its name.
+    Reuses the TaiwanStockInfo rows we already download (no extra API call)."""
+    names = {}
+    for r in rows:
+        sid, name = r.get('stock_id'), r.get('stock_name')
+        if not sid or not name or r.get('type') not in ('twse', 'tpex'):
+            continue
+        if not re.match(r'^\d{4,6}[A-Z]?$', sid):
+            continue
+        names.setdefault(sid, name)
+    if len(names) < 1000:  # partial / failed response — keep yesterday's file
+        print(f"Name index too small ({len(names)}), not writing")
+        return
+    payload = {
+        'updated': datetime.now(TAIPEI).strftime('%Y-%m-%d %H:%M:%S+08:00'),
+        'names': dict(sorted(names.items())),
+    }
+    with open(NAMES_FILE, 'w', encoding='utf-8') as f:
+        json.dump(payload, f, ensure_ascii=False, separators=(',', ':'))
+    print(f"Wrote {len(names)} names -> {NAMES_FILE}")
+
+
 def fetch_etf_universe(include_bond: bool, limit: int | None) -> list[dict]:
     rows = finmind('TaiwanStockInfo')
+    try:
+        write_name_index(rows)
+    except Exception as e:
+        print(f"Name index failed: {e}")
     etfs = [
         r for r in rows
         if 'ETF' in (r.get('industry_category') or '')
