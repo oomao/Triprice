@@ -2221,21 +2221,21 @@
     {
       "date": "2026-09-15",
       "updated": "2026-09-15 08:19:25+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": -0.17,
           "adr_change_pct": -1.88
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 11131.28,
@@ -2267,21 +2267,21 @@
     {
       "date": "2026-09-17",
       "updated": "2026-09-17 08:07:17+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": -0.76,
           "adr_change_pct": 0.39
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 11246.11,
@@ -2336,21 +2336,21 @@
     {
       "date": "2026-09-22",
       "updated": "2026-09-22 08:36:28+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 0.97,
           "adr_change_pct": 0.89
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 12433.17,
@@ -2359,21 +2359,21 @@
     {
       "date": "2026-09-23",
       "updated": "2026-09-23 08:01:07+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 0.41,
           "adr_change_pct": 0.38
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 12689.82,
@@ -2382,21 +2382,21 @@
     {
       "date": "2026-09-24",
       "updated": "2026-09-24 08:15:17+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": -0.68,
           "adr_change_pct": 0.19
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 12534.27,
@@ -2405,21 +2405,21 @@
     {
       "date": "2026-09-25",
       "updated": "2026-09-25 08:17:34+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": -0.32,
           "adr_change_pct": -2.3
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 12492.54,
@@ -2428,21 +2428,21 @@
     {
       "date": "2026-09-26",
       "updated": "2026-09-26 08:22:57+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": -0.3,
           "adr_change_pct": 0.32
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 12668.93,
@@ -2474,21 +2474,21 @@
     {
       "date": "2026-09-30",
       "updated": "2026-09-30 09:06:09+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 0.84,
           "adr_change_pct": 1.15
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 12629.16,
@@ -2497,21 +2497,21 @@
     {
       "date": "2026-10-01",
       "updated": "2026-10-01 09:04:36+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": -1.62,
           "adr_change_pct": -1.77
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 12628.62,
@@ -2520,21 +2520,21 @@
     {
       "date": "2026-10-02",
       "updated": "2026-10-02 09:17:53+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": -3.4,
           "adr_change_pct": -2.16
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 12829.0,
@@ -2543,21 +2543,21 @@
     {
       "date": "2026-10-03",
       "updated": "2026-10-03 08:57:01+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 0.27,
           "adr_change_pct": 0.96
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 13136.67,
@@ -2612,21 +2612,21 @@
     {
       "date": "2026-10-08",
       "updated": "2026-10-08 09:34:41+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 0.92,
           "adr_change_pct": -1.66
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 13066.15,
@@ -2658,21 +2658,21 @@
     {
       "date": "2026-10-10",
       "updated": "2026-10-10 09:31:47+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 0.22,
           "adr_change_pct": 0.9
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 12572.42,
@@ -2704,21 +2704,21 @@
     {
       "date": "2026-10-14",
       "updated": "2026-10-14 08:53:30+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 3.75,
           "adr_change_pct": -1.65
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 12208.79,
@@ -2727,21 +2727,21 @@
     {
       "date": "2026-10-15",
       "updated": "2026-10-15 08:18:02+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": -0.21,
           "adr_change_pct": -0.79
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 11684.38,
@@ -2750,21 +2750,21 @@
     {
       "date": "2026-10-16",
       "updated": "2026-10-16 08:05:27+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 2.58,
           "adr_change_pct": 0.93
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 11581.21,
@@ -2773,21 +2773,21 @@
     {
       "date": "2026-10-17",
       "updated": "2026-10-17 08:10:12+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": -1.99,
           "adr_change_pct": -2.83
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 11137.29,
@@ -2796,21 +2796,21 @@
     {
       "date": "2026-10-20",
       "updated": "2026-10-20 08:55:01+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 0.53,
           "adr_change_pct": 0.68
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 11316.34,
@@ -2819,21 +2819,21 @@
     {
       "date": "2026-10-21",
       "updated": "2026-10-21 08:23:15+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 0.65,
           "adr_change_pct": 0.13
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 11283.81,
@@ -2842,21 +2842,21 @@
     {
       "date": "2026-10-22",
       "updated": "2026-10-22 08:26:39+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": 0.46,
           "adr_change_pct": 4.72
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 11505.56,
@@ -2865,21 +2865,21 @@
     {
       "date": "2026-10-23",
       "updated": "2026-10-23 08:24:13+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
+      "avg_premium_pct": null,
+      "avg_adr_change_pct": null,
       "signal_code": "strong_bear",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         },
         "HNHPF": {
           "premium_pct": -1.28,
           "adr_change_pct": -4.38
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": null,
+          "adr_change_pct": null
         }
       },
       "sox_close": 10731.98,
@@ -2887,22 +2887,22 @@
     },
     {
       "date": "2026-10-24",
-      "updated": "2026-10-24 08:16:50+08:00",
-      "avg_premium_pct": NaN,
-      "avg_adr_change_pct": NaN,
-      "signal_code": "strong_bear",
+      "updated": "2026-10-26 13:45:50+08:00",
+      "avg_premium_pct": 3.34,
+      "avg_adr_change_pct": 1.61,
+      "signal_code": "bull",
       "per_adr": {
         "TSM": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": 14.28,
+          "adr_change_pct": 1.49
         },
         "HNHPF": {
-          "premium_pct": -1.09,
-          "adr_change_pct": 0.27
+          "premium_pct": -0.58,
+          "adr_change_pct": 0.81
         },
         "ASX": {
-          "premium_pct": NaN,
-          "adr_change_pct": NaN
+          "premium_pct": -3.68,
+          "adr_change_pct": 2.52
         }
       },
       "sox_close": 10779.46,
