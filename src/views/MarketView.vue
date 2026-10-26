@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { fetchData } from '../lib/data.js'
 
 const data = ref(null)
 const loading = ref(true)
@@ -7,9 +8,7 @@ const error = ref(null)
 
 onMounted(async () => {
   try {
-    const res = await fetch(`${import.meta.env.BASE_URL}data/market.json`)
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    data.value = await res.json()
+    data.value = await fetchData('market.json')
   } catch (e) {
     error.value = e.message
   } finally {

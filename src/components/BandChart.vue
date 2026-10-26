@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { positionPct as calcPosition, positionTier } from '../lib/position.js'
 
 const props = defineProps({
   // [{d:'YYYY-MM-DD', c:close, p?:per}, ...] sorted ascending
@@ -122,15 +123,13 @@ const xTicks = computed(() => {
   return ticks
 })
 
-// Where in [0,1] does current price sit relative to the cheap..expensive band?
+// Where does the current price sit? 0% = cheap, 50% = fair, 100% = expensive.
 const positionPct = computed(() => {
   if (!valid.value) return null
-  const { cheap, expensive } = props.bands
   const cur = props.currentPrice ?? points.value[points.value.length - 1].c
-  if (expensive === cheap) return null
-  const pct = ((cur - cheap) / (expensive - cheap)) * 100
-  return Math.round(pct)
+  return calcPosition(cur, props.bands)
 })
+const tier = computed(() => positionTier(positionPct.value))
 
 function fmt(n) {
   if (n == null || isNaN(n)) return '—'
@@ -273,21 +272,9 @@ const hover = computed(() => {
     </svg>
 
     <div v-if="positionPct != null" class="mt-2 text-xs text-slate-500">
-      目前股價落在便宜～昂貴帶的
-      <strong
-        :class="
-          positionPct < 0
-            ? 'text-emerald-600'
-            : positionPct < 50
-              ? 'text-emerald-500'
-              : positionPct < 100
-                ? 'text-amber-500'
-                : 'text-red-500'
-        "
-      >
-        {{ positionPct < 0 ? '便宜以下' : positionPct > 100 ? '昂貴以上' : `${positionPct}%` }}
-      </strong>
-      位置（0% = 便宜價，100% = 昂貴價）
+      目前股價位置
+      <strong :class="tier.text">{{ tier.label }} · {{ positionPct }}%</strong>
+      （0% = 便宜價，50% = 合理價，100% = 昂貴價）
     </div>
   </div>
   <div v-else class="text-xs text-slate-400 italic py-3">

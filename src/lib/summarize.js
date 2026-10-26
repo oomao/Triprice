@@ -3,6 +3,8 @@
 // Result cached in localStorage keyed by code + fingerprint so flipping back to
 // the page doesn't trigger another paid call.
 
+import { positionPct } from './position.js'
+
 const SYSTEM_PROMPT =
   '你是台股資料整理助理。你的任務是把使用者提供的客觀資料壓縮成 2-3 句的繁體中文摘要。\n\n' +
   '嚴格規則：\n' +
@@ -17,12 +19,6 @@ const SYSTEM_PROMPT =
 const PROMPT_VERSION = 'v1'
 const CACHE_PREFIX = 'triprice.summary.v1.'
 
-function positionPct(price, bands) {
-  if (!price || !bands) return null
-  const { cheap, expensive } = bands
-  if (cheap == null || expensive == null || cheap === expensive) return null
-  return Math.round(((price - cheap) / (expensive - cheap)) * 100)
-}
 
 export function buildPrompt(d) {
   const parts = []
@@ -34,13 +30,13 @@ export function buildPrompt(d) {
   if (d.valuation_yield) {
     const pos = positionPct(d.current_price, d.valuation_yield)
     let line = `殖利率法估值 便宜 ${d.valuation_yield.cheap} / 合理 ${d.valuation_yield.fair} / 昂貴 ${d.valuation_yield.expensive}`
-    if (pos != null) line += `（目前位置 ${pos}%）`
+    if (pos != null) line += `（目前位置 ${pos}%，0=便宜價 50=合理價 100=昂貴價）`
     parts.push(line)
   }
   if (d.valuation_pe) {
     const pos = positionPct(d.current_price, d.valuation_pe)
     let line = `PE 法估值 便宜 ${d.valuation_pe.cheap} / 合理 ${d.valuation_pe.fair} / 昂貴 ${d.valuation_pe.expensive}`
-    if (pos != null) line += `（目前位置 ${pos}%）`
+    if (pos != null) line += `（目前位置 ${pos}%，0=便宜價 50=合理價 100=昂貴價）`
     parts.push(line)
   }
   if (d.eps_quarterly?.[0]?.yoy != null) {

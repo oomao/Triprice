@@ -2,7 +2,8 @@
 import { ref, onMounted, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import DiffBars from '../components/DiffBars.vue'
-import { computeFreshness } from '../lib/freshness.js'
+import { computeFreshness, ADR_SCHEDULE } from '../lib/freshness.js'
+import { fetchData } from '../lib/data.js'
 
 const signal = ref(null)
 const history = ref([])
@@ -12,19 +13,15 @@ const error = ref(null)
 const expandedWalkForward = ref({}) // { tw_code: bool }
 
 onMounted(async () => {
-  const base = import.meta.env.BASE_URL
   try {
-    const [sigRes, histRes, predRes] = await Promise.all([
-      fetch(`${base}data/adr_signal.json`),
-      fetch(`${base}data/adr_history.json`),
-      fetch(`${base}data/adr_prediction.json`),
+    const [sig, hist, pred] = await Promise.all([
+      fetchData('adr_signal.json', { optional: true }),
+      fetchData('adr_history.json', { optional: true }),
+      fetchData('adr_prediction.json', { optional: true }),
     ])
-    if (sigRes.ok) signal.value = await sigRes.json()
-    if (histRes.ok) {
-      const j = await histRes.json()
-      history.value = (j.records || []).slice(-30)
-    }
-    if (predRes.ok) prediction.value = await predRes.json()
+    signal.value = sig
+    history.value = (hist?.records || []).slice(-30)
+    prediction.value = pred
   } catch (e) {
     error.value = e.message
   } finally {
@@ -48,9 +45,9 @@ function pctSign(v) {
   return (v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%'
 }
 
-// Freshness badge for the prediction file: green ≤6h, amber 6–30h, red >30h.
-// Shared logic in lib/freshness.js (also used by the list + per-stock pages).
-const freshness = computed(() => computeFreshness(prediction.value?.updated))
+// Freshness badge for the prediction file, judged against the US-close cron
+// cadence (a Saturday-morning file is still current on Monday).
+const freshness = computed(() => computeFreshness(prediction.value?.updated, { schedule: ADR_SCHEDULE }))
 
 // Map of stock code → hnhpf_stale flag from prediction JSON (so we can propagate
 // the warning onto the top per-ADR cards which only have signal data).
@@ -215,7 +212,9 @@ function sparkZeroOf(vals) {
   return SPARK_PAD + (SPARK_H - SPARK_PAD * 2) * (1 - (0 - min) / range)
 }
 
-const premiumVals = computed(() => history.value.map((h) => h.avg_premium_pct))
+const premiumVals = computed(() =>
+  history.value.map((h) => h.avg_premium_pct).filter((v) => v != null && !isNaN(v))
+)
 const sparkPath   = computed(() => sparkPathOf(premiumVals.value))
 const sparkZero   = computed(() => sparkZeroOf(premiumVals.value))
 const premiumRange = computed(() => {

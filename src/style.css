@@ -74,6 +74,12 @@ body {
 .dark .text-slate-500 { color: var(--ink-muted); }
 .dark .text-slate-400 { color: #6b7280; }
 .dark .text-\[\#0a0e16\] { color: var(--ink); }
+/* "Ink" fills (active chips, segmented controls, primary buttons) invert in dark. */
+.dark .bg-\[\#0a0e16\] { background-color: var(--ink); color: var(--bg); }
+.dark .border-\[\#0a0e16\] { border-color: var(--ink); }
+/* Up / down colours: the light-theme shades are too dim on the dark surface. */
+.dark .text-red-600 { color: var(--gain); }
+.dark .text-emerald-700, .dark .text-emerald-600 { color: var(--loss); }
 .dark input, .dark select, .dark textarea {
   background-color: var(--surface);
   color: var(--ink);

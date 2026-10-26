@@ -261,17 +261,20 @@ const showRidgeDetails = ref(false)
       </p>
     </section>
 
-    <!-- 9. 自選組合 -->
+    <!-- 9. 總覽表 -->
     <section class="bg-white border border-[#e7e7e1] p-5">
-      <div class="text-xs uppercase tracking-[0.16em] text-slate-500 mb-1">自選頁</div>
-      <h2 class="text-lg font-semibold tracking-tight mb-3">組合便宜度</h2>
+      <div class="text-xs uppercase tracking-[0.16em] text-slate-500 mb-1">總覽頁</div>
+      <h2 class="text-lg font-semibold tracking-tight mb-3">估值位置 · 自選 · 到價提醒</h2>
       <p class="text-sm leading-relaxed mb-2">
-        把所有自選股的「目前位置百分位」平均起來，得到「整體組合在便宜~昂貴帶的位置」。
+        總覽把每檔股價放進自己的估值帶，一張表排序、篩選，一眼找出誰便宜。
       </p>
       <ul class="text-xs leading-relaxed space-y-1 list-disc list-outside ml-5">
-        <li>每檔位置 = (現價 − 便宜價) ÷ (昂貴價 − 便宜價) × 100%</li>
-        <li>優先用 PE 法（成長股不會被殖利率法低估）；無 EPS 退回殖利率法</li>
-        <li>同時標出組合中<strong>最便宜的一檔</strong>（潛在加碼候選）跟<strong>最貴的一檔</strong>（潛在減碼候選）</li>
+        <li><strong>估值位置</strong>：0% = 便宜價、50% = 合理價、100% = 昂貴價（分段線性；低於便宜價為負、高於昂貴價超過 100%）。位置與「便宜 / 合理偏便宜 / 合理偏貴 / 昂貴」標籤永遠一致。</li>
+        <li>優先用 PE 法（成長股不會被殖利率法低估）；無 EPS 退回殖利率法。兩法位置相差 50 個百分點以上時標示 <strong>⚠ 兩法分歧</strong>。</li>
+        <li><strong>距合理</strong>：現價到合理價還差多少（正 = 低於合理價）。</li>
+        <li><strong>★ 自選</strong>：任一列點 ☆ 加入；上方「★ 自選」分頁就是你的組合，估值分布卡會顯示組合的平均位置。未預載的代號可用頂部搜尋開啟後加入。</li>
+        <li><strong>估值分布</strong>：點色條或標籤只看某一級（例如只看便宜）。</li>
+        <li><strong>到價提醒</strong>：個股頁一鍵設在便宜價 / 合理價；收盤跌破時，下次打開總覽頁頂端提醒（純前端，不推播）。</li>
       </ul>
     </section>
 
@@ -340,7 +343,7 @@ const showRidgeDetails = ref(false)
       <div class="text-xs uppercase tracking-[0.16em] text-slate-500 mb-1">老實說</div>
       <h2 class="text-lg font-semibold tracking-tight mb-3">已知限制</h2>
       <ul class="text-xs space-y-2 list-disc list-outside ml-5 leading-relaxed">
-        <li><strong>未還原權息</strong>：FinMind 免費版未提供調整還原價，因此分割（如 0050 在 2024-12 拆分 1:4）會讓 1Y 報酬被誤算。系統已加入單日 &gt; 30% 跌幅偵測，遇到會顯示 N/A 而非錯誤數字。</li>
+        <li><strong>未還原權息</strong>：FinMind 免費版未提供調整還原價。個股估值會偵測單日 &gt; 30% 跳空（台股漲跌幅上限僅 10%，必為分割 / 減資，如 0050 在 2025-06 拆分 1:4），把歷史價格與股利依比例還原後再算三價；ETF 頁的 1Y 報酬遇到分割則顯示 N/A。</li>
         <li><strong>估值帶為水平線</strong>：用「當前 EPS/股利」推回去畫，不是真河流圖。基本面長期變化會讓帶狀偏離歷史。</li>
         <li><strong>ETF 評分為相對排名</strong>：分母是當前清單，換清單分數會變。費用率因 FinMind 不提供，未納入。</li>
         <li><strong>ADR 訊號是統計參考</strong>，不是必中規律。隔日台股仍可能因國內事件偏離 ADR 隱含方向。</li>

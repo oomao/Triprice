@@ -2,6 +2,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { CONDITIONS, evaluate } from '../lib/screener.js'
+import { fetchData } from '../lib/data.js'
 
 const stocksMeta = ref(null)
 const stocks = ref([])     // array of full TW JSONs
@@ -51,17 +52,14 @@ function persist() {
 
 onMounted(async () => {
   try {
-    const base = import.meta.env.BASE_URL
-    const stocksRes = await fetch(`${base}data/stocks.json`)
-    stocksMeta.value = await stocksRes.json()
+    stocksMeta.value = await fetchData('stocks.json')
     const codes = Object.keys(stocksMeta.value.tw_stocks)
-    const fxRes = fetch(`${base}data/fx.json`)
+    const fxP = fetchData('fx.json', { optional: true })
     const stockResults = await Promise.all(
-      codes.map(c => fetch(`${base}data/tw/${c}.json`).then(r => r.ok ? r.json() : null).catch(() => null))
+      codes.map(c => fetchData(`tw/${c}.json`, { optional: true }))
     )
     stocks.value = stockResults.filter(Boolean)
-    const fxR = await fxRes
-    if (fxR.ok) fx.value = await fxR.json()
+    fx.value = await fxP
   } catch (e) {
     error.value = e.message
   } finally {

@@ -37,7 +37,9 @@ function round(n, d) {
   return Number(Number(n).toFixed(d))
 }
 
-function getCached(code) {
+// Exported so the overview table can show a custom watchlist code's valuation
+// (from the last time its page was opened) without hitting FinMind again.
+export function getCached(code) {
   try {
     const raw = localStorage.getItem(CACHE_PREFIX + code)
     if (!raw) return null

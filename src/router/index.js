@@ -7,9 +7,10 @@ const routes = [
     component: () => import('../views/HomeView.vue')
   },
   {
+    // 自選 merged into the overview table (★ filter); keep old links / home-screen
+    // shortcuts working.
     path: '/watchlist',
-    name: 'watchlist',
-    component: () => import('../views/WatchlistView.vue')
+    redirect: { path: '/', query: { list: 'watch' } }
   },
   {
     path: '/stock/:code',
@@ -52,7 +53,8 @@ const routes = [
 export default createRouter({
   history: createWebHashHistory(),
   routes,
-  scrollBehavior() {
-    return { top: 0 }
+  scrollBehavior(to, from, saved) {
+    // Restore position on back/forward (e.g. returning to a long overview table).
+    return saved || { top: 0 }
   }
 })

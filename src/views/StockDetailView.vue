@@ -9,7 +9,10 @@ import BandChart from '../components/BandChart.vue'
 import CandleChart from '../components/CandleChart.vue'
 import ChipsChart from '../components/ChipsChart.vue'
 import DiffBars from '../components/DiffBars.vue'
-import { computeFreshness } from '../lib/freshness.js'
+import ValuationScale from '../components/ValuationScale.vue'
+import { computeFreshness, TW_SCHEDULE } from '../lib/freshness.js'
+import { fetchData } from '../lib/data.js'
+import { valuationView, distancePct, METHOD_LABEL } from '../lib/position.js'
 
 const settingsStore = useSettingsStore()
 const summaryState = ref(null)      // {text, generated_at, provider, model, fingerprint} | null
@@ -23,6 +26,7 @@ const alertInput = ref('')
 const rawData = ref(null)
 const stocksMeta = ref(null)
 const adrPrediction = ref(null)   // headline-stock prediction from data/adr_prediction.json
+const liveName = ref(null)        // name from data/names.json for non-preloaded codes
 const loading = ref(true)
 const loadingMessage = ref('載入中…')
 const error = ref(null)
@@ -31,7 +35,7 @@ const lastUpdated = inject('lastUpdated', ref({}))
 // Day-scale thresholds (weekend-safe). The cron silently died for ~30 days once;
 // the per-stock page must show staleness, not present month-old data as current.
 const freshness = computed(() =>
-  computeFreshness(lastUpdated.value.tw, { warnHours: 80, staleHours: 168, staleNote: '資料可能過期' })
+  computeFreshness(lastUpdated.value.tw, { schedule: TW_SCHEDULE, staleNote: '資料可能過期' })
 )
 
 const code = computed(() => route.params.code)
@@ -40,9 +44,11 @@ const isDynamic = computed(() => rawData.value?._dynamic === true)
 
 // Price alert (fires when latest close ≤ target — the "等便宜了買" case).
 const alertTarget = computed(() => alerts.get(code.value))
-function setAlert() {
-  alerts.set(code.value, alertInput.value)
+const alertOpen = ref(false)
+function setAlert(price = alertInput.value) {
+  alerts.set(code.value, price)
   alertInput.value = ''
+  alertOpen.value = false
 }
 
 // === User customization settings (per-stock localStorage) ===
@@ -175,27 +181,27 @@ async function load() {
   loading.value = true
   loadingMessage.value = '載入中…'
   error.value = null
+  method.value = null
+  alertOpen.value = false
+  liveName.value = null
   rawData.value = null
   adrPrediction.value = null
   summaryState.value = null
   summaryError.value = ''
   loadSettings(code.value)
   try {
-    const base = import.meta.env.BASE_URL
-    const [stocksRes, dataRes, predRes] = await Promise.all([
-      fetch(`${base}data/stocks.json`),
-      fetch(`${base}data/tw/${code.value}.json`),
-      fetch(`${base}data/adr_prediction.json`).catch(() => null),
+    const [meta, stock, pred] = await Promise.all([
+      fetchData('stocks.json'),
+      fetchData(`tw/${code.value}.json`, { optional: true }),
+      fetchData('adr_prediction.json', { optional: true }),
     ])
-    stocksMeta.value = await stocksRes.json()
-    if (predRes && predRes.ok) {
-      try {
-        const pred = await predRes.json()
-        adrPrediction.value = pred?.stocks?.[code.value] || null
-      } catch {}
+    stocksMeta.value = meta
+    adrPrediction.value = pred?.stocks?.[code.value] || null
+    if (!meta?.tw_stocks?.[code.value]) {
+      fetchData('names.json', { optional: true }).then((n) => { liveName.value = n?.names?.[code.value] || null })
     }
-    if (dataRes.ok) {
-      rawData.value = await dataRes.json()
+    if (stock) {
+      rawData.value = stock
     } else {
       loadingMessage.value = '此股票未預載，從 FinMind 即時抓取（約 5 秒）…'
       try {
@@ -257,16 +263,46 @@ function fmt(n, d = 2) {
   })
 }
 
-function priceTier(current, valuation) {
-  if (!current || !valuation) return null
-  if (current <= valuation.cheap) return { label: '便宜', color: 'text-emerald-600' }
-  if (current <= valuation.fair) return { label: '合理偏便宜', color: 'text-emerald-500' }
-  if (current <= valuation.expensive) return { label: '合理偏貴', color: 'text-amber-500' }
-  return { label: '昂貴', color: 'text-red-500' }
-}
+// === Verdict: one method drives the headline (same rule as the overview table:
+// PE when there is EPS, else yield); the user can flip to the other method.
+const method = ref(null) // null = default (primary) | 'pe' | 'yield'
+const view = computed(() => (data.value ? valuationView(data.value) : null))
+const selected = computed(() => {
+  const v = view.value
+  if (!v) return null
+  if (method.value === 'pe' && v.pe) return v.pe
+  if (method.value === 'yield' && v.yld) return v.yld
+  return v.primary
+})
+const other = computed(() => {
+  const v = view.value
+  if (!v || !selected.value) return null
+  return selected.value.method === 'pe' ? v.yld : v.pe
+})
 
-const yieldTier = computed(() => priceTier(data.value?.current_price, data.value?.valuation_yield))
-const peTier = computed(() => priceTier(data.value?.current_price, data.value?.valuation_pe))
+const BAND_ROWS = [
+  { k: 'cheap', l: '便宜價', c: 'text-emerald-600' },
+  { k: 'fair', l: '合理價', c: 'text-[#0a0e16]' },
+  { k: 'expensive', l: '昂貴價', c: 'text-red-500' },
+]
+
+function pctAbs(n) {
+  return Math.abs(n).toFixed(1) + '%'
+}
+const verdictSentence = computed(() => {
+  const sel = selected.value
+  const price = data.value?.current_price
+  if (!sel || !price) return ''
+  const { cheap, fair, expensive } = sel.bands
+  const parts = []
+  parts.push(price > fair
+    ? `比合理價 ${fmt(fair)} 高 ${pctAbs(((price - fair) / fair) * 100)}`
+    : `要漲 ${pctAbs(distancePct(price, fair))} 才回到合理價 ${fmt(fair)}`)
+  if (price > expensive) parts.push(`已高於昂貴價 ${fmt(expensive)}`)
+  else if (price > cheap) parts.push(`再跌 ${pctAbs(distancePct(price, cheap))} 才到便宜價 ${fmt(cheap)}`)
+  else parts.push(`已低於便宜價 ${fmt(cheap)}`)
+  return `現價 ${fmt(price)}，${parts.join('；')}。`
+})
 
 const dividendLabel = computed(() => {
   const m = settings.value.dividend_mode
@@ -283,28 +319,30 @@ const epsLabel = computed(() =>
 
 <template>
   <div>
-    <RouterLink to="/" class="text-[11px] text-slate-500 hover:text-[#0a0e16] uppercase tracking-widest font-mono">← 清單</RouterLink>
+    <RouterLink to="/" class="text-[11px] text-slate-500 hover:text-[#0a0e16] uppercase tracking-widest font-mono">← 總覽</RouterLink>
 
     <div v-if="loading" class="py-8">
       <div class="skel h-7 w-48 mb-3"></div>
       <div class="skel h-12 w-32 mb-2"></div>
       <div class="skel h-4 w-64 mb-6"></div>
-      <div class="skel h-32 w-full"></div>
+      <div class="skel h-40 w-full"></div>
+      <p v-if="loadingMessage !== '載入中…'" class="mt-4 text-sm text-slate-500">{{ loadingMessage }}</p>
     </div>
     <div v-else-if="error && !data" class="py-8">
       <p class="text-slate-700">{{ error }}</p>
       <p class="text-sm text-slate-500 mt-2">請確認代號正確（4-6 碼數字 / 字母），或稍後重試。</p>
     </div>
     <div v-else-if="data">
-      <!-- Hero header: code+name as small label, price huge, change inline -->
-      <div class="flex items-start justify-between mt-3 mb-6 gap-3">
+      <!-- Header: identity + price on the left, actions on the right -->
+      <div class="flex items-start justify-between mt-3 mb-4 gap-3 flex-wrap">
         <div class="min-w-0">
           <div class="flex items-baseline gap-2 mb-1">
             <span class="font-mono text-[11px] text-slate-500 uppercase tracking-widest">{{ code }}</span>
+            <span v-if="meta?.adr" class="font-mono text-[10px] text-slate-400">ADR {{ meta.adr }}</span>
             <span v-if="isDynamic" class="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 font-mono uppercase tracking-wider">live</span>
           </div>
-          <h1 class="text-2xl font-bold tracking-tight leading-tight">{{ meta?.name || rawData?.name || code }}</h1>
-          <div class="mt-3 flex items-baseline gap-3 flex-wrap">
+          <h1 class="text-2xl font-bold tracking-tight leading-tight">{{ meta?.name || liveName || (rawData?.name !== code ? rawData?.name : null) || code }}</h1>
+          <div class="mt-2 flex items-baseline gap-3 flex-wrap">
             <span class="text-4xl font-bold tabular-nums tracking-tight">{{ fmt(rawData.current_price) }}</span>
             <span
               v-if="rawData.change != null"
@@ -317,102 +355,176 @@ const epsLabel = computed(() =>
               </span>
             </span>
           </div>
-          <div class="text-[11px] text-slate-500 mt-1 font-mono">收盤 {{ rawData.close_date }}</div>
-          <span v-if="freshness"
-                class="inline-block mt-1.5 px-2 py-0.5 rounded border text-[11px] font-medium"
-                :class="freshness.cls">
-            資料 {{ freshness.label }}
-          </span>
+          <div class="mt-1 flex items-center gap-2 flex-wrap text-[11px] text-slate-500 font-mono">
+            <span>收盤 {{ rawData.close_date }}</span>
+            <span v-if="freshness" class="px-1.5 py-px rounded border font-sans font-medium" :class="freshness.cls">資料 {{ freshness.label }}</span>
+          </div>
         </div>
-        <button
-          @click="watchlist.toggle(code)"
-          class="px-3 py-1.5 border text-xs uppercase tracking-wider transition shrink-0 font-semibold"
-          :class="
-            watchlist.has(code)
-              ? 'bg-amber-100 border-amber-500 text-amber-800'
-              : 'bg-white border-[#0a0e16] text-[#0a0e16] hover:bg-[#0a0e16] hover:text-white'
-          "
-        >
-          {{ watchlist.has(code) ? '✓ 自選中' : '+ 加入自選' }}
-        </button>
-      </div>
-
-      <!-- 到價提醒（純前端：localStorage 存目標價，下次開 app 在清單頁比對提醒） -->
-      <div class="mb-5 flex items-center flex-wrap gap-2 text-sm">
-        <span class="text-slate-500 text-xs uppercase tracking-wider">到價提醒</span>
-        <template v-if="alertTarget != null">
-          <span class="px-2 py-0.5 rounded border border-amber-300 bg-amber-50 text-amber-800 text-xs font-mono">
-            跌破 {{ fmt(alertTarget) }} 提醒
-          </span>
-          <span v-if="rawData.current_price != null && rawData.current_price <= alertTarget"
-                class="text-xs text-emerald-600 font-semibold">✓ 已到價</span>
-          <button @click="alerts.remove(code)" class="text-xs text-slate-400 hover:text-red-500">清除</button>
-        </template>
-        <template v-else>
-          <input
-            v-model="alertInput"
-            type="number" inputmode="decimal" step="0.01"
-            :placeholder="data.valuation_yield?.cheap || data.valuation_pe?.cheap || '目標價'"
-            class="w-24 px-2 py-1 rounded border border-[#d8d8d2] text-sm focus:outline-none focus:border-[#0a0e16]"
-            @keyup.enter="setAlert"
-          />
+        <div class="flex items-center gap-2 shrink-0">
           <button
-            @click="setAlert"
-            class="text-xs px-2.5 py-1 rounded border border-[#0a0e16] text-[#0a0e16] hover:bg-[#0a0e16] hover:text-white transition"
-          >設定</button>
-          <span class="text-[11px] text-slate-400 hidden sm:inline">價格跌到目標時，下次開 app 會在清單頁提醒</span>
-        </template>
+            @click="watchlist.toggle(code)"
+            class="h-9 px-3 border text-xs tracking-wider transition font-semibold"
+            :class="
+              watchlist.has(code)
+                ? 'bg-amber-100 border-amber-500 text-amber-800'
+                : 'bg-white border-[#0a0e16] text-[#0a0e16] hover:bg-[#0a0e16] hover:text-white'
+            "
+          >{{ watchlist.has(code) ? '★ 自選中' : '☆ 加入自選' }}</button>
+          <button
+            v-if="alertTarget == null"
+            @click="alertOpen = !alertOpen"
+            class="h-9 px-3 border text-xs tracking-wider transition font-semibold bg-white text-slate-700 hover:border-[#0a0e16]"
+            :class="alertOpen ? 'border-[#0a0e16]' : 'border-[#d8d8d2]'"
+          >🔔 到價提醒</button>
+          <span v-else class="h-9 pl-3 pr-1 border border-amber-300 bg-amber-50 text-amber-800 text-xs font-semibold inline-flex items-center gap-1.5">
+            🔔 跌破 {{ fmt(alertTarget) }}
+            <span v-if="rawData.current_price != null && rawData.current_price <= alertTarget" class="text-emerald-600">✓ 已到價</span>
+            <button @click="alerts.remove(code)" class="w-6 h-6 text-amber-700/60 hover:text-red-500" aria-label="清除提醒">✕</button>
+          </span>
+        </div>
       </div>
 
-      <!-- 摘要（瀏覽器端用使用者本地的 LLM key 產生；快取在 localStorage） -->
-      <section class="mb-5 bg-white border border-[#e7e7e1] border-l-2 border-l-[#b4530b] px-4 py-3">
-        <div v-if="summaryState?.text">
-          <p class="text-sm leading-relaxed whitespace-pre-line">{{ summaryState.text }}</p>
-          <div class="flex items-center justify-between flex-wrap gap-x-3 gap-y-1 mt-2">
-            <span class="text-[10px] text-slate-400 font-mono">
-              {{ summaryState.provider }} · {{ summaryState.model }} · {{ summaryState.generated_at?.replace(/:\d{2}\+\d{2}:\d{2}$/, '').replace('T', ' ') }}
-            </span>
-            <div class="flex gap-2">
-              <button
-                @click="handleGenerateSummary(true)"
-                :disabled="summaryLoading"
-                class="text-[11px] text-[#b4530b] hover:text-[#0a0e16] disabled:opacity-50"
-              >{{ summaryLoading ? '生成中…' : '重新生成' }}</button>
-              <button @click="handleClearSummary" class="text-[11px] text-slate-400 hover:text-red-500">清除</button>
-            </div>
+      <!-- Alert editor: one-tap presets at the valuation prices -->
+      <div v-if="alertOpen && alertTarget == null" class="mb-4 px-3 py-2.5 bg-white border border-[#e7e7e1] flex items-center flex-wrap gap-2 text-sm">
+        <span class="text-xs text-slate-500">收盤跌破</span>
+        <input
+          v-model="alertInput"
+          type="number" inputmode="decimal" step="0.01"
+          placeholder="目標價"
+          class="w-24 px-2 py-1 rounded border border-[#d8d8d2] text-sm focus:outline-none focus:border-[#0a0e16]"
+          @keyup.enter="setAlert()"
+        />
+        <button
+          @click="setAlert()"
+          :disabled="!alertInput"
+          class="text-xs px-2.5 py-1 rounded border border-[#0a0e16] text-[#0a0e16] hover:bg-[#0a0e16] hover:text-white transition disabled:opacity-40"
+        >設定</button>
+        <template v-if="selected">
+          <span class="text-xs text-slate-400 ml-1">或直接用</span>
+          <button @click="setAlert(selected.bands.cheap)" class="text-xs px-2 py-1 rounded border border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-500">便宜價 {{ fmt(selected.bands.cheap) }}</button>
+          <button @click="setAlert(selected.bands.fair)" class="text-xs px-2 py-1 rounded border border-[#d8d8d2] text-slate-700 hover:border-[#0a0e16]">合理價 {{ fmt(selected.bands.fair) }}</button>
+        </template>
+        <span class="basis-full text-[11px] text-slate-400">純前端提醒：下次打開 Triprice 時在總覽頁頂端顯示（不會推播）。</span>
+      </div>
+
+      <!-- Verdict: the answer first -->
+      <section class="mb-5 bg-white border border-[#e7e7e1]">
+        <div class="flex items-center justify-between gap-3 px-4 pt-3">
+          <h2 class="text-[11px] uppercase tracking-[0.16em] text-slate-500 font-semibold">估值判讀</h2>
+          <div v-if="view?.pe && view?.yld" class="inline-flex border border-[#d8d8d2] rounded overflow-hidden text-xs" role="tablist">
+            <button
+              v-for="m in ['pe', 'yield']"
+              :key="m"
+              role="tab"
+              :aria-selected="selected?.method === m"
+              class="px-2.5 py-1 transition"
+              :class="selected?.method === m ? 'bg-[#0a0e16] text-white' : 'bg-white text-slate-600 hover:text-[#0a0e16]'"
+              @click="method = m"
+            >{{ METHOD_LABEL[m] }}</button>
+          </div>
+          <span v-else-if="selected" class="text-xs text-slate-500">{{ METHOD_LABEL[selected.method] }}</span>
+        </div>
+
+        <div v-if="selected && selected.pct != null" class="px-4 pb-4">
+          <div class="flex items-baseline gap-3 mt-1 flex-wrap">
+            <span class="text-3xl font-bold tracking-tight" :class="selected.tier.text">{{ selected.tier.label }}</span>
+            <span class="font-mono text-sm text-slate-500">位置 {{ selected.pct }}%</span>
+          </div>
+          <p class="text-sm text-slate-600 mt-1 leading-relaxed">{{ verdictSentence }}</p>
+
+          <div class="mt-2 px-1 sm:px-6">
+            <ValuationScale :bands="selected.bands" :price="data.current_price" />
+          </div>
+
+          <div class="mt-1 space-y-1.5 text-xs leading-relaxed">
+            <p v-if="other && other.pct != null" class="text-slate-600">
+              另一種方法 · {{ METHOD_LABEL[other.method] }}：
+              <strong :class="other.tier.text">{{ other.tier.label }} {{ other.pct }}%</strong>
+              <button class="ml-1 text-[#b4530b] hover:text-[#0a0e16] underline" @click="method = other.method">切換查看</button>
+            </p>
+            <p v-if="view.divergent" class="px-2.5 py-1.5 bg-amber-50 border border-amber-200 text-slate-700">
+              ⚠ 兩種方法的位置相差半個估值帶以上 — 通常代表近年獲利或配息變化很大（獲利暴增／衰退、配息政策改變、景氣循環），單看一種容易誤判，建議兩者一起參考。
+            </p>
+            <p v-if="selected.method === 'yield' && data.yield_stats && data.yield_stats.avg < 0.02" class="px-2.5 py-1.5 bg-amber-50 border border-amber-200 text-slate-700">
+              ⚠ 殖利率中位數僅 {{ fmt(data.yield_stats.avg * 100, 2) }}%，屬成長股型態 — 殖利率法會嚴重低估合理價<template v-if="view.pe">，建議以 PE 法為主</template>。
+            </p>
+            <p v-if="data.split_detected" class="text-slate-500">
+              ℹ 近 3 年曾分割／減資，歷史價格與股利已依分割比例還原後再計算。
+            </p>
+            <p v-if="settings.margin_of_safety > 0" class="text-amber-700">
+              已套用安全邊際 {{ settings.margin_of_safety }}%（便宜價、合理價打折；昂貴價不變）。
+            </p>
           </div>
         </div>
-        <div v-else>
-          <div class="flex items-baseline justify-between gap-3 flex-wrap">
-            <div>
-              <div class="text-[10px] uppercase tracking-[0.18em] text-slate-500 mb-0.5">AI 摘要</div>
-              <p v-if="!settingsStore.hasActiveApiKey" class="text-xs text-slate-500 leading-relaxed">
-                需在
-                <RouterLink to="/settings" class="text-[#b4530b] hover:text-[#0a0e16] underline">設定</RouterLink>
-                填入 {{ settingsStore.llmProvider }} 的 API key 後即可生成。所有金鑰只存在你的瀏覽器。
-              </p>
-              <p v-else class="text-xs text-slate-500 leading-relaxed">
-                依目前估值與基本面資料生成 2~3 句客觀摘要。
-                供應商：<span class="font-mono">{{ settingsStore.llmProvider }}</span> ·
-                模型：<span class="font-mono">{{ settingsStore.effectiveModel }}</span>
-              </p>
-            </div>
-            <button
-              v-if="settingsStore.hasActiveApiKey"
-              @click="handleGenerateSummary(false)"
-              :disabled="summaryLoading"
-              class="px-3 py-1.5 border text-xs uppercase tracking-wider transition shrink-0 font-semibold"
-              :class="summaryLoading
-                ? 'bg-slate-200 text-slate-500 border-slate-300 cursor-wait'
-                : 'bg-[#0a0e16] text-white border-[#0a0e16] hover:bg-black'"
-            >{{ summaryLoading ? '生成中…' : '生成摘要' }}</button>
-          </div>
-          <p v-if="summaryError" class="mt-2 text-xs text-red-600 break-words">⚠ {{ summaryError }}</p>
+        <div v-else class="px-4 pb-4 pt-1 text-sm text-slate-500">
+          這檔目前算不出估值帶：殖利率法需要配息紀錄，PE 法需要正的近 4 季 EPS。
         </div>
       </section>
 
+      <!-- Valuation band chart for the selected method -->
+      <section v-if="selected && data.price_history?.length" class="mb-6">
+        <h2 class="text-lg font-semibold mb-2">估值帶走勢 <span class="text-sm font-normal text-slate-500">· {{ METHOD_LABEL[selected.method] }} · 近 3 年</span></h2>
+        <div class="bg-white border border-[#e7e7e1] p-3">
+          <BandChart
+            :key="selected.method"
+            :history="data.price_history"
+            :bands="selected.bands"
+            :current-price="data.current_price"
+          />
+        </div>
+      </section>
+
+      <!-- Both methods side by side + how they're computed -->
+      <section class="mb-6">
+        <h2 class="text-lg font-semibold mb-2">估值明細</h2>
+        <div class="bg-white border border-[#e7e7e1] overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-slate-50 text-slate-600 text-xs">
+                <th class="px-4 py-2 text-left font-medium w-1/4"></th>
+                <th class="px-4 py-2 text-right font-medium" :class="selected?.method === 'yield' ? 'text-[#0a0e16]' : ''">殖利率法</th>
+                <th class="px-4 py-2 text-right font-medium" :class="selected?.method === 'pe' ? 'text-[#0a0e16]' : ''">PE 法</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in BAND_ROWS" :key="row.k" class="border-t border-slate-100">
+                <td class="px-4 py-2.5 text-slate-600">{{ row.l }}</td>
+                <td class="px-4 py-2.5 text-right font-bold tnum" :class="data.valuation_yield ? row.c : 'text-slate-300'">{{ fmt(data.valuation_yield?.[row.k]) }}</td>
+                <td class="px-4 py-2.5 text-right font-bold tnum" :class="data.valuation_pe ? row.c : 'text-slate-300'">{{ fmt(data.valuation_pe?.[row.k]) }}</td>
+              </tr>
+              <tr class="border-t border-slate-100">
+                <td class="px-4 py-2.5 text-slate-600">目前位置</td>
+                <td class="px-4 py-2.5 text-right text-xs font-semibold" :class="view?.yld?.tier.text">{{ view?.yld?.pct != null ? view.yld.tier.label + ' ' + view.yld.pct + '%' : '—' }}</td>
+                <td class="px-4 py-2.5 text-right text-xs font-semibold" :class="view?.pe?.tier.text">{{ view?.pe?.pct != null ? view.pe.tier.label + ' ' + view.pe.pct + '%' : '—' }}</td>
+              </tr>
+              <tr class="border-t border-slate-100 text-xs text-slate-500 align-top">
+                <td class="px-4 py-2.5">計算依據</td>
+                <td class="px-4 py-2.5 text-right leading-relaxed">
+                  <template v-if="data.valuation_yield && data.yield_stats">
+                    股利 {{ fmt(data.dividend_used) }} ÷ 殖利率<br />
+                    {{ fmt(data.yield_stats.high * 100, 2) }}% / {{ fmt(data.yield_stats.avg * 100, 2) }}% / {{ fmt(data.yield_stats.low * 100, 2) }}%
+                  </template>
+                  <template v-else>無配息資料</template>
+                </td>
+                <td class="px-4 py-2.5 text-right leading-relaxed">
+                  <template v-if="data.valuation_pe && data.pe_stats">
+                    EPS {{ fmt(data.eps_ttm) }} × PE<br />
+                    {{ fmt(data.pe_stats.low, 1) }} / {{ fmt(data.pe_stats.avg, 1) }} / {{ fmt(data.pe_stats.high, 1) }}
+                  </template>
+                  <template v-else>{{ rawData.eps_ttm == null ? '無 EPS（ETF 等）' : 'EPS ≤ 0，不適用' }}</template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">
+          {{ dividendLabel }} · {{ epsLabel }} · 殖利率 / PE 區間取自近 3 年每日資料的 5 / 50 / 95 百分位
+          <span v-if="settings.margin_of_safety > 0" class="text-amber-600">· 安全邊際 {{ settings.margin_of_safety }}%</span>
+        </p>
+      </section>
+
       <!-- 進階設定 -->
-      <details class="mb-5 group" :open="hasCustomization">
+      <details class="mb-6 -mt-3 group" :open="hasCustomization">
         <summary
           class="cursor-pointer text-sm font-medium text-[#b4530b] hover:text-[#0a0e16] inline-flex items-center gap-1.5 select-none list-none"
         >
@@ -497,120 +609,6 @@ const epsLabel = computed(() =>
           >重設為預設值</button>
         </div>
       </details>
-
-      <!-- 殖利率法估值表 -->
-      <section class="mb-6">
-        <div class="flex items-baseline gap-2 mb-2">
-          <h2 class="text-lg font-semibold">殖利率法估值</h2>
-          <span v-if="yieldTier" class="text-sm font-medium" :class="yieldTier.color">
-            目前位置：{{ yieldTier.label }}
-          </span>
-        </div>
-        <!-- 資料含股票分割／減資（FinMind 未還原），殖利率分布被混合價位汙染 → 停用 -->
-        <div
-          v-if="data.split_detected"
-          class="mb-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-xs text-slate-700 leading-relaxed"
-        >
-          ⚠️ 近 3 年資料含股票分割／減資（價格未還原），殖利率分布會被混合價位汙染，故暫不提供殖利率法估值。請以下方 PE 法為主要參考。
-        </div>
-
-        <template v-if="data.valuation_yield">
-          <div
-            v-if="data.yield_stats && data.yield_stats.avg < 0.02"
-            class="mb-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-xs text-slate-700 leading-relaxed"
-          >
-            ⚠️ 此股殖利率偏低（中位數 {{ fmt(data.yield_stats.avg * 100, 2) }}%）—— 殖利率法對成長股會嚴重低估合理價，請以下方 PE 法為主要參考。
-          </div>
-          <div class="bg-white border border-[#e7e7e1] overflow-hidden">
-            <table class="w-full text-sm">
-              <tbody>
-                <tr class="border-b border-slate-100">
-                  <td class="px-4 py-2.5 bg-slate-50 w-1/3 sm:w-1/4">便宜價</td>
-                  <td class="px-4 py-2.5 text-emerald-600 font-bold">{{ fmt(data.valuation_yield?.cheap) }}</td>
-                  <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
-                    股利 {{ fmt(data.dividend_used) }} / 高殖利率 {{ fmt(data.yield_stats?.high * 100, 2) }}%
-                  </td>
-                </tr>
-                <tr class="border-b border-slate-100">
-                  <td class="px-4 py-2.5 bg-slate-50">合理價</td>
-                  <td class="px-4 py-2.5 text-[#0a0e16] font-bold">{{ fmt(data.valuation_yield?.fair) }}</td>
-                  <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
-                    股利 {{ fmt(data.dividend_used) }} / 中位數殖利率 {{ fmt(data.yield_stats?.avg * 100, 2) }}%
-                  </td>
-                </tr>
-                <tr>
-                  <td class="px-4 py-2.5 bg-slate-50">昂貴價</td>
-                  <td class="px-4 py-2.5 text-red-500 font-bold">{{ fmt(data.valuation_yield?.expensive) }}</td>
-                  <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">
-                    股利 {{ fmt(data.dividend_used) }} / 低殖利率 {{ fmt(data.yield_stats?.low * 100, 2) }}%
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="text-xs text-slate-500 mt-1">
-            {{ dividendLabel }} {{ fmt(data.dividend_used) }} 元 · 殖利率區間取自近 3 年
-            <span v-if="settings.margin_of_safety > 0" class="text-amber-600">· 安全邊際 {{ settings.margin_of_safety }}%</span>
-          </p>
-
-          <div
-            v-if="data.price_history?.length"
-            class="mt-3 bg-white border border-[#e7e7e1] p-3"
-          >
-            <BandChart
-              :history="data.price_history"
-              :bands="data.valuation_yield"
-              :current-price="data.current_price"
-            />
-          </div>
-        </template>
-      </section>
-
-      <!-- PE 法估值表 -->
-      <section v-if="data.valuation_pe" class="mb-6">
-        <div class="flex items-baseline gap-2 mb-2">
-          <h2 class="text-lg font-semibold">本益比 (PE) 法估值</h2>
-          <span v-if="peTier" class="text-sm font-medium" :class="peTier.color">
-            目前位置：{{ peTier.label }}
-          </span>
-        </div>
-        <div class="bg-white border border-[#e7e7e1] overflow-hidden">
-          <table class="w-full text-sm">
-            <tbody>
-              <tr class="border-b border-slate-100">
-                <td class="px-4 py-2.5 bg-slate-50 w-1/3 sm:w-1/4">便宜價</td>
-                <td class="px-4 py-2.5 text-emerald-600 font-bold">{{ fmt(data.valuation_pe.cheap) }}</td>
-                <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">EPS × 低 PE {{ fmt(data.pe_stats?.low, 1) }}</td>
-              </tr>
-              <tr class="border-b border-slate-100">
-                <td class="px-4 py-2.5 bg-slate-50">合理價</td>
-                <td class="px-4 py-2.5 text-[#0a0e16] font-bold">{{ fmt(data.valuation_pe.fair) }}</td>
-                <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">EPS × 中位數 PE {{ fmt(data.pe_stats?.avg, 1) }}</td>
-              </tr>
-              <tr>
-                <td class="px-4 py-2.5 bg-slate-50">昂貴價</td>
-                <td class="px-4 py-2.5 text-red-500 font-bold">{{ fmt(data.valuation_pe.expensive) }}</td>
-                <td class="px-4 py-2.5 text-xs text-slate-500 hidden sm:table-cell">EPS × 高 PE {{ fmt(data.pe_stats?.high, 1) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="text-xs text-slate-500 mt-1">
-          {{ epsLabel }} {{ fmt(data.eps_ttm) }} 元
-          <span v-if="settings.margin_of_safety > 0" class="text-amber-600">· 安全邊際 {{ settings.margin_of_safety }}%</span>
-        </p>
-
-        <div
-          v-if="data.valuation_pe && data.price_history?.length"
-          class="mt-3 bg-white border border-[#e7e7e1] p-3"
-        >
-          <BandChart
-            :history="data.price_history"
-            :bands="data.valuation_pe"
-            :current-price="data.current_price"
-          />
-        </div>
-      </section>
 
       <!-- K 線 -->
       <section v-if="data.kline?.length" class="mb-6">
@@ -749,14 +747,14 @@ const epsLabel = computed(() =>
               <tr class="bg-slate-50 text-slate-600">
                 <th class="px-4 py-2 text-left">年度</th>
                 <th class="px-4 py-2 text-right">現金股利</th>
-                <th class="px-4 py-2 text-right">當年殖利率</th>
+                <th class="px-4 py-2 text-right" title="當年現金股利 ÷ 當年平均收盤價（超出 3 年價格資料者不計）">當年殖利率</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="d in data.dividend_history" :key="d.year" class="border-t border-slate-100">
                 <td class="px-4 py-2">{{ d.year }}</td>
                 <td class="px-4 py-2 text-right">{{ fmt(d.cash_dividend) }}</td>
-                <td class="px-4 py-2 text-right">{{ fmt(d.yield * 100, 2) }}%</td>
+                <td class="px-4 py-2 text-right">{{ d.yield != null ? fmt(d.yield * 100, 2) + '%' : '—' }}</td>
               </tr>
             </tbody>
           </table>
@@ -785,6 +783,53 @@ const epsLabel = computed(() =>
               </tr>
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <!-- 摘要（瀏覽器端用使用者本地的 LLM key 產生；快取在 localStorage） -->
+      <section class="mb-6 bg-white border border-[#e7e7e1] border-l-2 border-l-[#b4530b] px-4 py-3">
+        <div v-if="summaryState?.text">
+          <p class="text-sm leading-relaxed whitespace-pre-line">{{ summaryState.text }}</p>
+          <div class="flex items-center justify-between flex-wrap gap-x-3 gap-y-1 mt-2">
+            <span class="text-[10px] text-slate-400 font-mono">
+              {{ summaryState.provider }} · {{ summaryState.model }} · {{ summaryState.generated_at?.replace(/:\d{2}\+\d{2}:\d{2}$/, '').replace('T', ' ') }}
+            </span>
+            <div class="flex gap-2">
+              <button
+                @click="handleGenerateSummary(true)"
+                :disabled="summaryLoading"
+                class="text-[11px] text-[#b4530b] hover:text-[#0a0e16] disabled:opacity-50"
+              >{{ summaryLoading ? '生成中…' : '重新生成' }}</button>
+              <button @click="handleClearSummary" class="text-[11px] text-slate-400 hover:text-red-500">清除</button>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <div class="flex items-baseline justify-between gap-3 flex-wrap">
+            <div>
+              <div class="text-[10px] uppercase tracking-[0.18em] text-slate-500 mb-0.5">AI 摘要</div>
+              <p v-if="!settingsStore.hasActiveApiKey" class="text-xs text-slate-500 leading-relaxed">
+                需在
+                <RouterLink to="/settings" class="text-[#b4530b] hover:text-[#0a0e16] underline">設定</RouterLink>
+                填入 {{ settingsStore.llmProvider }} 的 API key 後即可生成。所有金鑰只存在你的瀏覽器。
+              </p>
+              <p v-else class="text-xs text-slate-500 leading-relaxed">
+                依目前估值與基本面資料生成 2~3 句客觀摘要。
+                供應商：<span class="font-mono">{{ settingsStore.llmProvider }}</span> ·
+                模型：<span class="font-mono">{{ settingsStore.effectiveModel }}</span>
+              </p>
+            </div>
+            <button
+              v-if="settingsStore.hasActiveApiKey"
+              @click="handleGenerateSummary(false)"
+              :disabled="summaryLoading"
+              class="px-3 py-1.5 border text-xs uppercase tracking-wider transition shrink-0 font-semibold"
+              :class="summaryLoading
+                ? 'bg-slate-200 text-slate-500 border-slate-300 cursor-wait'
+                : 'bg-[#0a0e16] text-white border-[#0a0e16] hover:bg-black'"
+            >{{ summaryLoading ? '生成中…' : '生成摘要' }}</button>
+          </div>
+          <p v-if="summaryError" class="mt-2 text-xs text-red-600 break-words">⚠ {{ summaryError }}</p>
         </div>
       </section>
     </div>
