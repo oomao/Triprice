@@ -1,11 +1,11 @@
 {
-  "updated": "2026-10-26 13:45:50+08:00",
-  "avg_premium_pct": 3.34,
-  "avg_adr_change_pct": 1.61,
+  "updated": "2026-10-27 09:10:32+08:00",
+  "avg_premium_pct": 3.35,
+  "avg_adr_change_pct": 1.43,
   "signal_label": "偏多",
   "signal_code": "bull",
-  "fx_rate": 32.563,
-  "fx_date": "2026-10-26",
+  "fx_rate": 32.539,
+  "fx_date": "2026-10-27",
   "adrs": [
     {
       "adr": "TSM",
@@ -19,8 +19,8 @@
       "adr_close_date": "2026-10-23",
       "adr_change": 6.16,
       "adr_change_pct": 1.49,
-      "implied_tw_price": 2725.59,
-      "premium_pct": 14.28,
+      "implied_tw_price": 2723.58,
+      "premium_pct": 14.2,
       "ratio": 5
     },
     {
@@ -31,12 +31,12 @@
       "tw_close_date": "2026-10-22",
       "tw_change": -5.0,
       "tw_change_pct": -2.0,
-      "adr_close": 14.96,
-      "adr_close_date": "2026-10-23",
-      "adr_change": 0.12,
-      "adr_change_pct": 0.81,
-      "implied_tw_price": 243.57,
-      "premium_pct": -0.58,
+      "adr_close": 15.0,
+      "adr_close_date": "2026-10-26",
+      "adr_change": 0.04,
+      "adr_change_pct": 0.27,
+      "implied_tw_price": 244.04,
+      "premium_pct": -0.39,
       "ratio": 2
     },
     {
@@ -51,15 +51,15 @@
       "adr_close_date": "2026-10-23",
       "adr_change": 0.95,
       "adr_change_pct": 2.52,
-      "implied_tw_price": 629.93,
-      "premium_pct": -3.68,
+      "implied_tw_price": 629.47,
+      "premium_pct": -3.75,
       "ratio": 2
     }
   ],
   "sox": {
-    "close": 10779.46,
-    "close_date": "2026-10-23",
-    "change": 47.48,
-    "change_pct": 0.44
+    "close": 11083.47,
+    "close_date": "2026-10-26",
+    "change": 304.01,
+    "change_pct": 2.82
   }
 }
