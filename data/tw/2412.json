@@ -3513,8 +3513,8 @@
     "change": 0.22,
     "change_pct": 0.45,
     "ratio": 10,
-    "fx_rate": 32.882,
-    "implied_tw_price": 161.22,
-    "premium_pct": 0.14
+    "fx_rate": 32.865,
+    "implied_tw_price": 161.14,
+    "premium_pct": -0.53
   }
 }
