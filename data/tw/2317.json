@@ -3509,12 +3509,12 @@
   "adr": {
     "symbol": "HNHPF",
     "close": 13.05,
-    "close_date": "2026-11-18",
-    "change": 0.05,
-    "change_pct": 0.38,
+    "close_date": "2026-11-19",
+    "change": -0.09,
+    "change_pct": -0.68,
     "ratio": 2,
-    "fx_rate": 32.974,
-    "implied_tw_price": 215.16,
-    "premium_pct": -2.64
+    "fx_rate": 32.971,
+    "implied_tw_price": 215.14,
+    "premium_pct": -2.43
   }
 }
