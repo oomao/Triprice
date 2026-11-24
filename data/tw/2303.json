@@ -3501,13 +3501,13 @@
   "pbr": 2.35,
   "adr": {
     "symbol": "UMC",
-    "close": 12.04,
-    "close_date": "2026-11-20",
-    "change": -1.36,
-    "change_pct": -10.15,
+    "close": 14.39,
+    "close_date": "2026-11-23",
+    "change": 2.35,
+    "change_pct": 19.52,
     "ratio": 5,
-    "fx_rate": 33.0263,
-    "implied_tw_price": 79.53,
-    "premium_pct": -0.96
+    "fx_rate": 32.851,
+    "implied_tw_price": 94.55,
+    "premium_pct": 7.07
   }
 }
